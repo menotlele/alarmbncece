@@ -16,6 +16,18 @@ flutter pub get
 flutter run
 ```
 
+## Mockup web (HP di layar laptop)
+Ada mockup interaktif versi "bayar atau langganan" di `web_mockup/index.html`. Satu file HTML, tanpa build. Tinggal buka di browser laptop: HP tampil di tengah, panel demo di samping.
+
+- ⏰ Tab **Alarm**: daftar alarm, tambah/ubah/hapus, tombol "Coba" buat langsung bunyi.
+- ⏱️ Tab **Timer**: hitung mundur dengan preset (mi instan 3 mnt, telur rebus 7 mnt, fokus 25 mnt).
+- 💸 Pas bunyi: geser untuk matikan → muncul tagihan Rp 2.000 + biaya admin Rp 500. Snooze juga bayar, tarif naik 0,5× tiap snooze.
+- 👑 Tab **Pro**: langganan Rp 15.000/bulan atau Rp 99.000/tahun, matikan gratis. Batalinnya dibujuk dua kali.
+- 🧠 Jalur gratisan: jawab 3 soal perkalian atau tonton iklan fiktif 10 detik.
+- 🎛️ Panel demo: bunyikan alarm/timer seketika (tombol `A` / `T`), nyala-matikan suara dan status Pro, reset data.
+
+Semua harga dan pembayaran di mockup ini pura-pura (saldo bohongan, disimpan di `localStorage` browser).
+
 ## Suara alarm
 Taruh file `alarm.mp3` di `assets/sounds/`. Tanpa file itu app tetap jalan (alarm "silent"). Lihat `assets/sounds/README.txt`.
 

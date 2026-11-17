@@ -1,0 +1,1630 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Coin Alarm</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: meja presentasi. Penjelasan di kiri, HP di tengah dengan cahaya koin di belakangnya, panel demo di kanan. */
+:root {
+  /* halaman luar (ikut tema) */
+  --bg: #E6E9F0;
+  --panel: #F5F7FB;
+  --fg: #121829;
+  --muted: #576078;
+  --line: #CBD1DD;
+  --accent: #865700;
+  --knob: #FFFFFF;
+  --glow: rgba(247, 185, 40, .42);
+  --glow-ring: rgba(242, 67, 42, .40);
+  --shadow: rgba(10, 12, 30, .42);
+
+  /* HP & aplikasi (satu tampilan malam, tidak ikut tema) */
+  --bezel: #07080C;
+  --frame: #3B4050;
+  --bezel-edge: #1B1E28;
+  --island: #000000;
+  --a-bg: #0D1020;
+  --a-surface: #161A2E;
+  --a-surface-2: #232845;
+  --a-line: rgba(255, 255, 255, .07);
+  --a-line-strong: rgba(255, 255, 255, .16);
+  --a-fg: #F2F3F8;
+  --a-muted: #8F96AF;
+  --a-white: #FFFFFF;
+  --a-bar: rgba(13, 16, 32, .86);
+  --a-blue: #3D7BFF;
+  --a-leaf: #2FAE66;
+  --a-toast: #F2F3F8;
+  --a-toast-ink: #0D1020;
+  --coin: #F7B928;
+  --coin-hi: #FFE08A;
+  --coin-deep: #C98A06;
+  --coin-ink: #2A1E00;
+  --alarm: #F2432A;
+  --alarm-hi: #FF7A4D;
+  --alarm-deep: #B3200D;
+  --alarm-soft: #FF8A73;
+  --ok: #3DDC97;
+  --ok-ink: #06291A;
+  --ad-1: #D4F4E2;
+  --ad-2: #FFF0C2;
+  --ad-ink: #13301F;
+  --ad-pillow: #FFFFFF;
+
+  --f-display: "Archivo", "Arial Black", system-ui, sans-serif;
+  --f-body: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --s: 1;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A0D17; --panel: #11152A; --fg: #E8EAF2; --muted: #8E96AC; --line: #252B42;
+    --accent: #F7B928; --knob: #E8EAF2; --glow: rgba(247, 185, 40, .16); --glow-ring: rgba(242, 67, 42, .30); --shadow: rgba(0, 0, 0, .7);
+    --frame: #2C303C;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0A0D17; --panel: #11152A; --fg: #E8EAF2; --muted: #8E96AC; --line: #252B42;
+  --accent: #F7B928; --knob: #E8EAF2; --glow: rgba(247, 185, 40, .16); --glow-ring: rgba(242, 67, 42, .30); --shadow: rgba(0, 0, 0, .7);
+  --frame: #2C303C;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: .45; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.screen :focus-visible { outline-color: var(--coin); }
+
+/* ---------- panggung ---------- */
+.stage {
+  min-height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 330px) auto minmax(0, 290px);
+  grid-template-areas: "intro device controls";
+  align-items: center;
+  justify-content: center;
+  column-gap: clamp(32px, 5vw, 80px);
+  row-gap: 36px;
+  overflow-x: clip;
+}
+.intro { grid-area: intro; position: relative; z-index: 2; }
+.device-col { grid-area: device; position: relative; display: grid; place-items: center; }
+.controls { grid-area: controls; position: relative; z-index: 2; }
+@media (max-width: 1099px) {
+  .stage { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "intro device" "controls device"; align-content: center; }
+}
+@media (max-width: 759px) {
+  .stage { grid-template-columns: minmax(0, 1fr); grid-template-areas: "intro" "device" "controls"; }
+}
+
+.eyebrow { margin: 0 0 14px; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+h1 {
+  margin: 0 0 18px;
+  font-family: var(--f-display);
+  font-stretch: 125%;
+  font-weight: 850;
+  font-size: clamp(42px, 4.4vw, 62px);
+  line-height: .95;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+.lead { margin: 0 0 26px; font-size: 17px; line-height: 1.55; max-width: 34ch; }
+.steps { list-style: none; margin: 0 0 26px; padding: 0; display: grid; gap: 14px; counter-reset: s; }
+.steps li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start; color: var(--muted); font-size: 14.5px; counter-increment: s; }
+.steps li::before {
+  content: counter(s);
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1.5px solid var(--line);
+  display: grid; place-items: center;
+  font-family: var(--f-mono); font-size: 12px; font-weight: 700; color: var(--fg);
+}
+.steps b { color: var(--fg); font-weight: 700; }
+.steps .mono { font-family: var(--f-mono); font-size: 13px; color: var(--fg); }
+.disclaimer { margin: 0; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); max-width: 40ch; }
+
+.controls { display: grid; gap: 16px; align-content: center; }
+.controls .eyebrow { margin: 0; }
+.ctl-group { display: grid; gap: 8px; }
+.ctl {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 13px 16px; border-radius: 14px;
+  background: var(--panel); border: 1px solid var(--line);
+  font-weight: 600; font-size: 14.5px; text-align: left;
+  transition: border-color .15s, transform .15s;
+}
+.ctl:hover { border-color: var(--accent); }
+.ctl:active { transform: translateY(1px); }
+.ctl.primary { border-color: var(--accent); }
+kbd { font-family: var(--f-mono); font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; border: 1px solid var(--line); color: var(--muted); background: var(--bg); }
+.ctl-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px 10px 16px; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); font-weight: 600; font-size: 14.5px; }
+.toggle { flex: none; width: 42px; height: 24px; border-radius: 999px; background: var(--line); position: relative; transition: background .2s; }
+.toggle::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--knob); box-shadow: 0 1px 2px var(--shadow); transition: transform .2s; }
+.toggle[aria-checked="true"] { background: var(--accent); }
+.toggle[aria-checked="true"]::after { transform: translateX(18px); }
+.readout { margin: 0; display: grid; border-top: 1px solid var(--line); }
+.readout div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 2px; border-bottom: 1px solid var(--line); font-size: 14px; }
+.readout dt { color: var(--muted); }
+.readout dd { margin: 0; font-family: var(--f-mono); font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+.ctl.ghost { background: transparent; justify-content: center; color: var(--muted); }
+.ctl.ghost.armed { color: var(--fg); border-color: var(--accent); }
+.out-fine { margin: 0; font-size: 12.5px; color: var(--muted); }
+
+/* ---------- HP ---------- */
+.halo { position: absolute; left: 50%; top: 50%; translate: -50% -50%; border-radius: 50%; pointer-events: none; }
+.halo { width: calc(900px * var(--s)); height: calc(900px * var(--s)); background: radial-gradient(circle, var(--glow) 0%, transparent 62%); transition: background .5s; }
+body.is-ringing .halo { background: radial-gradient(circle, var(--glow-ring) 0%, transparent 62%); }
+
+.device-slot { position: relative; z-index: 1; width: calc(414px * var(--s)); height: calc(868px * var(--s)); }
+.device-slot.is-ringing { animation: buzz 1.1s infinite; }
+@keyframes buzz {
+  0%, 45%, 100% { transform: none; }
+  5% { transform: translateX(-3px) rotate(-.8deg); }
+  10% { transform: translateX(3px) rotate(.8deg); }
+  15% { transform: translateX(-3px) rotate(-.8deg); }
+  20% { transform: translateX(3px) rotate(.8deg); }
+  25% { transform: translateX(-2px) rotate(-.4deg); }
+  30% { transform: translateX(2px) rotate(.4deg); }
+  35% { transform: translateX(-1px); }
+}
+.device {
+  position: relative;
+  width: 414px; height: 868px;
+  transform: scale(var(--s)); transform-origin: 0 0;
+  border-radius: 64px;
+  background: var(--bezel);
+  box-shadow:
+    0 0 0 2px var(--bezel-edge),
+    0 0 0 6px var(--frame),
+    0 0 0 7px var(--bezel-edge),
+    0 50px 90px -30px var(--shadow),
+    0 20px 40px -20px var(--shadow);
+}
+.device::before { content: ""; position: absolute; left: -10px; top: 170px; width: 4px; height: 34px; border-radius: 2px; background: var(--frame); box-shadow: 0 60px 0 0 var(--frame), 0 60px 0 0 var(--frame); }
+.device::after { content: ""; position: absolute; right: -10px; top: 250px; width: 4px; height: 96px; border-radius: 2px; background: var(--frame); }
+.device .vol2 { position: absolute; left: -10px; top: 290px; width: 4px; height: 60px; border-radius: 2px; background: var(--frame); }
+
+.screen {
+  position: absolute; inset: 12px;
+  border-radius: 52px; overflow: hidden;
+  background: var(--a-bg); color: var(--a-fg);
+  font-size: 15px; line-height: 1.45;
+  isolation: isolate;
+}
+.statusbar {
+  position: absolute; top: 0; left: 0; right: 0; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 30px 0 42px;
+  font-weight: 700; font-size: 15.5px;
+  z-index: 60; pointer-events: none;
+}
+.sb-time { font-variant-numeric: tabular-nums; }
+.sb-icons { display: flex; gap: 6px; align-items: center; }
+.sb-icons svg { height: 12px; width: auto; fill: currentColor; }
+.island { position: absolute; top: 11px; left: 50%; translate: -50% 0; width: 124px; height: 36px; border-radius: 20px; background: var(--island); z-index: 70; }
+.homebar { position: absolute; bottom: 8px; left: 50%; translate: -50% 0; width: 134px; height: 5px; border-radius: 3px; background: var(--a-fg); opacity: .85; z-index: 95; pointer-events: none; }
+
+.app { position: absolute; inset: 52px 0 0 0; display: flex; flex-direction: column; }
+.view { flex: 1; overflow-y: auto; padding: 6px 20px 130px; scrollbar-width: none; }
+.view::-webkit-scrollbar, .sheet::-webkit-scrollbar { display: none; }
+.tabbar {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 86px;
+  padding: 8px 10px 26px;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  background: var(--a-bar);
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+  border-top: 1px solid var(--a-line);
+  z-index: 5;
+}
+.tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 600; color: var(--a-muted); }
+.tab svg { width: 24px; height: 24px; }
+.tab[aria-current="page"] { color: var(--coin); }
+
+svg.i { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.v-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 10px 0 18px; }
+.v-eyebrow { margin: 0 0 3px; font-size: 13px; color: var(--a-muted); font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.v-title { margin: 0; font-family: var(--f-display); font-stretch: 118%; font-weight: 800; font-size: 34px; line-height: 1; letter-spacing: -.01em; }
+.wallet-chip { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px 6px 6px; border-radius: 999px; background: var(--a-surface-2); font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.coin-dot {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--coin-hi), var(--coin) 55%, var(--coin-deep));
+  color: var(--coin-ink); font-size: 8.5px; font-weight: 800; letter-spacing: -.02em;
+  display: grid; place-items: center;
+}
+.sultan { display: inline-flex; align-items: center; gap: 4px; color: var(--coin); font-weight: 700; }
+.sultan svg { width: 14px; height: 14px; }
+
+.next { position: relative; overflow: hidden; padding: 18px 20px; border-radius: 24px; background: var(--a-surface); margin-bottom: 12px; }
+.next::after { content: ""; position: absolute; right: -50px; top: -50px; width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(circle, rgba(247, 185, 40, .22), transparent 70%); pointer-events: none; }
+.next-k { margin: 0; font-size: 11.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--a-muted); }
+.next-t { margin: 6px 0 2px; font-family: var(--f-display); font-stretch: 120%; font-weight: 800; font-size: 54px; line-height: 1; font-variant-numeric: tabular-nums; display: flex; align-items: baseline; gap: 10px; }
+.next-t span { font-family: var(--f-body); font-size: 15px; font-weight: 600; color: var(--a-muted); }
+.next-in { margin: 6px 0 0; font-size: 13.5px; color: var(--a-muted); }
+.next-in b { color: var(--coin); font-weight: 700; }
+
+.snz { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 10px 10px 16px; border-radius: 16px; background: rgba(242, 67, 42, .16); font-size: 13.5px; margin-bottom: 12px; }
+.snz b { font-variant-numeric: tabular-nums; color: var(--alarm-soft); }
+.snz button { font-size: 12.5px; font-weight: 700; padding: 6px 12px; border-radius: 999px; background: var(--alarm); color: var(--a-white); }
+
+.alarms { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.alarm { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; padding: 14px 16px 14px 18px; border-radius: 22px; background: var(--a-surface); }
+.alarm-main { display: grid; gap: 2px; text-align: left; min-width: 0; }
+.alarm-time { font-family: var(--f-display); font-stretch: 112%; font-weight: 700; font-size: 38px; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.alarm-label { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.alarm-days { font-size: 12.5px; color: var(--a-muted); }
+.alarm.off .alarm-time, .alarm.off .alarm-label { opacity: .4; }
+.alarm-side { display: grid; justify-items: end; gap: 10px; }
+.switch { width: 51px; height: 31px; border-radius: 999px; background: var(--a-surface-2); position: relative; transition: background .2s; }
+.switch i { position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: var(--a-muted); transition: transform .2s, background .2s; box-shadow: 0 2px 4px rgba(0, 0, 0, .3); }
+.switch[aria-checked="true"] { background: var(--coin); }
+.switch[aria-checked="true"] i { transform: translateX(20px); background: var(--a-white); }
+.try { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: var(--a-muted); padding: 4px 10px 4px 8px; border-radius: 999px; border: 1px solid var(--a-line-strong); }
+.try svg { width: 11px; height: 11px; fill: currentColor; stroke: none; }
+.price-note { margin: 16px 2px 0; font-size: 12.5px; color: var(--a-muted); line-height: 1.55; }
+.price-note b { color: var(--a-fg); font-weight: 700; }
+.fab { position: absolute; right: 20px; bottom: 104px; width: 60px; height: 60px; border-radius: 50%; background: var(--coin); color: var(--coin-ink); display: grid; place-items: center; box-shadow: 0 10px 24px -6px rgba(247, 185, 40, .55); z-index: 4; }
+.fab svg { width: 28px; height: 28px; stroke-width: 2.6; }
+
+/* timer */
+.dial-wrap { position: relative; width: 272px; height: 272px; margin: 4px auto 16px; }
+.t-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+.t-track { fill: none; stroke: var(--a-surface-2); stroke-width: 14; }
+.t-prog { fill: none; stroke: var(--coin); stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset .5s linear; }
+.t-center { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; gap: 2px; }
+.t-left { font-family: var(--f-display); font-stretch: 115%; font-weight: 800; font-size: 64px; line-height: 1; font-variant-numeric: tabular-nums; }
+.t-sub { font-size: 13px; color: var(--a-muted); }
+.t-adjust { display: flex; justify-content: center; gap: 10px; margin-bottom: 12px; }
+.t-adjust button, .chip { padding: 8px 14px; border-radius: 999px; background: var(--a-surface); font-size: 13px; font-weight: 600; border: 1px solid var(--a-line); }
+.chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 18px; }
+.chip.on { background: var(--coin); color: var(--coin-ink); border-color: transparent; }
+.t-ctrl { display: grid; grid-template-columns: 1fr 1.6fr; gap: 10px; }
+
+.btn { height: 54px; border-radius: 18px; font-weight: 700; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; }
+.btn.coin { background: var(--coin); color: var(--coin-ink); }
+.btn.ghost { background: var(--a-surface-2); color: var(--a-fg); }
+.btn.danger { background: rgba(242, 67, 42, .16); color: var(--alarm-soft); }
+.btn.block { width: 100%; }
+
+/* layar bunyi */
+.ring {
+  position: absolute; inset: 0; z-index: 30;
+  background: radial-gradient(120% 70% at 50% 28%, var(--alarm-hi) 0%, var(--alarm) 45%, var(--alarm-deep) 100%);
+  color: var(--a-white);
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: 92px 24px 40px;
+  opacity: 0; visibility: hidden; transform: scale(1.03);
+  transition: opacity .25s, transform .25s, visibility 0s .25s;
+}
+.ring.open { opacity: 1; visibility: visible; transform: none; transition: opacity .25s, transform .25s; }
+.ring-mid { position: relative; flex: 1; display: grid; place-items: center; }
+.bell { position: relative; width: 112px; height: 112px; color: var(--a-white); animation: wobble 1.1s ease-in-out infinite; transform-origin: 50% 60%; }
+.bell svg { width: 100%; height: 100%; stroke-width: 1.6; }
+@keyframes wobble { 0%, 50%, 100% { transform: rotate(0); } 8% { transform: rotate(-14deg); } 16% { transform: rotate(12deg); } 24% { transform: rotate(-10deg); } 32% { transform: rotate(8deg); } 40% { transform: rotate(-4deg); } }
+.pulse { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; }
+.pulse i { position: absolute; left: -120px; top: -120px; width: 240px; height: 240px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .35); opacity: 0; animation: pulse 2.4s ease-out infinite; }
+.pulse i:nth-child(2) { animation-delay: .8s; }
+.pulse i:nth-child(3) { animation-delay: 1.6s; }
+@keyframes pulse { 0% { transform: scale(.45); opacity: .7; } 100% { transform: scale(1.5); opacity: 0; } }
+.ring-top { position: relative; text-align: center; }
+.ring-eyebrow { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; opacity: .85; }
+.ring-clock { margin: 10px 0 6px; font-family: var(--f-display); font-stretch: 120%; font-weight: 850; font-size: 98px; line-height: .95; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.ring-label { margin: 0; font-size: 20px; font-weight: 700; }
+.surge { display: inline-flex; align-items: center; gap: 6px; margin: 14px 0 0; padding: 6px 12px; border-radius: 999px; background: rgba(0, 0, 0, .22); font-size: 13px; font-weight: 700; }
+.surge svg { width: 14px; height: 14px; color: var(--coin); fill: currentColor; stroke: none; }
+.ring-bottom { position: relative; display: grid; gap: 12px; }
+.ring-price { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 18px; border-radius: 18px; background: rgba(0, 0, 0, .18); font-size: 14px; font-weight: 600; }
+.ring-price b { font-family: var(--f-display); font-stretch: 110%; font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.snooze-btn { height: 54px; border-radius: 18px; background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .28); font-weight: 700; font-size: 16px; }
+.slide { position: relative; height: 72px; border-radius: 999px; background: rgba(0, 0, 0, .24); overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; }
+.slide-fill { position: absolute; left: 6px; top: 6px; bottom: 6px; width: 60px; border-radius: 999px; background: rgba(255, 255, 255, .2); transition: width .3s; }
+.slide-text {
+  position: absolute; inset: 0; display: grid; place-items: center; padding-left: 56px;
+  font-weight: 700; font-size: 16px; letter-spacing: .02em;
+  background: linear-gradient(90deg, rgba(255, 255, 255, .5) 0%, var(--a-white) 50%, rgba(255, 255, 255, .5) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: shimmer 2.2s linear infinite;
+  pointer-events: none;
+}
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: 0 0; } }
+.slide-knob { position: absolute; left: 6px; top: 6px; width: 60px; height: 60px; border-radius: 50%; background: var(--a-white); color: var(--alarm); display: grid; place-items: center; transition: transform .3s; touch-action: none; cursor: grab; box-shadow: 0 6px 14px rgba(0, 0, 0, .25); }
+.slide-knob:active { cursor: grabbing; }
+.slide-knob svg { width: 26px; height: 26px; stroke-width: 2.6; }
+.slide.nudge .slide-knob { animation: nudge .6s; }
+@keyframes nudge { 30% { transform: translateX(28px); } 60% { transform: translateX(-4px); } }
+.free-link { justify-self: center; padding: 4px; font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; opacity: .9; }
+
+/* sheet */
+.scrim { position: absolute; inset: 0; z-index: 40; background: rgba(5, 6, 14, .58); opacity: 0; visibility: hidden; transition: opacity .25s, visibility 0s .25s; }
+.scrim.open { opacity: 1; visibility: visible; transition: opacity .25s; }
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; max-height: 90%; z-index: 45;
+  overflow-y: auto; scrollbar-width: none;
+  background: var(--a-surface);
+  border-radius: 30px 30px 0 0;
+  padding: 10px 22px 34px;
+  transform: translateY(105%);
+  transition: transform .32s cubic-bezier(.2, .8, .2, 1);
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, .35);
+}
+.sheet.open { transform: none; }
+.grab { width: 38px; height: 5px; border-radius: 3px; background: var(--a-line-strong); margin: 0 auto 16px; }
+.sh-head { margin-bottom: 16px; }
+.sh-eyebrow { margin: 0 0 4px; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--coin); }
+.sh-title { margin: 0; font-family: var(--f-display); font-stretch: 112%; font-weight: 800; font-size: 26px; line-height: 1.1; text-wrap: balance; }
+.sh-sub { margin: 6px 0 0; color: var(--a-muted); font-size: 14px; }
+.receipt { position: relative; display: grid; gap: 8px; margin-bottom: 18px; padding: 14px 16px; border-radius: 18px; background: var(--a-bg); font-family: var(--f-mono); font-size: 12.5px; }
+.rc-line { display: flex; align-items: baseline; gap: 8px; color: var(--a-muted); }
+.rc-line i { flex: 1; min-width: 12px; border-bottom: 1.5px dotted var(--a-line-strong); transform: translateY(-3px); }
+.rc-line span:last-child { color: var(--a-fg); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rc-total { display: flex; justify-content: space-between; margin-top: 2px; padding-top: 10px; border-top: 1px dashed var(--a-line-strong); font-weight: 700; font-size: 16px; }
+.rc-total span:last-child { color: var(--coin); }
+.sh-label { margin: 0 0 8px; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--a-muted); }
+.methods { display: grid; gap: 8px; margin-bottom: 16px; }
+.method { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding: 10px 14px 10px 10px; border-radius: 16px; background: var(--a-bg); border: 1.5px solid transparent; text-align: left; }
+.method.on { border-color: var(--coin); }
+.m-ico { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; font-size: 11.5px; font-weight: 800; }
+.m-wallet { background: var(--coin); color: var(--coin-ink); }
+.m-wallet::before { content: "Rp"; }
+.m-paylater { background: var(--a-blue); color: var(--a-white); }
+.m-paylater::before { content: "PL"; }
+.m-daun { background: var(--a-leaf); }
+.m-daun::before { content: ""; width: 16px; height: 16px; border-radius: 0 14px; background: var(--a-white); transform: rotate(-10deg); }
+.m-txt { display: grid; min-width: 0; }
+.m-txt b { font-size: 14.5px; }
+.m-txt small { font-size: 12.5px; color: var(--a-muted); }
+.m-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--a-line-strong); transition: border .15s; }
+.method.on .m-dot { border: 6px solid var(--coin); }
+.upsell { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; width: 100%; margin-top: 12px; padding: 12px 14px; border-radius: 16px; background: rgba(247, 185, 40, .1); text-align: left; }
+.upsell > svg:first-child { width: 22px; height: 22px; color: var(--coin); }
+.upsell > svg:last-child { width: 18px; height: 18px; color: var(--a-muted); }
+.upsell b, .option b { display: block; font-size: 14.5px; }
+.upsell small, .option small { display: block; color: var(--a-muted); font-size: 12.5px; }
+.sh-foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 14px; }
+.sh-foot.center { justify-content: center; }
+.link { padding: 6px 2px; font-size: 14px; font-weight: 600; color: var(--a-muted); text-decoration: underline; text-underline-offset: 3px; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin-bottom: 14px; border-radius: 14px; background: var(--a-bg); }
+.seg button { padding: 9px; border-radius: 10px; font-size: 13.5px; font-weight: 700; color: var(--a-muted); }
+.seg button[aria-checked="true"] { background: var(--a-surface-2); color: var(--a-fg); }
+
+.proc { display: grid; justify-items: center; text-align: center; gap: 6px; padding: 26px 0 18px; }
+.coin-spin {
+  width: 84px; height: 84px; margin-bottom: 14px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--coin-hi), var(--coin) 55%, var(--coin-deep));
+  color: var(--coin-ink); font-family: var(--f-display); font-weight: 900; font-size: 24px;
+  display: grid; place-items: center;
+  animation: flip 1.1s linear infinite;
+}
+@keyframes flip { to { transform: rotateY(360deg); } }
+.proc-step { margin: 0; min-height: 24px; font-weight: 700; font-size: 16px; }
+.proc-amt { margin: 0; color: var(--a-muted); font-family: var(--f-mono); font-size: 13px; }
+
+.result { display: grid; justify-items: center; text-align: center; gap: 10px; padding: 10px 0 4px; }
+.res-ico { width: 72px; height: 72px; margin-bottom: 4px; border-radius: 50%; display: grid; place-items: center; }
+.res-ico svg { width: 34px; height: 34px; stroke-width: 2.6; }
+.res-ico.good { background: rgba(61, 220, 151, .16); color: var(--ok); }
+.res-ico.bad { background: rgba(242, 67, 42, .16); color: var(--alarm-soft); }
+.res-msg { margin: 0 0 10px; max-width: 30ch; color: var(--a-muted); font-size: 14.5px; }
+.result .btn { width: 100%; }
+
+.option { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; width: 100%; margin-bottom: 10px; padding: 16px; border-radius: 18px; background: var(--a-bg); text-align: left; }
+.option > svg:first-child { width: 26px; height: 26px; color: var(--coin); }
+.option > svg:last-child { width: 18px; height: 18px; color: var(--a-muted); }
+
+.m-dots { display: flex; gap: 6px; margin-bottom: 8px; }
+.m-dots i { flex: 1; height: 5px; border-radius: 3px; background: var(--a-surface-2); }
+.m-dots i.on { background: var(--ok); }
+.m-q { margin: 16px 0 4px; text-align: center; font-family: var(--f-display); font-stretch: 115%; font-weight: 800; font-size: 44px; font-variant-numeric: tabular-nums; }
+.m-ans { display: inline-block; min-width: 2ch; color: var(--coin); }
+.m-msg { margin: 0 0 12px; min-height: 20px; text-align: center; color: var(--alarm-soft); font-size: 13.5px; font-weight: 600; }
+.keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.keypad button { height: 52px; border-radius: 14px; background: var(--a-bg); font-family: var(--f-display); font-size: 22px; font-weight: 700; }
+.keypad .k-ok { background: var(--coin); color: var(--coin-ink); font-family: var(--f-body); font-size: 16px; }
+
+.ad { position: relative; overflow: hidden; margin-bottom: 14px; padding: 22px 20px 18px; border-radius: 20px; background: linear-gradient(160deg, var(--ad-1), var(--ad-2)); color: var(--ad-ink); }
+.ad-tag { position: absolute; top: 12px; right: 12px; padding: 3px 8px; border-radius: 6px; background: rgba(0, 0, 0, .1); font-size: 10.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.ad-art { height: 124px; display: grid; place-items: center; margin-bottom: 6px; }
+.pillow { position: relative; width: 172px; height: 92px; border-radius: 46px 46px 40px 40px / 52px 52px 40px 40px; background: var(--ad-pillow); box-shadow: inset 0 -10px 0 rgba(0, 0, 0, .06), 0 16px 22px -12px rgba(0, 0, 0, .3); }
+.pillow::after { content: "z z z"; position: absolute; top: -30px; right: -8px; font-family: var(--f-display); font-weight: 800; font-size: 20px; letter-spacing: 4px; color: var(--ad-ink); opacity: .45; }
+.ad-brand { margin: 0; font-family: var(--f-display); font-stretch: 122%; font-weight: 900; font-size: 30px; line-height: 1; }
+.ad-copy { margin: 6px 0 4px; font-size: 14px; }
+.ad-fine { margin: 0; font-size: 11.5px; opacity: .7; }
+
+.tp { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 4px 0 12px; }
+.tp-col { display: grid; justify-items: center; gap: 4px; }
+.tp-col button { width: 64px; height: 36px; border-radius: 12px; background: var(--a-bg); color: var(--a-muted); display: grid; place-items: center; }
+.tp-col button svg { width: 20px; height: 20px; }
+.tp output { min-width: 2ch; text-align: center; font-family: var(--f-display); font-stretch: 115%; font-weight: 800; font-size: 64px; line-height: 1; font-variant-numeric: tabular-nums; }
+.tp-sep { padding-bottom: 6px; font-family: var(--f-display); font-weight: 800; font-size: 54px; color: var(--a-muted); }
+.chip.quick { display: block; margin: 0 auto 16px; }
+.field { display: grid; gap: 6px; margin-bottom: 16px; }
+.field span { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--a-muted); }
+.field input { height: 48px; padding: 0 14px; border-radius: 14px; border: 1.5px solid var(--a-line-strong); background: var(--a-bg); color: var(--a-fg); font: inherit; font-size: 15px; }
+.field input::placeholder { color: var(--a-muted); }
+.field input:focus { outline: none; border-color: var(--coin); }
+.days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 10px; }
+.day { height: 40px; border-radius: 12px; background: var(--a-bg); font-size: 12.5px; font-weight: 700; color: var(--a-muted); }
+.day.on { background: var(--coin); color: var(--coin-ink); }
+.sh-note { margin: 0 0 18px; font-size: 12.5px; color: var(--a-muted); }
+.sh-actions { display: grid; grid-template-columns: 1fr 1.6fr; gap: 10px; }
+
+/* pro */
+.pro-hero { text-align: center; padding: 14px 0 4px; }
+.crown { width: 64px; height: 64px; margin: 0 auto 12px; border-radius: 20px; display: grid; place-items: center; background: radial-gradient(circle at 35% 30%, var(--coin-hi), var(--coin) 55%, var(--coin-deep)); color: var(--coin-ink); }
+.crown svg { width: 32px; height: 32px; }
+.pro-title { margin: 2px 0 6px; font-family: var(--f-display); font-stretch: 120%; font-weight: 850; font-size: 32px; line-height: 1; }
+.pro-sub { margin: 0 auto 20px; max-width: 28ch; color: var(--a-muted); font-size: 14.5px; }
+.plans { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+.plan { position: relative; display: grid; gap: 2px; text-align: left; padding: 16px 14px 14px; border-radius: 20px; background: var(--a-surface); border: 2px solid transparent; }
+.plan.on { border-color: var(--coin); }
+.plan-badge { position: absolute; top: -10px; right: 10px; padding: 3px 8px; border-radius: 999px; background: var(--ok); color: var(--ok-ink); font-size: 11px; font-weight: 800; }
+.plan-name { font-size: 13px; font-weight: 700; color: var(--a-muted); }
+.plan-price { font-family: var(--f-display); font-stretch: 110%; font-weight: 800; font-size: 22px; font-variant-numeric: tabular-nums; }
+.plan-per { font-size: 12px; color: var(--a-muted); }
+.perks { list-style: none; margin: 0 0 18px; padding: 0; display: grid; gap: 10px; }
+.perks li { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; }
+.perks svg { flex: none; width: 18px; height: 18px; margin-top: 2px; color: var(--ok); stroke-width: 2.6; }
+.fine { margin: 12px 0 0; text-align: center; font-size: 12px; color: var(--a-muted); }
+.pro-card { position: relative; overflow: hidden; margin: 8px 0 18px; padding: 20px; border-radius: 24px; background: linear-gradient(150deg, var(--coin-hi), var(--coin) 50%, var(--coin-deep)); color: var(--coin-ink); }
+.pro-card .bg-crown { position: absolute; right: -16px; top: -12px; width: 128px; height: 128px; opacity: .14; }
+.pc-eyebrow { margin: 0; font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; opacity: .75; }
+.pro-card h2 { margin: 4px 0 2px; font-family: var(--f-display); font-stretch: 118%; font-weight: 850; font-size: 30px; line-height: 1.05; }
+.pro-card p { margin: 0; font-size: 13.5px; font-weight: 600; opacity: .8; }
+.pc-stat { display: flex; justify-content: space-between; align-items: baseline; margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(42, 30, 0, .18); font-weight: 700; }
+.pc-stat b { font-family: var(--f-display); font-size: 22px; font-variant-numeric: tabular-nums; }
+.cancel-box { display: grid; gap: 10px; padding: 16px; border-radius: 18px; background: var(--a-surface); }
+.cancel-box p { margin: 0; font-size: 14.5px; }
+.cancel-box p b { font-family: var(--f-display); font-size: 17px; }
+
+/* dompet */
+.balance { margin-bottom: 12px; padding: 20px; border-radius: 24px; background: linear-gradient(150deg, var(--coin-hi), var(--coin) 55%, var(--coin-deep)); color: var(--coin-ink); }
+.bal-label { margin: 0; font-size: 13px; font-weight: 700; opacity: .75; }
+.bal-amt { margin: 2px 0 14px; font-family: var(--f-display); font-stretch: 118%; font-weight: 850; font-size: 40px; line-height: 1; font-variant-numeric: tabular-nums; }
+.bal-actions { display: flex; gap: 8px; }
+.bal-actions button { flex: 1; height: 40px; border-radius: 12px; background: rgba(42, 30, 0, .12); font-weight: 700; font-size: 13.5px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+.stats div { display: grid; gap: 2px; align-content: start; padding: 12px; border-radius: 16px; background: var(--a-surface); min-width: 0; }
+.stats span { font-family: var(--f-display); font-stretch: 108%; font-weight: 800; font-size: 16px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.stats small { font-size: 11.5px; line-height: 1.3; color: var(--a-muted); }
+.sec-title { margin: 0 0 6px; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--a-muted); }
+.history { list-style: none; margin: 0; padding: 0; }
+.history li { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--a-line); }
+.h-ico { width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; background: var(--a-surface); }
+.h-ico svg { width: 18px; height: 18px; }
+.h-stop { color: var(--alarm-soft); }
+.h-snooze, .h-pro { color: var(--coin); }
+.h-topup { color: var(--ok); }
+.h-free { color: var(--a-muted); }
+.h-txt { display: grid; min-width: 0; }
+.h-txt b { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.h-txt small { font-size: 12px; color: var(--a-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.h-amt { font-family: var(--f-mono); font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.h-amt.pos { color: var(--ok); }
+.h-amt.zero { color: var(--a-muted); }
+
+.toast {
+  position: absolute; top: 58px; left: 16px; right: 16px; z-index: 90;
+  padding: 12px 16px; border-radius: 16px;
+  background: var(--a-toast); color: var(--a-toast-ink);
+  font-size: 14px; font-weight: 600;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+  transform: translateY(-150%); opacity: 0;
+  transition: transform .3s, opacity .3s;
+  pointer-events: none;
+}
+.toast.show { transform: none; opacity: 1; }
+.coin-fall { position: absolute; top: -30px; z-index: 85; width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, var(--coin-hi), var(--coin) 55%, var(--coin-deep)); pointer-events: none; animation: fall 1.9s cubic-bezier(.3, .1, .7, 1) forwards; }
+@keyframes fall { to { transform: translateY(900px) rotate(540deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .device-slot.is-ringing, .pulse i, .slide-text, .coin-fall, .bell { animation: none; }
+  .coin-spin { animation-duration: 3s; }
+  .coin-fall { display: none; }
+}
+</style>
+</head>
+<body>
+<main class="stage">
+  <section class="intro">
+    <p class="eyebrow">Mockup aplikasi · proyek iseng</p>
+    <h1>Coin Alarm</h1>
+    <p class="lead">Alarm dan timer yang nggak bisa dimatiin gratis. Mau bunyinya berhenti? Bayar dulu, atau langganan Pro.</p>
+    <ol class="steps">
+      <li><span><b>Alarm bunyi.</b> Layar merah, HP getar, tombol back nggak mempan.</span></li>
+      <li><span><b>Geser untuk matikan.</b> Langsung muncul tagihan <span class="mono">Rp 2.000</span> + biaya admin <span class="mono">Rp 500</span>.</span></li>
+      <li><span><b>Snooze juga bayar.</b> Tiap snooze, tarifnya naik 0,5×.</span></li>
+      <li><span><b>Atau langganan.</b> Pro <span class="mono">Rp 15.000</span>/bulan, matikan sepuasnya. Yang pelit bisa lewat jalur gratisan: soal hitungan atau iklan.</span></li>
+    </ol>
+    <p class="disclaimer">Semua harga dan pembayaran di mockup ini pura-pura. Tidak ada uang sungguhan yang berpindah.</p>
+  </section>
+
+  <div class="device-col">
+    <div class="halo" aria-hidden="true"></div>
+    <div class="device-slot" id="device-slot">
+      <div class="device" id="device">
+        <span class="vol2" aria-hidden="true"></span>
+        <div class="screen" id="screen">
+          <div class="statusbar" aria-hidden="true">
+            <span class="sb-time" id="sb-time">05:30</span>
+            <span class="sb-icons">
+              <svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+              <svg viewBox="0 0 16 12"><path d="M8 2.4c2.3 0 4.4.9 6 2.4l1.3-1.4A10.4 10.4 0 0 0 8 .4 10.4 10.4 0 0 0 .7 3.4L2 4.8a8.4 8.4 0 0 1 6-2.4zm0 3.6c1.3 0 2.5.5 3.4 1.4l1.4-1.4A6.8 6.8 0 0 0 8 4a6.8 6.8 0 0 0-4.8 2l1.4 1.4C5.5 6.5 6.7 6 8 6zm0 5.6 2-2.1a2.8 2.8 0 0 0-4 0z"/></svg>
+              <svg viewBox="0 0 27 12"><rect x=".5" y=".5" width="23" height="11" rx="3.2" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="15" height="8" rx="1.8"/><path d="M25 4v4c.8-.3 1.4-1.1 1.4-2s-.6-1.7-1.4-2z" opacity=".45"/></svg>
+            </span>
+          </div>
+          <div class="island" aria-hidden="true"></div>
+
+          <div class="app" id="app">
+            <div class="view" id="view"></div>
+            <nav class="tabbar" id="tabbar" aria-label="Menu aplikasi"></nav>
+          </div>
+
+          <div class="ring" id="ring" role="alertdialog" aria-label="Alarm berbunyi" inert></div>
+          <div class="scrim" id="scrim"></div>
+          <div class="sheet" id="sheet" role="dialog" aria-modal="true" inert></div>
+          <div class="toast" id="toast" role="status" aria-live="polite"></div>
+          <div class="homebar" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="controls" aria-label="Panel demo">
+    <p class="eyebrow">Panel demo</p>
+    <div class="ctl-group">
+      <button class="ctl primary" id="ctl-alarm" type="button"><span>Bunyikan alarm sekarang</span><kbd>A</kbd></button>
+      <button class="ctl" id="ctl-timer" type="button"><span>Selesaikan timer sekarang</span><kbd>T</kbd></button>
+    </div>
+    <div class="ctl-group">
+      <div class="ctl-row"><span id="lbl-sound">Suara alarm</span><button class="toggle" id="ctl-sound" type="button" role="switch" aria-checked="true" aria-labelledby="lbl-sound"></button></div>
+      <div class="ctl-row"><span id="lbl-pro">Langganan Pro</span><button class="toggle" id="ctl-pro" type="button" role="switch" aria-checked="false" aria-labelledby="lbl-pro"></button></div>
+    </div>
+    <dl class="readout">
+      <div><dt>Saldo bohongan</dt><dd id="ro-wallet">Rp 0</dd></div>
+      <div><dt>Habis buat bangun</dt><dd id="ro-spent">Rp 0</dd></div>
+      <div><dt>Status</dt><dd id="ro-pro">Gratisan</dd></div>
+    </dl>
+    <button class="ctl ghost" id="ctl-reset" type="button">Reset data mockup</button>
+    <p class="out-fine">Alarm, saldo, dan riwayat cuma tersimpan di browser ini. Klik di mana saja dulu supaya suara alarm boleh bunyi.</p>
+  </aside>
+</main>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ---------- helper ---------- */
+  const $ = (s, r = document) => r.querySelector(s);
+  const pad = n => String(n).padStart(2, '0');
+  const hm = (h, m) => `${pad(h)}:${pad(m)}`;
+  const hmOf = d => hm(d.getHours(), d.getMinutes());
+  const rp = n => 'Rp ' + Math.round(n).toLocaleString('id-ID');
+  const mmss = s => `${pad(Math.floor(s / 60))}:${pad(s % 60)}`;
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fmtMult = m => m.toLocaleString('id-ID', { maximumFractionDigits: 1 }) + '×';
+  const DAY = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+  const DAY_FULL = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+  const DAYMS = 864e5;
+
+  const PRICE = { stopAlarm: 2000, stopTimer: 1000, snooze: 1000, admin: 500, monthly: 15000, yearly: 99000, discount: 7500 };
+  const STORE = 'coinalarm-mockup-v1';
+  const METHODS = [
+    { id: 'wallet', name: 'Dompet Coin' },
+    { id: 'paylater', name: 'PayLater Ngantuk', sub: 'Bangun sekarang, bayar bulan depan' },
+    { id: 'daun', name: 'Uang Daun', sub: 'Petik langsung dari pohon' },
+  ];
+  const PRESETS = [
+    { s: 60, label: '1 mnt' },
+    { s: 180, label: 'Mi instan 3 mnt' },
+    { s: 420, label: 'Telur rebus 7 mnt' },
+    { s: 1500, label: 'Fokus 25 mnt' },
+  ];
+
+  const svg = (d, extra = '') => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true" ${extra}>${d}</svg>`;
+  const I = {
+    alarm: svg('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M5 3 2 6M19 3l3 3"/>'),
+    timer: svg('<circle cx="12" cy="14" r="8"/><path d="M12 10v4M9.5 2h5M12 2v4M18.5 7.5 20 6"/>'),
+    wallet: svg('<rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 15h2"/>'),
+    crown: svg('<path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/>'),
+    plus: svg('<path d="M12 5v14M5 12h14"/>'),
+    play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
+    check: svg('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
+    x: svg('<path d="M6 6l12 12M18 6 6 18"/>'),
+    arrow: svg('<path d="M5 12h14M13 6l6 6-6 6"/>'),
+    up: svg('<path d="M6 15l6-6 6 6"/>'),
+    down: svg('<path d="M6 9l6 6 6-6"/>'),
+    bolt: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 2 4 14h7l-1.5 8L19 10h-7z"/></svg>',
+    math: svg('<path d="M4 6h6M7 3v6M14 6h6M5 15l4 4M9 15l-4 4M14 16h6M14 20h6"/>'),
+    tv: svg('<rect x="3" y="5" width="18" height="13" rx="2"/><path d="M8 21h8M10.5 9.5v4.5l3.5-2.25z"/>'),
+    zz: svg('<path d="M4 6h6l-6 7h6M14 12h6l-6 7h6"/>'),
+    gift: svg('<rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v8h14v-8M12 8v13M12 8c-2-4-6-4-6-1.5S10 8 12 8zm0 0c2-4 6-4 6-1.5S14 8 12 8z"/>'),
+  };
+
+  /* ---------- state ---------- */
+  function seed() {
+    const now = Date.now();
+    const at = (daysAgo, h, m) => { const d = new Date(now - daysAgo * DAYMS); d.setHours(h, m, 0, 0); return d.getTime(); };
+    return {
+      alarms: [
+        { id: 'a1', h: 5, m: 30, label: 'Subuh, jangan skip', days: [1, 1, 1, 1, 1, 1, 1], on: true },
+        { id: 'a2', h: 6, m: 15, label: 'Berangkat kerja', days: [1, 1, 1, 1, 1, 0, 0], on: true },
+        { id: 'a3', h: 13, m: 0, label: 'Tidur siang 20 menit', days: [0, 0, 0, 0, 0, 1, 1], on: false },
+      ],
+      wallet: 42000,
+      history: [
+        { t: at(1, 5, 40), title: 'Matikan alarm 05:30', note: 'Tarif 2×', amount: -4500, kind: 'stop' },
+        { t: at(1, 5, 35), title: 'Snooze alarm 05:30', note: 'Tarif 1,5×', amount: -2000, kind: 'snooze' },
+        { t: at(1, 5, 30), title: 'Snooze alarm 05:30', note: 'Tarif normal', amount: -1500, kind: 'snooze' },
+        { t: at(2, 20, 12), title: 'Top up saldo', note: 'Uang bohongan', amount: 50000, kind: 'topup' },
+      ],
+      pro: null,
+      proSaved: 0,
+      muted: false,
+    };
+  }
+  function load() {
+    try {
+      const raw = localStorage.getItem(STORE);
+      if (raw) {
+        const d = JSON.parse(raw);
+        if (d && Array.isArray(d.alarms) && Array.isArray(d.history)) return Object.assign(seed(), d);
+      }
+    } catch (e) { /* storage diblokir: pakai data contoh */ }
+    return seed();
+  }
+  function save() { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) { /* abaikan */ } }
+
+  let S = load();
+  const R = {
+    tab: 'alarm',
+    timer: { total: 300, remaining: 300, running: false, endAt: 0 },
+    ringing: null,
+    snooze: null,
+    sheet: null,
+    lastFired: {},
+    proPlan: 'monthly',
+    cancelStep: 0,
+    adT: 0,
+    procT: 0,
+  };
+  const isPro = () => !!S.pro;
+  const planName = p => ({ monthly: 'Bulanan', yearly: 'Sultan Tahunan', discount: 'Bulanan diskon 50%' }[p] || 'Bulanan');
+
+  /* ---------- elemen ---------- */
+  const screen = $('#screen'), viewEl = $('#view'), appEl = $('#app'), ringEl = $('#ring');
+  const sheetEl = $('#sheet'), scrimEl = $('#scrim'), toastEl = $('#toast'), slot = $('#device-slot');
+
+  /* ---------- waktu ---------- */
+  function greet(d) {
+    const h = d.getHours();
+    if (h >= 4 && h < 10) return 'Selamat pagi';
+    if (h >= 10 && h < 15) return 'Selamat siang';
+    if (h >= 15 && h < 18) return 'Selamat sore';
+    return 'Selamat malam';
+  }
+  function nextOccurrence(a, now) {
+    const once = !a.days.some(Boolean);
+    for (let i = 0; i < 8; i++) {
+      const d = new Date(now);
+      d.setDate(d.getDate() + i);
+      d.setHours(a.h, a.m, 0, 0);
+      if (d <= now) continue;
+      if (once || a.days[(d.getDay() + 6) % 7]) return d;
+    }
+    return null;
+  }
+  function nextAlarm(now) {
+    let best = null;
+    for (const a of S.alarms) {
+      if (!a.on) continue;
+      const d = nextOccurrence(a, now);
+      if (d && (!best || d < best.d)) best = { a, d };
+    }
+    return best;
+  }
+  function dayWord(d, now) {
+    const a = new Date(now); a.setHours(0, 0, 0, 0);
+    const b = new Date(d); b.setHours(0, 0, 0, 0);
+    const diff = Math.round((b - a) / DAYMS);
+    if (diff === 0) return 'hari ini';
+    if (diff === 1) return 'besok';
+    return DAY_FULL[d.getDay()];
+  }
+  function inWords(ms) {
+    const mins = Math.max(1, Math.ceil(ms / 60000));
+    const h = Math.floor(mins / 60), m = mins % 60;
+    if (h >= 24) return `${Math.floor(h / 24)} hari ${h % 24} jam`;
+    if (h) return `${h} jam ${m} menit`;
+    return `${m} menit`;
+  }
+  function relTime(t) {
+    const d = new Date(t), now = new Date();
+    const a = new Date(now); a.setHours(0, 0, 0, 0);
+    const b = new Date(d); b.setHours(0, 0, 0, 0);
+    const diff = Math.round((a - b) / DAYMS);
+    if (diff === 0) return `Hari ini ${hmOf(d)}`;
+    if (diff === 1) return `Kemarin ${hmOf(d)}`;
+    return `${d.getDate()} ${MON[d.getMonth()]} ${hmOf(d)}`;
+  }
+  const fmtDate = t => { const d = new Date(t); return `${d.getDate()} ${MON[d.getMonth()]} ${d.getFullYear()}`; };
+  const durLabel = s => (s < 60 ? `${s} detik` : `${Math.round(s / 60)} menit`);
+  function daysText(a) {
+    const on = a.days.map(Boolean);
+    const n = on.filter(Boolean).length;
+    if (n === 0) return 'Sekali saja';
+    if (n === 7) return 'Setiap hari';
+    if (n === 5 && on.slice(0, 5).every(Boolean)) return 'Hari kerja';
+    if (n === 2 && on[5] && on[6]) return 'Akhir pekan';
+    return DAY.filter((_, i) => on[i]).join(' · ');
+  }
+
+  /* ---------- harga ---------- */
+  function quote(action, ring, plan) {
+    if (action === 'pro') {
+      const base = plan === 'yearly' ? PRICE.yearly : PRICE.monthly;
+      return { lines: [[`Pro ${planName(plan)}`, base], ['Biaya admin', PRICE.admin]], total: base + PRICE.admin, mult: 1 };
+    }
+    const base = action === 'snooze' ? PRICE.snooze : (ring.kind === 'timer' ? PRICE.stopTimer : PRICE.stopAlarm);
+    const mult = 1 + 0.5 * (ring.snoozes || 0);
+    const surge = Math.round(base * (mult - 1));
+    const lines = [[action === 'snooze' ? 'Snooze 5 menit' : (ring.kind === 'timer' ? 'Matikan timer' : 'Matikan alarm'), base]];
+    if (surge) lines.push([`Tarif lonjakan ${fmtMult(mult)}`, surge]);
+    lines.push(['Biaya admin', PRICE.admin]);
+    return { lines, total: base + surge + PRICE.admin, mult };
+  }
+  function actionTitle(action, r) {
+    if (!r) return '';
+    if (action === 'snooze') return `Snooze alarm ${r.timeLabel}`;
+    return r.kind === 'timer' ? 'Matikan timer' : `Matikan alarm ${r.timeLabel}`;
+  }
+  function addHistory(h) {
+    S.history.unshift(Object.assign({ t: Date.now() }, h));
+    if (S.history.length > 60) S.history.length = 60;
+  }
+  function spentTotal() { return S.history.reduce((s, h) => s + (h.amount < 0 ? -h.amount : 0), 0); }
+  function monthSpent() {
+    const now = new Date();
+    return S.history.reduce((s, h) => {
+      const d = new Date(h.t);
+      return s + (h.amount < 0 && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear() ? -h.amount : 0);
+    }, 0);
+  }
+
+  /* ---------- suara ---------- */
+  let actx = null, beepIv = 0;
+  function audio() {
+    if (!actx) {
+      const C = window.AudioContext || window.webkitAudioContext;
+      if (!C) return null;
+      try { actx = new C(); } catch (e) { return null; }
+    }
+    if (actx.state === 'suspended') actx.resume().catch(() => {});
+    return actx;
+  }
+  function beepBurst() {
+    const ac = audio();
+    if (!ac) return;
+    const t0 = ac.currentTime + 0.02;
+    for (let i = 0; i < 4; i++) {
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = 'square';
+      o.frequency.value = i % 2 ? 1320 : 990;
+      const t = t0 + i * 0.16;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.07, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.11);
+      o.connect(g).connect(ac.destination);
+      o.start(t);
+      o.stop(t + 0.12);
+    }
+  }
+  function startBeep() { stopBeep(); if (S.muted) return; beepBurst(); beepIv = setInterval(beepBurst, 1100); }
+  function stopBeep() { clearInterval(beepIv); beepIv = 0; }
+  document.addEventListener('pointerdown', () => { audio(); }, { passive: true });
+
+  /* ---------- tampilan: tab ---------- */
+  function walletChip() {
+    return `<button class="wallet-chip" type="button" data-action="tab" data-v="wallet" aria-label="Saldo ${rp(S.wallet)}, buka dompet"><span class="coin-dot">Rp</span>${Math.round(S.wallet).toLocaleString('id-ID')}</button>`;
+  }
+  function nextText(nx, now) {
+    if (!nx) return 'Dompetmu aman. Untuk sementara.';
+    return `${inWords(nx.d - now)} lagi · siapin <b>${isPro() ? 'Rp 0, kamu Pro' : rp(PRICE.stopAlarm + PRICE.admin)}</b>`;
+  }
+  function alarmView() {
+    const now = new Date();
+    const nx = nextAlarm(now);
+    const list = S.alarms.slice().sort((x, y) => (x.h * 60 + x.m) - (y.h * 60 + y.m));
+    const snz = R.snooze ? `<div class="snz"><span>Snooze aktif · bunyi lagi <b id="snz-left">${mmss(Math.max(0, Math.ceil((R.snooze.until - now) / 1000)))}</b></span><button type="button" data-action="snooze-now">Bunyikan</button></div>` : '';
+    return `
+      <header class="v-head">
+        <div><p class="v-eyebrow">${greet(now)}${isPro() ? ` · <span class="sultan">${I.crown}Sultan</span>` : ''}</p><h2 class="v-title">Alarm</h2></div>
+        ${walletChip()}
+      </header>
+      ${snz}
+      <section class="next" aria-label="Alarm berikutnya">
+        <p class="next-k">${nx ? 'Alarm berikutnya' : 'Belum ada alarm aktif'}</p>
+        ${nx ? `<p class="next-t">${hm(nx.a.h, nx.a.m)} <span>${dayWord(nx.d, now)}</span></p>` : ''}
+        <p class="next-in" id="next-in">${nextText(nx, now)}</p>
+      </section>
+      <ul class="alarms">${list.map(alarmCard).join('')}</ul>
+      <p class="price-note">Matikan <b>${rp(PRICE.stopAlarm)}</b> + admin ${rp(PRICE.admin)}. Snooze <b>${rp(PRICE.snooze)}</b> + admin, dan tarifnya naik 0,5× tiap kali snooze.</p>
+      <button class="fab" type="button" data-action="add-alarm" aria-label="Tambah alarm">${I.plus}</button>`;
+  }
+  function alarmCard(a) {
+    const t = hm(a.h, a.m);
+    return `<li class="alarm ${a.on ? '' : 'off'}">
+      <button class="alarm-main" type="button" data-action="edit-alarm" data-id="${a.id}" aria-label="Ubah alarm ${t}">
+        <span class="alarm-time">${t}</span>
+        <span class="alarm-label">${esc(a.label || 'Alarm')}</span>
+        <span class="alarm-days">${daysText(a)}</span>
+      </button>
+      <div class="alarm-side">
+        <button class="switch" type="button" role="switch" aria-checked="${a.on}" aria-label="Alarm ${t}" data-action="toggle-alarm" data-id="${a.id}"><i></i></button>
+        <button class="try" type="button" data-action="test-alarm" data-id="${a.id}">${I.play}Coba</button>
+      </div>
+    </li>`;
+  }
+
+  const CIRC = 2 * Math.PI * 116;
+  function timerView() {
+    const t = R.timer;
+    const off = CIRC * (1 - t.remaining / t.total);
+    const label = t.running ? 'Jeda' : (t.remaining < t.total ? 'Lanjut' : 'Mulai');
+    const dis = t.running ? 'disabled' : '';
+    return `
+      <header class="v-head">
+        <div><p class="v-eyebrow" id="t-state">${t.running ? 'Sedang jalan' : (t.remaining < t.total ? 'Dijeda' : 'Siap')}</p><h2 class="v-title">Timer</h2></div>
+        ${walletChip()}
+      </header>
+      <div class="dial-wrap">
+        <svg class="t-ring" viewBox="0 0 272 272" aria-hidden="true"><circle class="t-track" cx="136" cy="136" r="116"/><circle class="t-prog" id="t-prog" cx="136" cy="136" r="116" stroke-dasharray="${CIRC.toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}"/></svg>
+        <div class="t-center"><span class="t-left" id="t-left">${mmss(t.remaining)}</span><span class="t-sub">dari ${durLabel(t.total)}</span></div>
+      </div>
+      <div class="t-adjust">
+        <button type="button" data-action="t-add" data-v="-60" ${dis}>− 1 menit</button>
+        <button type="button" data-action="t-add" data-v="60" ${dis}>+ 1 menit</button>
+      </div>
+      <div class="chips">${PRESETS.map(p => `<button type="button" class="chip ${t.total === p.s ? 'on' : ''}" data-action="t-preset" data-v="${p.s}" ${dis}>${p.label}</button>`).join('')}</div>
+      <div class="t-ctrl">
+        <button class="btn ghost" type="button" data-action="t-reset">Reset</button>
+        <button class="btn coin" type="button" data-action="t-toggle">${label}</button>
+      </div>
+      <p class="price-note">Pas timer bunyi, matikannya <b>${isPro() ? 'gratis (Pro)' : rp(PRICE.stopTimer + PRICE.admin)}</b>${isPro() ? '' : ` (${rp(PRICE.stopTimer)} + admin ${rp(PRICE.admin)})`}.</p>`;
+  }
+
+  function walletView() {
+    const stops = S.history.filter(h => h.kind === 'stop' && h.amount < 0).length;
+    const snoozes = S.history.filter(h => h.kind === 'snooze' && h.amount < 0).length;
+    const icon = k => ({ stop: I.alarm, snooze: I.zz, topup: I.plus, pro: I.crown, free: I.gift }[k] || I.alarm);
+    const amt = h => h.amount === 0 ? '<span class="h-amt zero">Rp 0</span>' : `<span class="h-amt ${h.amount > 0 ? 'pos' : ''}">${h.amount > 0 ? '+' : '−'}${rp(Math.abs(h.amount))}</span>`;
+    return `
+      <header class="v-head"><div><p class="v-eyebrow">Uang bohongan</p><h2 class="v-title">Dompet</h2></div></header>
+      <div class="balance">
+        <p class="bal-label">Saldo Dompet Coin</p>
+        <p class="bal-amt">${rp(S.wallet)}</p>
+        <div class="bal-actions">
+          <button type="button" data-action="topup" data-v="10000">+ ${rp(10000)}</button>
+          <button type="button" data-action="topup" data-v="50000">+ ${rp(50000)}</button>
+        </div>
+      </div>
+      <div class="stats">
+        <div><span>${rp(monthSpent())}</span><small>habis buat bangun bulan ini</small></div>
+        <div><span>${stops}×</span><small>bayar buat matiin</small></div>
+        <div><span>${snoozes}×</span><small>bayar buat snooze</small></div>
+      </div>
+      <h3 class="sec-title">Riwayat</h3>
+      <ul class="history">${S.history.slice(0, 30).map(h => `<li>
+        <span class="h-ico h-${h.kind}">${icon(h.kind)}</span>
+        <span class="h-txt"><b>${esc(h.title)}</b><small>${esc(h.note)} · ${relTime(h.t)}</small></span>
+        ${amt(h)}
+      </li>`).join('')}</ul>`;
+  }
+
+  const PERKS = ['Matikan alarm dan timer tanpa bayar', 'Snooze gratis, tarif nggak pernah naik', 'Bebas biaya admin (kecuali waktu langganan)', 'Lencana Sultan di beranda'];
+  function proView() {
+    if (!isPro()) {
+      const yearly = R.proPlan === 'yearly';
+      return `
+        <div class="pro-hero">
+          <div class="crown">${I.crown}</div>
+          <p class="v-eyebrow" style="justify-content:center">Langganan</p>
+          <h2 class="pro-title">Coin Alarm Pro</h2>
+          <p class="pro-sub">Bangun tanpa mikirin tagihan. Matikan alarm dan timer sepuasnya.</p>
+        </div>
+        <div class="plans" role="radiogroup" aria-label="Pilih paket">
+          <button type="button" class="plan ${!yearly ? 'on' : ''}" role="radio" aria-checked="${!yearly}" data-action="plan" data-v="monthly"><span class="plan-name">Bulanan</span><span class="plan-price">${rp(PRICE.monthly)}</span><span class="plan-per">per bulan</span></button>
+          <button type="button" class="plan ${yearly ? 'on' : ''}" role="radio" aria-checked="${yearly}" data-action="plan" data-v="yearly"><span class="plan-badge">Hemat 45%</span><span class="plan-name">Sultan Tahunan</span><span class="plan-price">${rp(PRICE.yearly)}</span><span class="plan-per">${rp(PRICE.yearly / 12)}/bulan</span></button>
+        </div>
+        <ul class="perks">${PERKS.map(p => `<li>${I.check}<span>${p}</span></li>`).join('')}</ul>
+        <button class="btn coin block" type="button" data-action="buy-pro">Langganan ${yearly ? rp(PRICE.yearly) + '/tahun' : rp(PRICE.monthly) + '/bulan'}</button>
+        <p class="fine">Pembayaran pura-pura. Bisa dibatalkan kapan saja, setelah kami bujuk dua kali.</p>`;
+    }
+    let cancel = '';
+    if (R.cancelStep === 0) {
+      cancel = `<button class="btn ghost block" type="button" data-action="cancel-pro">Batalkan langganan</button>`;
+    } else if (R.cancelStep === 1) {
+      cancel = `<div class="cancel-box"><p><b>Yakin mau batal?</b></p><p>Mulai besok, tiap matiin alarm bayar lagi ${rp(PRICE.stopAlarm + PRICE.admin)}. Snooze juga, dan tarifnya naik terus.</p>
+        <button class="btn coin block" type="button" data-action="cancel-keep">Tetap Pro</button>
+        <button class="link" type="button" data-action="cancel-next">Lanjut batalkan</button></div>`;
+    } else {
+      cancel = `<div class="cancel-box"><p><b>Tunggu dulu!</b></p><p>Diskon 50% selama 3 bulan: cukup ${rp(PRICE.discount)}/bulan. Lebih murah dari 3× matiin alarm.</p>
+        <button class="btn coin block" type="button" data-action="cancel-discount">Ambil diskon</button>
+        <button class="link" type="button" data-action="cancel-confirm">Tetap batalkan</button></div>`;
+    }
+    return `
+      <header class="v-head"><div><p class="v-eyebrow">Langganan</p><h2 class="v-title">Pro</h2></div>${walletChip()}</header>
+      <div class="pro-card">
+        <svg class="i bg-crown" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>
+        <p class="pc-eyebrow">Pro aktif</p>
+        <h2>${planName(S.pro.plan)}</h2>
+        <p>Diperpanjang otomatis ${fmtDate(S.pro.until)}</p>
+        <div class="pc-stat"><span>Udah hemat</span><b>${rp(S.proSaved || 0)}</b></div>
+      </div>
+      <ul class="perks">${PERKS.map(p => `<li>${I.check}<span>${p}</span></li>`).join('')}</ul>
+      ${cancel}`;
+  }
+
+  const VIEWS = { alarm: alarmView, timer: timerView, wallet: walletView, pro: proView };
+  const TABS = [['alarm', 'Alarm', I.alarm], ['timer', 'Timer', I.timer], ['wallet', 'Dompet', I.wallet], ['pro', 'Pro', I.crown]];
+  $('#tabbar').innerHTML = TABS.map(([id, label, ic]) => `<button class="tab" type="button" data-action="tab" data-v="${id}">${ic}<span>${label}</span></button>`).join('');
+
+  function render() {
+    viewEl.innerHTML = VIEWS[R.tab]();
+    document.querySelectorAll('.tab').forEach(b => {
+      if (b.dataset.v === R.tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    });
+    renderControls();
+  }
+
+  /* ---------- layar bunyi ---------- */
+  function renderRing() {
+    const r = R.ringing;
+    if (!r) return;
+    const pro = isPro();
+    const qs = quote('stop', r), qz = quote('snooze', r);
+    ringEl.innerHTML = `
+      <div class="ring-top">
+        <p class="ring-eyebrow">${r.kind === 'timer' ? 'Timer selesai' : 'Alarm'} · ${esc(r.timeLabel)}</p>
+        <p class="ring-clock" id="ring-clock">${hmOf(new Date())}</p>
+        <p class="ring-label">${esc(r.label)}</p>
+        ${r.snoozes && !pro ? `<p class="surge">${I.bolt}Tarif ${fmtMult(qs.mult)} · udah snooze ${r.snoozes}×</p>` : ''}
+      </div>
+      <div class="ring-mid" aria-hidden="true">
+        <div class="pulse"><i></i><i></i><i></i></div>
+        <div class="bell">${I.alarm}</div>
+      </div>
+      <div class="ring-bottom">
+        <div class="ring-price"><span>Biaya matikan</span><b>${pro ? 'Gratis · Pro' : rp(qs.total)}</b></div>
+        ${r.kind === 'alarm' ? `<button class="snooze-btn" type="button" data-action="snooze">Snooze 5 menit · ${pro ? 'gratis' : rp(qz.total)}</button>` : ''}
+        <div class="slide" id="slide">
+          <div class="slide-fill" id="slide-fill"></div>
+          <span class="slide-text">Geser untuk matikan</span>
+          <button class="slide-knob" id="knob" type="button" aria-label="Geser untuk matikan. Tekan Enter untuk memicu.">${I.arrow}</button>
+        </div>
+        ${pro ? '' : `<button class="free-link" type="button" data-action="free">Nggak mau bayar? Jalur gratisan</button>`}
+      </div>`;
+    bindSlider();
+  }
+
+  let SCALE = 1;
+  function bindSlider() {
+    const slide = $('#slide'), knob = $('#knob'), fill = $('#slide-fill');
+    if (!slide) return;
+    let x = 0, start = 0, base = 0, dragging = false, moved = false, max = 0;
+    const set = v => { x = v; knob.style.transform = `translateX(${v}px)`; fill.style.width = `${v + 60}px`; };
+    knob.addEventListener('pointerdown', e => {
+      dragging = true; moved = false;
+      max = slide.clientWidth - knob.offsetWidth - 12;
+      start = e.clientX; base = x;
+      knob.style.transition = 'none'; fill.style.transition = 'none';
+      try { knob.setPointerCapture(e.pointerId); } catch (err) { /* abaikan */ }
+    });
+    knob.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      const dx = (e.clientX - start) / SCALE;
+      if (Math.abs(dx) > 4) moved = true;
+      set(Math.min(max, Math.max(0, base + dx)));
+    });
+    const end = () => {
+      if (!dragging) return;
+      dragging = false;
+      knob.style.transition = ''; fill.style.transition = '';
+      if (x >= max * 0.86) { set(max); setTimeout(slideDone, 140); }
+      else {
+        set(0);
+        if (!moved) {
+          slide.classList.remove('nudge'); void slide.offsetWidth; slide.classList.add('nudge');
+          toast('Geser ke kanan, jangan cuma ditekan.');
+        }
+      }
+    };
+    knob.addEventListener('pointerup', end);
+    knob.addEventListener('pointercancel', end);
+    knob.addEventListener('click', e => { if (e.detail === 0) slideDone(); });
+  }
+  function resetSlider() {
+    const knob = $('#knob'), fill = $('#slide-fill');
+    if (knob) knob.style.transform = '';
+    if (fill) fill.style.width = '';
+  }
+  function slideDone() {
+    const r = R.ringing;
+    if (!r) return;
+    if (isPro()) {
+      S.proSaved = (S.proSaved || 0) + quote('stop', r).total;
+      addHistory({ title: actionTitle('stop', r), note: 'Gratis karena Pro', amount: 0, kind: 'free' });
+      save();
+      stopRinging();
+      toast(`${r.kind === 'timer' ? 'Timer' : 'Alarm'} diam. Gratis, kamu Pro.`);
+      return;
+    }
+    openSheet('pay', { action: 'stop', method: 'wallet' });
+    setTimeout(resetSlider, 300);
+  }
+
+  function ring(opts) {
+    if (R.ringing) return;
+    R.ringing = Object.assign({ snoozes: 0 }, opts);
+    if (R.sheet) closeSheet();
+    renderRing();
+    ringEl.classList.add('open');
+    slot.classList.add('is-ringing');
+    document.body.classList.add('is-ringing');
+    syncInert();
+    startBeep();
+    render();
+  }
+  function stopRinging() {
+    R.ringing = null;
+    ringEl.classList.remove('open');
+    slot.classList.remove('is-ringing');
+    document.body.classList.remove('is-ringing');
+    stopBeep();
+    syncInert();
+    render();
+  }
+  function syncInert() {
+    const sh = !!R.sheet, rg = !!R.ringing;
+    appEl.inert = sh || rg;
+    ringEl.inert = sh || !rg;
+    sheetEl.inert = !sh;
+  }
+
+  function doSnooze() {
+    const r = R.ringing;
+    if (!r) return;
+    const until = Date.now() + 5 * 60000;
+    stopRinging();
+    R.snooze = { until, ring: Object.assign({}, r, { snoozes: r.snoozes + 1 }) };
+    closeSheet();
+    render();
+    toast(`Snooze 5 menit. Bunyi lagi jam ${hmOf(new Date(until))}.`);
+  }
+
+  /* ---------- sheet ---------- */
+  function openSheet(view, ctx = {}) {
+    clearInterval(R.adT); clearInterval(R.procT);
+    R.sheet = { view, ctx };
+    renderSheet();
+    sheetEl.scrollTop = 0;
+    sheetEl.classList.add('open');
+    scrimEl.classList.add('open');
+    syncInert();
+    if (view === 'ad') startAd();
+  }
+  function closeSheet() {
+    clearInterval(R.adT); clearInterval(R.procT);
+    R.sheet = null;
+    sheetEl.classList.remove('open');
+    scrimEl.classList.remove('open');
+    syncInert();
+  }
+  function sheetBack() {
+    if (!R.sheet) return;
+    const b = R.sheet.ctx.back;
+    if (b) openSheet(b.view, b.ctx); else closeSheet();
+  }
+  function renderSheet() {
+    const { view, ctx } = R.sheet;
+    sheetEl.setAttribute('aria-label', { pay: 'Pembayaran', edit: 'Atur alarm', free: 'Jalur gratisan', math: 'Soal hitungan', ad: 'Iklan', processing: 'Memproses', result: 'Hasil pembayaran', done: 'Selesai' }[view] || 'Lembar');
+    sheetEl.innerHTML = '<div class="grab" aria-hidden="true"></div>' + SHEETS[view](ctx);
+  }
+
+  const SHEETS = {
+    pay(ctx) {
+      const r = R.ringing;
+      const buyPro = ctx.action === 'pro';
+      if (!buyPro && !r) return '<p class="sh-sub">Alarm sudah diam.</p>';
+      const q = quote(ctx.action, r, ctx.plan);
+      const head = buyPro
+        ? { eyebrow: 'Langganan', title: 'Coin Alarm Pro' }
+        : { eyebrow: 'Eits, bayar dulu', title: actionTitle(ctx.action, r) };
+      const methods = METHODS.map(m => `<button type="button" class="method ${ctx.method === m.id ? 'on' : ''}" role="radio" aria-checked="${ctx.method === m.id}" data-action="method" data-v="${m.id}">
+          <span class="m-ico m-${m.id}" aria-hidden="true"></span>
+          <span class="m-txt"><b>${m.name}</b><small>${m.id === 'wallet' ? 'Saldo ' + rp(S.wallet) : m.sub}</small></span>
+          <span class="m-dot" aria-hidden="true"></span>
+        </button>`).join('');
+      const seg = buyPro ? `<div class="seg" role="radiogroup" aria-label="Paket">
+          <button type="button" role="radio" aria-checked="${ctx.plan !== 'yearly'}" data-action="pay-plan" data-v="monthly">Bulanan</button>
+          <button type="button" role="radio" aria-checked="${ctx.plan === 'yearly'}" data-action="pay-plan" data-v="yearly">Sultan Tahunan</button>
+        </div>` : '';
+      return `
+        <div class="sh-head"><p class="sh-eyebrow">${head.eyebrow}</p><h3 class="sh-title">${esc(head.title)}</h3></div>
+        ${seg}
+        <div class="receipt">
+          ${q.lines.map(([k, v]) => `<div class="rc-line"><span>${esc(k)}</span><i></i><span>${rp(v)}</span></div>`).join('')}
+          <div class="rc-total"><span>Total</span><span>${rp(q.total)}</span></div>
+        </div>
+        <p class="sh-label">Bayar pakai</p>
+        <div class="methods" role="radiogroup" aria-label="Metode pembayaran">${methods}</div>
+        <button class="btn coin block" type="button" data-action="pay">Bayar ${rp(q.total)}</button>
+        ${buyPro
+          ? `<div class="sh-foot center"><button class="link" type="button" data-action="sheet-back">${ctx.back ? 'Kembali' : 'Batal'}</button></div>`
+          : `<button class="upsell" type="button" data-action="go-pro">${I.crown}<span><b>Capek bayar terus?</b><small>Pro ${rp(PRICE.monthly)}/bulan, matikan sepuasnya</small></span>${I.arrow}</button>
+             <div class="sh-foot"><button class="link" type="button" data-action="free">Gratisan aja</button><button class="link" type="button" data-action="close-sheet">Nanti dulu</button></div>`}`;
+    },
+    processing(ctx) {
+      return `<div class="proc" role="status"><div class="coin-spin" aria-hidden="true">Rp</div><p class="proc-step" id="proc-step">${ctx.step}</p><p class="proc-amt">${rp(ctx.total)} · uang bohongan</p></div>`;
+    },
+    result(ctx) {
+      return `<div class="result">
+        <div class="res-ico bad">${I.x}</div>
+        <h3 class="sh-title">${esc(ctx.title)}</h3>
+        <p class="res-msg">${esc(ctx.msg)}</p>
+        ${ctx.topup ? `<button class="btn coin" type="button" data-action="topup-pay">Top up ${rp(50000)} lalu bayar</button>` : ''}
+        <button class="btn ${ctx.topup ? 'ghost' : 'coin'}" type="button" data-action="retry">${ctx.topup ? 'Kembali' : 'Pakai Dompet Coin'}</button>
+      </div>`;
+    },
+    done(ctx) {
+      return `<div class="result">
+        <div class="res-ico good">${I.check}</div>
+        <h3 class="sh-title">${esc(ctx.title)}</h3>
+        <p class="res-msg">${esc(ctx.msg)}</p>
+        <button class="btn coin" type="button" data-action="close-sheet">${esc(ctx.cta || 'Oke')}</button>
+      </div>`;
+    },
+    free() {
+      return `
+        <div class="sh-head"><p class="sh-eyebrow">Jalur gratisan</p><h3 class="sh-title">Bayar pakai usaha</h3><p class="sh-sub">Matikan tanpa bayar, asal kamu buktiin udah melek.</p></div>
+        <button class="option" type="button" data-action="math">${I.math}<span><b>Jawab 3 soal perkalian</b><small>Salah satu, ulang dari awal</small></span>${I.arrow}</button>
+        <button class="option" type="button" data-action="ad">${I.tv}<span><b>Tonton iklan 10 detik</b><small>Nggak bisa di-skip</small></span>${I.arrow}</button>
+        <div class="sh-foot center"><button class="link" type="button" data-action="sheet-back">Kembali</button></div>`;
+    },
+    math(c) {
+      return `
+        <div class="sh-head"><p class="sh-eyebrow">Soal ${c.n + 1} dari 3</p><h3 class="sh-title">Buktiin kamu udah melek</h3></div>
+        <div class="m-dots" aria-hidden="true">${[0, 1, 2].map(i => `<i class="${i < c.n ? 'on' : ''}"></i>`).join('')}</div>
+        <p class="m-q">${c.a} × ${c.b} = <span class="m-ans" id="m-ans">${c.input || '?'}</span></p>
+        <p class="m-msg" role="alert">${c.err ? esc(c.err) : '&nbsp;'}</p>
+        <div class="keypad">${['1', '2', '3', '4', '5', '6', '7', '8', '9', 'del', '0', 'ok'].map(k =>
+          `<button type="button" data-action="key" data-v="${k}" class="${k === 'ok' ? 'k-ok' : ''}" ${k === 'del' ? 'aria-label="Hapus"' : ''}>${k === 'del' ? '⌫' : k === 'ok' ? 'Cek' : k}</button>`).join('')}</div>
+        <div class="sh-foot center"><button class="link" type="button" data-action="sheet-back">Nyerah</button></div>`;
+    },
+    ad(c) {
+      return `
+        <div class="ad">
+          <span class="ad-tag">Iklan</span>
+          <div class="ad-art" aria-hidden="true"><div class="pillow"></div></div>
+          <p class="ad-brand">Bantal Budek</p>
+          <p class="ad-copy">Bantal peredam suara. Alarm bunyi, kamu tetap pulas. Cocok banget buat pengguna Coin Alarm.</p>
+          <p class="ad-fine">Produk fiktif. Diskon 0% khusus hari ini.</p>
+        </div>
+        <button class="btn coin block" type="button" id="ad-btn" data-action="ad-done" ${c.left > 0 ? 'disabled' : ''}>${c.left > 0 ? `Bisa ditutup dalam ${c.left} detik` : 'Tutup iklan & matikan alarm'}</button>
+        <div class="sh-foot center"><button class="link" type="button" data-action="sheet-back">Kembali</button></div>`;
+    },
+    edit(c) {
+      return `
+        <div class="sh-head"><p class="sh-eyebrow">${c.id ? 'Ubah alarm' : 'Alarm baru'}</p><h3 class="sh-title">Mau dibangunin jam berapa?</h3></div>
+        <div class="tp">
+          <div class="tp-col">
+            <button type="button" data-action="tp" data-f="h" data-d="1" aria-label="Tambah jam">${I.up}</button>
+            <output id="tp-h" aria-label="Jam">${pad(c.h)}</output>
+            <button type="button" data-action="tp" data-f="h" data-d="-1" aria-label="Kurangi jam">${I.down}</button>
+          </div>
+          <span class="tp-sep" aria-hidden="true">:</span>
+          <div class="tp-col">
+            <button type="button" data-action="tp" data-f="m" data-d="5" aria-label="Tambah 5 menit">${I.up}</button>
+            <output id="tp-m" aria-label="Menit">${pad(c.m)}</output>
+            <button type="button" data-action="tp" data-f="m" data-d="-5" aria-label="Kurangi 5 menit">${I.down}</button>
+          </div>
+        </div>
+        <button class="chip quick" type="button" data-action="tp-soon">Buat ngetes: 1 menit dari sekarang</button>
+        <label class="field" for="alarm-label"><span>Label</span><input id="alarm-label" type="text" maxlength="40" autocomplete="off" value="${esc(c.label)}" placeholder="Misal: Sidang skripsi"></label>
+        <p class="sh-label">Ulangi</p>
+        <div class="days">${DAY.map((d, i) => `<button type="button" class="day ${c.days[i] ? 'on' : ''}" aria-pressed="${!!c.days[i]}" data-action="day" data-i="${i}">${d}</button>`).join('')}</div>
+        <p class="sh-note">Nggak pilih hari = bunyi sekali. Biaya matikan tetap ${rp(PRICE.stopAlarm + PRICE.admin)}.</p>
+        <div class="sh-actions">
+          ${c.id ? `<button class="btn danger" type="button" data-action="del-alarm">Hapus</button>` : `<button class="btn ghost" type="button" data-action="close-sheet">Batal</button>`}
+          <button class="btn coin" type="button" data-action="save-alarm">Simpan</button>
+        </div>`;
+    },
+  };
+
+  /* ---------- pembayaran ---------- */
+  function pay() {
+    const ctx = R.sheet.ctx;
+    if (ctx.action !== 'pro' && !R.ringing) { closeSheet(); return; }
+    const q = quote(ctx.action, R.ringing, ctx.plan);
+    const steps = ctx.action === 'pro'
+      ? ['Menghubungi bank bohongan…', 'Mengaktifkan mode Sultan…']
+      : ['Menghubungi bank bohongan…', ctx.method === 'wallet' ? 'Memotong saldo…' : 'Menunggu persetujuan…', ctx.action === 'snooze' ? 'Menidurkan alarm 5 menit…' : 'Membujuk alarm supaya diam…'];
+    openSheet('processing', { total: q.total, step: steps[0] });
+    let i = 0;
+    R.procT = setInterval(() => {
+      i++;
+      if (i < steps.length) { const el = $('#proc-step'); if (el) el.textContent = steps[i]; }
+      else { clearInterval(R.procT); settle(ctx, q); }
+    }, 700);
+  }
+  function settle(ctx, q) {
+    if (!R.sheet || R.sheet.view !== 'processing') return;
+    const fail = (title, msg, extra) => openSheet('result', Object.assign({ title, msg, payCtx: ctx }, extra));
+    if (ctx.method === 'paylater') return fail('Ditolak PayLater', 'Skor kredit tidurmu terlalu rendah. Kebanyakan snooze bulan ini.');
+    if (ctx.method === 'daun') return fail('Uang daun ditolak', 'Kasir cuma terima daun yang masih segar. Coba Dompet Coin aja.');
+    if (S.wallet < q.total) return fail('Saldo kurang', `Butuh ${rp(q.total)}, saldo kamu cuma ${rp(S.wallet)}.`, { topup: true });
+
+    const r = R.ringing;
+    S.wallet -= q.total;
+    if (ctx.action === 'pro') {
+      const days = ctx.plan === 'yearly' ? 365 : 30;
+      S.pro = { plan: ctx.plan, since: Date.now(), until: Date.now() + days * DAYMS };
+      R.cancelStep = 0;
+      addHistory({ title: `Langganan Pro ${planName(ctx.plan)}`, note: 'Termasuk biaya admin', amount: -q.total, kind: 'pro' });
+      save();
+      render();
+      if (r) { renderRing(); closeSheet(); toast('Pro aktif. Sekarang geser buat matiin, gratis.'); }
+      else { coinRain(); openSheet('done', { title: 'Kamu Pro sekarang', msg: 'Alarm dan timer bisa dimatiin gratis. Snooze juga.', cta: 'Mantap' }); }
+      return;
+    }
+    if (!r) { save(); closeSheet(); return; }
+    addHistory({ title: actionTitle(ctx.action, r), note: q.mult > 1 ? `Tarif ${fmtMult(q.mult)}` : 'Tarif normal', amount: -q.total, kind: ctx.action });
+    save();
+    if (ctx.action === 'snooze') { doSnooze(); return; }
+    const what = r.kind === 'timer' ? 'Timer' : 'Alarm';
+    stopRinging();
+    coinRain();
+    openSheet('done', { title: `${what} diam.`, msg: `${rp(q.total)} melayang dari dompetmu. Selamat pagi.`, cta: 'Makasih (nggak)' });
+  }
+  function topup(v) {
+    S.wallet += v;
+    addHistory({ title: 'Top up saldo', note: 'Uang bohongan', amount: v, kind: 'topup' });
+    save();
+  }
+  function freeDone(how) {
+    const r = R.ringing;
+    if (!r) { closeSheet(); return; }
+    addHistory({ title: actionTitle('stop', r), note: how === 'iklan' ? 'Gratis, nonton iklan' : 'Gratis, jawab soal', amount: 0, kind: 'free' });
+    save();
+    stopRinging();
+    openSheet('done', {
+      title: 'Gratis. Tapi udah melek, kan?',
+      msg: how === 'iklan' ? 'Iklannya kamu tonton sampai habis. Alarm dimatikan tanpa bayar.' : 'Tiga soal benar. Otakmu udah nyala, alarm boleh diam.',
+      cta: 'Oke, bangun',
+    });
+  }
+  function newQ() { return { a: 6 + Math.floor(Math.random() * 14), b: 3 + Math.floor(Math.random() * 7) }; }
+  function mathKey(k) {
+    const c = R.sheet && R.sheet.ctx;
+    if (!c || R.sheet.view !== 'math') return;
+    if (k === 'del') c.input = c.input.slice(0, -1);
+    else if (k === 'ok') {
+      if (!c.input) return;
+      if (Number(c.input) === c.a * c.b) {
+        c.n++; c.err = '';
+        if (c.n >= 3) { freeDone('soal'); return; }
+      } else {
+        c.err = `Salah, ${c.a} × ${c.b} = ${c.a * c.b}. Ulang dari soal 1.`;
+        c.n = 0;
+      }
+      Object.assign(c, newQ(), { input: '' });
+      renderSheet();
+      return;
+    } else if (c.input.length < 4) c.input += k;
+    const el = $('#m-ans');
+    if (el) el.textContent = c.input || '?';
+  }
+  function startAd() {
+    R.adT = setInterval(() => {
+      const s = R.sheet;
+      if (!s || s.view !== 'ad') { clearInterval(R.adT); return; }
+      s.ctx.left--;
+      const b = $('#ad-btn');
+      if (!b) return;
+      if (s.ctx.left <= 0) { clearInterval(R.adT); b.disabled = false; b.textContent = 'Tutup iklan & matikan alarm'; }
+      else b.textContent = `Bisa ditutup dalam ${s.ctx.left} detik`;
+    }, 1000);
+  }
+
+  /* ---------- toast & koin ---------- */
+  let toastT = 0;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastT);
+    toastT = setTimeout(() => toastEl.classList.remove('show'), 2800);
+  }
+  function coinRain() {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    for (let i = 0; i < 16; i++) {
+      const c = document.createElement('i');
+      c.className = 'coin-fall';
+      c.style.left = `${Math.random() * 92}%`;
+      c.style.animationDelay = `${Math.random() * 0.6}s`;
+      c.style.scale = String(0.7 + Math.random() * 0.6);
+      screen.appendChild(c);
+      setTimeout(() => c.remove(), 2800);
+    }
+  }
+
+  /* ---------- aksi ---------- */
+  const findAlarm = id => S.alarms.find(a => a.id === id);
+  const A = {
+    tab(el) { R.tab = el.dataset.v; R.cancelStep = 0; render(); viewEl.scrollTop = 0; },
+    'add-alarm'() { openSheet('edit', { h: 7, m: 0, label: '', days: [1, 1, 1, 1, 1, 0, 0] }); },
+    'edit-alarm'(el) { const a = findAlarm(el.dataset.id); if (a) openSheet('edit', { id: a.id, h: a.h, m: a.m, label: a.label, days: a.days.slice() }); },
+    'toggle-alarm'(el) {
+      const a = findAlarm(el.dataset.id);
+      if (!a) return;
+      a.on = !a.on; save(); render();
+      toast(a.on ? `Alarm ${hm(a.h, a.m)} nyala.` : `Alarm ${hm(a.h, a.m)} dimatikan. Gratis, soalnya belum bunyi.`);
+    },
+    'test-alarm'(el) { const a = findAlarm(el.dataset.id); if (a) ring({ kind: 'alarm', label: a.label || 'Alarm', timeLabel: hm(a.h, a.m) }); },
+    tp(el) {
+      const c = R.sheet.ctx, d = Number(el.dataset.d);
+      if (el.dataset.f === 'h') c.h = (c.h + d + 24) % 24; else c.m = (c.m + d + 60) % 60;
+      $('#tp-h').textContent = pad(c.h); $('#tp-m').textContent = pad(c.m);
+    },
+    'tp-soon'() {
+      const c = R.sheet.ctx, d = new Date(Date.now() + 60000);
+      c.h = d.getHours(); c.m = d.getMinutes(); c.days = [0, 0, 0, 0, 0, 0, 0];
+      if (!c.label) c.label = 'Tes alarm';
+      renderSheet();
+    },
+    day(el) {
+      const c = R.sheet.ctx, i = Number(el.dataset.i);
+      c.days[i] = c.days[i] ? 0 : 1;
+      el.classList.toggle('on', !!c.days[i]);
+      el.setAttribute('aria-pressed', String(!!c.days[i]));
+    },
+    'save-alarm'() {
+      const c = R.sheet.ctx;
+      const label = (c.label || '').trim() || 'Alarm';
+      if (c.id) { const a = findAlarm(c.id); if (a) Object.assign(a, { h: c.h, m: c.m, label, days: c.days, on: true }); delete R.lastFired[c.id]; }
+      else S.alarms.push({ id: 'a' + Date.now().toString(36), h: c.h, m: c.m, label, days: c.days, on: true });
+      save(); closeSheet(); R.tab = 'alarm'; render();
+      const now = new Date(), nx = nextOccurrence({ h: c.h, m: c.m, days: c.days }, now);
+      toast(`Alarm ${hm(c.h, c.m)} disimpan. Bunyi ${nx ? inWords(nx - now) : 'nanti'} lagi.`);
+    },
+    'del-alarm'() {
+      const c = R.sheet.ctx;
+      S.alarms = S.alarms.filter(a => a.id !== c.id);
+      save(); closeSheet(); render();
+      toast(`Alarm ${hm(c.h, c.m)} dihapus.`);
+    },
+    't-add'(el) { const t = R.timer; t.total = Math.min(99 * 60, Math.max(60, t.total + Number(el.dataset.v))); t.remaining = t.total; render(); },
+    't-preset'(el) { const t = R.timer; t.total = Number(el.dataset.v); t.remaining = t.total; render(); },
+    't-toggle'() {
+      const t = R.timer;
+      if (t.running) { t.remaining = Math.max(0, Math.ceil((t.endAt - Date.now()) / 1000)); t.running = false; }
+      else { t.endAt = Date.now() + t.remaining * 1000; t.running = true; }
+      render();
+    },
+    't-reset'() { const t = R.timer; t.running = false; t.remaining = t.total; render(); },
+    topup(el) { const v = Number(el.dataset.v); topup(v); render(); toast(`Saldo nambah ${rp(v)}. Tetap uang bohongan.`); },
+    plan(el) { R.proPlan = el.dataset.v; render(); },
+    'buy-pro'() { openSheet('pay', { action: 'pro', plan: R.proPlan, method: 'wallet' }); },
+    'cancel-pro'() { R.cancelStep = 1; render(); },
+    'cancel-keep'() { R.cancelStep = 0; render(); toast('Pilihan bijak. Dompet kami berterima kasih.'); },
+    'cancel-next'() { R.cancelStep = 2; render(); },
+    'cancel-discount'() { S.pro.plan = 'discount'; save(); R.cancelStep = 0; render(); toast(`Diskon dipakai: ${rp(PRICE.discount)}/bulan selama 3 bulan.`); },
+    'cancel-confirm'() { S.pro = null; save(); R.cancelStep = 0; render(); toast('Langganan dibatalkan. Kami bakal kangen uangmu.'); },
+    snooze() {
+      if (!R.ringing) return;
+      if (isPro()) {
+        addHistory({ title: actionTitle('snooze', R.ringing), note: 'Gratis karena Pro', amount: 0, kind: 'free' });
+        S.proSaved = (S.proSaved || 0) + quote('snooze', R.ringing).total;
+        save(); doSnooze(); return;
+      }
+      openSheet('pay', { action: 'snooze', method: 'wallet' });
+    },
+    'snooze-now'() { if (R.snooze) { const r = R.snooze.ring; R.snooze = null; ring(r); } },
+    free() {
+      if (!R.ringing) return;
+      const back = R.sheet && R.sheet.view === 'pay' ? { view: 'pay', ctx: R.sheet.ctx } : null;
+      openSheet('free', { back });
+    },
+    'go-pro'() { const prev = R.sheet.ctx; openSheet('pay', { action: 'pro', plan: 'monthly', method: prev.method || 'wallet', back: { view: 'pay', ctx: prev } }); },
+    'pay-plan'(el) { R.sheet.ctx.plan = el.dataset.v; renderSheet(); },
+    method(el) { R.sheet.ctx.method = el.dataset.v; const st = sheetEl.scrollTop; renderSheet(); sheetEl.scrollTop = st; },
+    pay() { pay(); },
+    retry() { const pc = R.sheet.ctx.payCtx; openSheet('pay', Object.assign({}, pc, { method: 'wallet' })); },
+    'topup-pay'() {
+      const pc = R.sheet.ctx.payCtx;
+      topup(50000); render();
+      openSheet('pay', Object.assign({}, pc, { method: 'wallet' }));
+      pay();
+    },
+    'close-sheet'() { closeSheet(); },
+    'sheet-back'() { sheetBack(); },
+    math() { const back = { view: 'free', ctx: R.sheet.ctx }; openSheet('math', Object.assign({ n: 0, input: '', err: '', back }, newQ())); },
+    ad() { const back = { view: 'free', ctx: R.sheet.ctx }; openSheet('ad', { left: 10, back }); },
+    key(el) { mathKey(el.dataset.v); },
+    'ad-done'() { freeDone('iklan'); },
+  };
+
+  screen.addEventListener('click', e => {
+    const el = e.target.closest('[data-action]');
+    if (!el || el.disabled || !screen.contains(el)) return;
+    const fn = A[el.dataset.action];
+    if (fn) fn(el, e);
+  });
+  sheetEl.addEventListener('input', e => {
+    if (e.target.id === 'alarm-label' && R.sheet) R.sheet.ctx.label = e.target.value;
+  });
+  sheetEl.addEventListener('keydown', e => {
+    if (e.target.id === 'alarm-label' && e.key === 'Enter') { e.preventDefault(); A['save-alarm'](); }
+  });
+  scrimEl.addEventListener('click', () => { if (R.sheet && R.sheet.view !== 'processing') closeSheet(); });
+
+  /* ---------- panel demo ---------- */
+  function demoAlarm() {
+    if (R.ringing) { toast('Lagi bunyi. Matikan dulu, bayar dulu.'); return; }
+    const now = new Date(), nx = nextAlarm(now);
+    const a = nx ? nx.a : S.alarms[0];
+    ring(a ? { kind: 'alarm', label: a.label || 'Alarm', timeLabel: hm(a.h, a.m) } : { kind: 'alarm', label: 'Alarm demo', timeLabel: hmOf(now) });
+  }
+  function demoTimer() {
+    if (R.ringing) { toast('Lagi bunyi. Matikan dulu, bayar dulu.'); return; }
+    const t = R.timer;
+    t.running = false; t.remaining = t.total;
+    ring({ kind: 'timer', label: `Timer ${durLabel(t.total)} selesai`, timeLabel: mmss(t.total) });
+  }
+  function renderControls() {
+    $('#ro-wallet').textContent = rp(S.wallet);
+    $('#ro-spent').textContent = rp(spentTotal());
+    $('#ro-pro').textContent = isPro() ? `Pro ${planName(S.pro.plan)}` : 'Gratisan';
+    $('#ctl-pro').setAttribute('aria-checked', String(isPro()));
+    $('#ctl-sound').setAttribute('aria-checked', String(!S.muted));
+  }
+  $('#ctl-alarm').addEventListener('click', demoAlarm);
+  $('#ctl-timer').addEventListener('click', demoTimer);
+  $('#ctl-sound').addEventListener('click', () => {
+    S.muted = !S.muted; save(); renderControls();
+    if (R.ringing) { if (S.muted) stopBeep(); else startBeep(); }
+  });
+  $('#ctl-pro').addEventListener('click', () => {
+    S.pro = isPro() ? null : { plan: 'monthly', since: Date.now(), until: Date.now() + 30 * DAYMS };
+    R.cancelStep = 0;
+    save(); render();
+    if (R.ringing) renderRing();
+    toast(isPro() ? 'Mode Pro dinyalakan dari panel demo.' : 'Kembali jadi pengguna gratisan.');
+  });
+  let resetArmed = 0;
+  $('#ctl-reset').addEventListener('click', e => {
+    const b = e.currentTarget;
+    if (!resetArmed) {
+      b.textContent = 'Yakin? Klik sekali lagi';
+      b.classList.add('armed');
+      resetArmed = setTimeout(() => { resetArmed = 0; b.textContent = 'Reset data mockup'; b.classList.remove('armed'); }, 3000);
+      return;
+    }
+    clearTimeout(resetArmed); resetArmed = 0;
+    b.textContent = 'Reset data mockup'; b.classList.remove('armed');
+    try { localStorage.removeItem(STORE); } catch (err) { /* abaikan */ }
+    S = seed();
+    R.snooze = null; R.cancelStep = 0; R.tab = 'alarm';
+    Object.assign(R.timer, { total: 300, remaining: 300, running: false, endAt: 0 });
+    closeSheet();
+    if (R.ringing) stopRinging(); else render();
+    toast('Data mockup kembali ke awal.');
+  });
+
+  document.addEventListener('keydown', e => {
+    const tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (R.sheet && R.sheet.view === 'math') {
+      if (/^[0-9]$/.test(e.key)) { e.preventDefault(); mathKey(e.key); return; }
+      if (e.key === 'Backspace') { e.preventDefault(); mathKey('del'); return; }
+      if (e.key === 'Enter' && tag !== 'button') { e.preventDefault(); mathKey('ok'); return; }
+    }
+    if (e.key === 'Escape' && R.sheet && R.sheet.view !== 'processing') { sheetBack(); return; }
+    if (e.key === 'a' || e.key === 'A') demoAlarm();
+    else if (e.key === 't' || e.key === 'T') demoTimer();
+  });
+
+  /* ---------- jam utama ---------- */
+  let lastMin = -1;
+  function checkAlarms(now) {
+    if (R.ringing) return;
+    if (R.snooze && now.getTime() >= R.snooze.until) { const r = R.snooze.ring; R.snooze = null; ring(r); return; }
+    const key = `${now.toDateString()} ${now.getHours()}:${now.getMinutes()}`;
+    const idx = (now.getDay() + 6) % 7;
+    for (const a of S.alarms) {
+      if (!a.on || a.h !== now.getHours() || a.m !== now.getMinutes()) continue;
+      const once = !a.days.some(Boolean);
+      if (!once && !a.days[idx]) continue;
+      if (R.lastFired[a.id] === key) continue;
+      R.lastFired[a.id] = key;
+      if (once) { a.on = false; save(); }
+      ring({ kind: 'alarm', label: a.label || 'Alarm', timeLabel: hm(a.h, a.m) });
+      return;
+    }
+  }
+  function tick() {
+    const now = new Date();
+    $('#sb-time').textContent = hmOf(now);
+    if (R.ringing) { const rc = $('#ring-clock'); if (rc) rc.textContent = hmOf(now); }
+
+    const t = R.timer;
+    if (t.running) {
+      const left = Math.max(0, Math.ceil((t.endAt - now.getTime()) / 1000));
+      if (left !== t.remaining) {
+        t.remaining = left;
+        if (R.tab === 'timer') {
+          const l = $('#t-left'), p = $('#t-prog');
+          if (l) l.textContent = mmss(left);
+          if (p) p.setAttribute('stroke-dashoffset', (CIRC * (1 - left / t.total)).toFixed(2));
+        }
+      }
+      if (left === 0) {
+        t.running = false; t.remaining = t.total;
+        if (!R.ringing) ring({ kind: 'timer', label: `Timer ${durLabel(t.total)} selesai`, timeLabel: mmss(t.total) });
+        else render();
+      }
+    }
+    if (R.snooze && R.tab === 'alarm') {
+      const el = $('#snz-left');
+      if (el) el.textContent = mmss(Math.max(0, Math.ceil((R.snooze.until - now.getTime()) / 1000)));
+    }
+    if (now.getMinutes() !== lastMin) {
+      lastMin = now.getMinutes();
+      if (R.tab === 'alarm') { const el = $('#next-in'); if (el) el.innerHTML = nextText(nextAlarm(now), now); }
+    }
+    checkAlarms(now);
+  }
+
+  /* ---------- ukuran HP ---------- */
+  function fit() {
+    const w = window.innerWidth, h = window.innerHeight - 48;
+    const stageW = $('.stage').clientWidth;
+    let s;
+    if (w >= 1100) s = Math.min(1, h / 868);
+    else if (w >= 760) s = Math.min(1, h / 868, (stageW * 0.56) / 414);
+    else s = Math.min(1, stageW / 420);
+    SCALE = Math.max(0.3, s);
+    document.documentElement.style.setProperty('--s', SCALE.toFixed(4));
+  }
+  window.addEventListener('resize', fit);
+
+  fit();
+  render();
+  syncInert();
+  tick();
+  setInterval(tick, 500);
+})();
+</script>
+</body>
+</html>
