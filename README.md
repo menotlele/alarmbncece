@@ -17,15 +17,15 @@ flutter run
 ```
 
 ## Mockup web (HP di layar laptop)
-Ada mockup interaktif versi "bayar atau langganan" di `web_mockup/index.html`. Satu file HTML, tanpa build. Tinggal buka di browser laptop: HP tampil di tengah, panel demo di samping.
+Ada mockup interaktif versi "bayar atau langganan" di `web_mockup/index.html`. Satu file HTML, tanpa build. Tinggal buka di browser laptop: teks dan panel demo di kiri, HP di kanan.
 
-Tampilannya meniru aplikasi Jam bawaan iPhone (font sistem, daftar alarm polos, saklar hijau, roda pemilih waktu, sheet, alert, banner notifikasi) dan ikut mode terang/gelap.
+Bahasa aplikasinya Inggris, harganya dalam dolar (USD), dan format jamnya 12 jam (AM/PM). Tampilannya meniru aplikasi Jam bawaan iPhone (font sistem, daftar alarm polos, saklar hijau, roda pemilih waktu, sheet, alert, banner notifikasi) dan ikut mode terang/gelap.
 
-- ⏰ Tab **Alarm**: daftar alarm, Edit untuk hapus, + untuk tambah, roda pemilih jam, Ulangi per hari, Label, Tunda.
-- ⏱️ Tab **Timer**: roda jam/menit/detik, tombol bulat Mulai/Jeda/Batalkan, daftar Terbaru (mi instan, telur rebus, fokus).
-- 🔒 Pas bunyi: layar kunci dengan "geser untuk menghentikan" → muncul tagihan Rp 2.000 + biaya admin Rp 500. Tunda juga bayar, tarif naik 0,5× tiap kali ditunda.
-- 👑 Tab **Pro**: langganan Rp 15.000/bulan atau Rp 99.000/tahun, hentikan gratis. Membatalkan dibujuk dua kali lewat alert.
-- 🧠 Hentikan tanpa bayar: jawab 3 soal perkalian (pakai keypad angka) atau tonton iklan fiktif 10 detik.
+- ⏰ Tab **Alarms**: daftar alarm, Edit untuk hapus, + untuk tambah, roda jam/menit/AM-PM, Repeat per hari, Label, Snooze.
+- ⏱️ Tab **Timers**: roda hours/min/sec, tombol bulat Start/Pause/Cancel, daftar Recents (instant noodles, boiled egg, focus).
+- 🔒 Pas bunyi: layar kunci dengan "slide to stop" → muncul tagihan $0.99 + service fee $0.29. Snooze juga bayar, tarif naik 0,5× tiap kali snooze.
+- 👑 Tab **Pro**: langganan $4.99/bulan atau $29.99/tahun, stop gratis. Membatalkan dibujuk dua kali lewat alert.
+- 🧠 Stop without paying: jawab 3 soal perkalian (pakai keypad angka) atau tonton iklan fiktif 10 detik.
 - 🎛️ Panel demo: bunyikan alarm/timer seketika (tombol `A` / `T`), nyala-matikan suara dan status Pro, reset data.
 
 Semua harga dan pembayaran di mockup ini pura-pura (saldo bohongan, disimpan di `localStorage` browser).

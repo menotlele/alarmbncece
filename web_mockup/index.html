@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -9,10 +9,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap">
 <style>
-/* Layout: halaman polos. Teks singkat di kiri, HP di tengah, panel demo bergaya Pengaturan di kanan.
-   Isi HP meniru aplikasi Jam bawaan iOS dan ikut tema terang/gelap seperti iPhone asli. */
+/* Layout: two columns. Copy and a Settings-style demo panel on the left, the phone on the right.
+   The phone recreates the look of the built-in iOS Clock app and follows light/dark mode like a real iPhone. */
 :root {
-  /* halaman */
+  /* page */
   --pg-bg: #F5F5F7;
   --pg-fg: #1D1D1F;
   --pg-fg2: #6E6E73;
@@ -24,7 +24,7 @@
   --pg-off: #E9E9EB;
   --pg-shadow: rgba(0, 0, 0, .22);
 
-  /* iOS, mode terang */
+  /* iOS, light mode */
   --bg: #FFFFFF;
   --bg-grouped: #F2F2F7;
   --cell: #FFFFFF;
@@ -60,7 +60,7 @@
   --key-tray: #D1D3D9;
   --scrim: rgba(0, 0, 0, .3);
 
-  /* tetap: perangkat, ikon aplikasi, layar kunci, iklan */
+  /* fixed: device, app icon, lock screen, ad */
   --frame: #BDB7AE;
   --frame-edge: #8D877E;
   --bezel: #000000;
@@ -132,50 +132,45 @@ button:disabled { cursor: default; }
 :focus-visible { outline: 2px solid var(--pg-link); outline-offset: 2px; }
 .screen :focus-visible { outline-color: var(--blue); }
 
-/* ---------- halaman ---------- */
+/* ---------- page ---------- */
 .stage {
   min-height: 100%;
   display: grid;
-  grid-template-columns: minmax(0, 340px) auto minmax(0, 300px);
-  grid-template-areas: "intro device controls";
-  align-items: center;
+  grid-template-columns: minmax(0, 360px) auto;
+  grid-template-rows: 1fr auto auto 1fr;
+  grid-template-areas: ". device" "intro device" "controls device" ". device";
   justify-content: center;
-  column-gap: clamp(32px, 5vw, 88px);
-  row-gap: 40px;
+  column-gap: clamp(48px, 7vw, 112px);
 }
-.intro { grid-area: intro; }
-.device-col { grid-area: device; display: grid; place-items: center; }
+.intro { grid-area: intro; padding-bottom: 36px; }
 .controls { grid-area: controls; }
-@media (max-width: 1099px) {
-  .stage { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "intro device" "controls device"; align-content: center; }
-}
-@media (max-width: 759px) {
-  .stage { grid-template-columns: minmax(0, 1fr); grid-template-areas: "intro" "device" "controls"; }
+.device-col { grid-area: device; align-self: center; display: grid; place-items: center; }
+@media (max-width: 859px) {
+  .stage { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; grid-template-areas: "intro" "device" "controls"; row-gap: 36px; }
+  .intro { padding-bottom: 0; }
 }
 
-.intro h1 { margin: 0 0 8px; font-size: clamp(40px, 4vw, 56px); font-weight: 700; line-height: 1.07; letter-spacing: -.028em; }
-.intro .sub { margin: 0 0 22px; max-width: 24ch; font-size: 21px; font-weight: 600; line-height: 1.38; letter-spacing: -.015em; color: var(--pg-fg2); text-wrap: balance; }
-.intro .body { margin: 0 0 14px; max-width: 36ch; }
-.intro .note { margin: 0; font-size: 14px; color: var(--pg-fg2); }
+.intro h1 { margin: 0 0 6px; font-size: clamp(40px, 4vw, 56px); font-weight: 700; line-height: 1.07; letter-spacing: -.028em; }
+.intro .sub { margin: 0 0 20px; max-width: 22ch; font-size: 24px; font-weight: 600; line-height: 1.25; letter-spacing: -.02em; color: var(--pg-fg2); text-wrap: balance; }
+.intro .body { margin: 0; max-width: 34ch; }
 
-.controls { display: grid; gap: 6px; align-content: center; }
-.ctl-h { margin: 0 16px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0; color: var(--pg-fg2); }
-.ctl-h:not(:first-child) { margin-top: 18px; }
+.controls { display: grid; gap: 6px; align-content: start; }
+.ctl-h { margin: 0 16px; font-size: 13px; text-transform: uppercase; letter-spacing: 0; color: var(--pg-fg2); }
+.ctl-h:not(:first-child) { margin-top: 20px; }
 .pg-group { background: var(--pg-card); border-radius: 12px; overflow: hidden; }
 .pg-row { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 46px; padding: 0 16px; font-size: 16px; text-align: left; }
 .pg-row + .pg-row::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--pg-sep); }
 button.pg-row:active { background: var(--pg-sep); }
 .pg-row.link { color: var(--pg-link); }
-.pg-row.danger { color: var(--pg-red); justify-content: center; }
-.pg-val { color: var(--pg-fg2); font-variant-numeric: tabular-nums; }
-kbd { font: inherit; font-size: 12px; color: var(--pg-fg2); border: 1px solid var(--pg-sep); border-radius: 5px; padding: 0 6px; }
+.pg-row.danger { color: var(--pg-red); }
+kbd { font: inherit; font-size: 12px; line-height: 18px; min-width: 22px; text-align: center; color: var(--pg-fg2); border: 1px solid var(--pg-sep); border-radius: 5px; padding: 0 5px; }
 .pg-sw { flex: none; position: relative; width: 51px; height: 31px; border-radius: 16px; background: var(--pg-off); transition: background .25s; }
 .pg-sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 3px 8px rgba(0, 0, 0, .15), 0 3px 1px rgba(0, 0, 0, .06); transition: transform .25s; }
 .pg-sw[aria-checked="true"] { background: var(--pg-green); }
 .pg-sw[aria-checked="true"]::after { transform: translateX(20px); }
-.ctl-f { margin: 6px 16px 0; font-size: 13px; line-height: 1.38; color: var(--pg-fg2); }
+.ctl-f { margin: 8px 16px 0; font-size: 13px; line-height: 1.38; color: var(--pg-fg2); }
 
-/* ---------- perangkat ---------- */
+/* ---------- device ---------- */
 .device-slot { position: relative; width: calc(417px * var(--s)); height: calc(876px * var(--s)); }
 .device-slot.is-ringing { animation: buzz 1.2s infinite; }
 @keyframes buzz {
@@ -213,7 +208,7 @@ kbd { font: inherit; font-size: 12px; color: var(--pg-fg2); border: 1px solid va
 .statusbar {
   position: absolute; top: 0; left: 0; right: 0; height: 54px;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 4px 34px 0 50px;
+  padding: 4px 34px 0 52px;
   font-size: 17px; font-weight: 600; letter-spacing: -.02em;
   color: var(--label);
   z-index: 80; pointer-events: none;
@@ -221,7 +216,7 @@ kbd { font: inherit; font-size: 12px; color: var(--pg-fg2); border: 1px solid va
 }
 .screen.ringing .statusbar, .screen.stacked .statusbar, .screen.full .statusbar { color: var(--ls-ink); }
 .screen.adshow .statusbar { color: var(--ad-ink); }
-.sb-time { font-variant-numeric: tabular-nums; }
+.sb-time { min-width: 44px; text-align: center; font-variant-numeric: tabular-nums; }
 .sb-icons { display: flex; gap: 6px; align-items: center; }
 .sb-icons svg { height: 12px; width: auto; fill: currentColor; }
 .island { position: absolute; top: 11px; left: 50%; translate: -50% 0; width: 124px; height: 36px; border-radius: 20px; background: var(--black); z-index: 85; }
@@ -232,7 +227,7 @@ kbd { font: inherit; font-size: 12px; color: var(--pg-fg2); border: 1px solid va
 svg.f { fill: currentColor; }
 svg.s { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-/* aplikasi */
+/* app */
 .app {
   position: absolute; inset: 0;
   background: var(--bg);
@@ -273,15 +268,17 @@ svg.s { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round
 .tab svg { width: 28px; height: 28px; }
 .tab[aria-current="page"] { color: var(--tint); }
 
-/* daftar polos (alarm, terbaru) */
-.sec-plain { display: flex; align-items: center; gap: 6px; margin: 12px 16px 0; padding-bottom: 8px; font-weight: 600; border-bottom: 1px solid var(--sep); }
+/* plain lists (alarms, recents) */
+.sec-plain { display: flex; align-items: center; gap: 6px; margin: 20px 16px 0; padding-bottom: 8px; font-weight: 600; border-bottom: 1px solid var(--sep); }
+.lt + .sec-plain { margin-top: 10px; }
 .sec-plain svg { width: 20px; height: 20px; color: var(--label2); }
-.sec-plain .sultan { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: var(--tint); }
-.sec-plain .sultan svg { width: 15px; height: 15px; color: var(--tint); }
+.sec-plain .badge-pro { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: var(--tint); }
+.sec-plain .badge-pro svg { width: 15px; height: 15px; color: var(--tint); }
 .plist { list-style: none; margin: 0 0 0 16px; padding: 0; }
 .prow { display: flex; align-items: center; gap: 12px; min-height: 86px; padding: 6px 16px 8px 0; border-bottom: 1px solid var(--sep); }
 .prow-main { flex: 1; min-width: 0; display: grid; text-align: left; }
 .al-time { font-size: 56px; font-weight: 300; line-height: 1.04; letter-spacing: -.015em; font-variant-numeric: tabular-nums; }
+.al-time small { margin-left: 3px; font-size: 32px; letter-spacing: 0; }
 .al-sub { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .prow.off .al-time, .prow.off .al-sub { color: var(--label2); }
 .bal-plain { font-size: 34px; font-weight: 300; line-height: 1.15; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
@@ -292,7 +289,7 @@ svg.s { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round
 .chev { flex: none; width: 14px; height: 14px; color: var(--label3); stroke-width: 3; }
 .foot { margin: 10px 16px 0; font-size: 13px; line-height: 1.38; color: var(--label2); }
 
-/* daftar berkelompok */
+/* grouped lists */
 .group { margin: 0 16px; background: var(--cell); border-radius: 10px; overflow: hidden; }
 .app[data-tab="timer"] .group, .app[data-tab="alarm"] .group { background: var(--cell2); }
 .sheet .group { background: var(--sheet-cell); }
@@ -311,11 +308,11 @@ button.row:active { background: var(--fill); }
 .row input::placeholder { color: var(--label3); }
 .r-txt { flex: 1; min-width: 0; display: grid; }
 .r-txt b { font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.r-txt small { font-size: 13px; line-height: 1.3; color: var(--label2); }
+.r-txt small { font-size: 13px; line-height: 1.3; color: var(--label2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sec-h { margin: 24px 32px 7px; font-size: 13px; text-transform: uppercase; letter-spacing: 0; color: var(--label2); }
 .sec-f { margin: 7px 32px 0; font-size: 13px; line-height: 1.38; color: var(--label2); }
 .sec-f.center { text-align: center; margin-inline: 24px; }
-.tile { flex: none; width: 29px; height: 29px; border-radius: 7px; display: grid; place-items: center; color: #FFFFFF; font-size: 11px; font-weight: 700; letter-spacing: 0; }
+.tile { flex: none; width: 29px; height: 29px; border-radius: 7px; display: grid; place-items: center; color: #FFFFFF; font-size: 12px; font-weight: 700; letter-spacing: 0; }
 .tile svg { width: 19px; height: 19px; }
 .tile.orange { background: var(--tint); }
 .tile.green { background: var(--green); }
@@ -328,14 +325,15 @@ button.row:active { background: var(--fill); }
 .sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: var(--knob); box-shadow: 0 3px 8px rgba(0, 0, 0, .15), 0 3px 1px rgba(0, 0, 0, .06); transition: transform .25s cubic-bezier(.3, .7, .4, 1); }
 .sw[aria-checked="true"] { background: var(--green); }
 .sw[aria-checked="true"]::after { transform: translateX(20px); }
+.row .sw { margin-left: auto; }
 .check { flex: none; width: 20px; height: 20px; margin-left: auto; color: var(--tint); stroke-width: 2.6; }
 .check.off { visibility: hidden; }
 
-/* roda pemilih */
+/* picker wheels */
 .wheel { position: relative; display: flex; justify-content: center; align-items: center; height: 216px; margin: 6px 16px; }
 .wheel-band { position: absolute; left: 0; right: 0; top: 90px; height: 36px; border-radius: 8px; background: var(--fill); pointer-events: none; }
-.wheel-col { position: relative; width: 66px; }
-.wheel-col.unit { width: 98px; }
+.wheel-col { position: relative; width: 64px; }
+.wheel-col.unit { width: 108px; }
 .wheel-scroll {
   position: relative; height: 216px;
   overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none;
@@ -348,10 +346,10 @@ button.row:active { background: var(--fill); }
 .wheel-scroll:focus-visible { background: var(--fill); border-radius: 8px; }
 .wheel-pad { height: 90px; }
 .wheel-item { height: 36px; line-height: 36px; text-align: center; font-size: 23px; font-variant-numeric: tabular-nums; scroll-snap-align: center; cursor: pointer; user-select: none; -webkit-user-select: none; }
-.unit .wheel-item { text-align: right; padding-right: 50px; }
-.wheel-unit { position: absolute; top: 90px; right: 6px; height: 36px; line-height: 36px; font-size: 17px; font-weight: 600; pointer-events: none; }
+.unit .wheel-item { text-align: right; padding-right: 60px; }
+.wheel-unit { position: absolute; top: 90px; left: 54px; height: 36px; line-height: 36px; font-size: 17px; font-weight: 600; pointer-events: none; }
 
-/* timer */
+/* timers */
 .circ-row { display: flex; justify-content: space-between; padding: 4px 18px 26px; }
 .circ { width: 82px; height: 82px; border-radius: 50%; font-size: 16px; font-weight: 500; text-align: center; }
 .circ.gray { background: var(--gray-bg); color: var(--label); box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--gray-bg); }
@@ -372,7 +370,7 @@ button.row:active { background: var(--fill); }
 .play-btn svg { width: 17px; height: 17px; margin-left: 2px; }
 .app[data-tab="timer"] .prow { min-height: 72px; }
 
-/* dompet & pro */
+/* wallet & pro */
 .bal { padding: 16px; display: grid; gap: 2px; }
 .bal-k { font-size: 15px; color: var(--label2); }
 .bal-v { font-size: 34px; font-weight: 700; line-height: 1.2; letter-spacing: .005em; font-variant-numeric: tabular-nums; }
@@ -389,14 +387,14 @@ button.row:active { background: var(--fill); }
 .big-btn { display: block; width: 100%; height: 50px; border-radius: 12px; background: var(--tint); color: var(--on-tint); font-size: 17px; font-weight: 600; text-align: center; }
 .big-btn:disabled { opacity: .45; }
 
-/* ikon aplikasi */
+/* app icon */
 .app-ico { flex: none; display: grid; place-items: center; color: #FFFFFF; background: linear-gradient(180deg, var(--icon-1), var(--icon-2)); }
 .app-ico svg { width: 64%; height: 64%; }
 .app-ico.xs { width: 38px; height: 38px; border-radius: 9px; }
 .app-ico.sm { width: 44px; height: 44px; border-radius: 10px; }
 .app-ico.lg { width: 88px; height: 88px; border-radius: 20px; box-shadow: 0 6px 16px -6px rgba(255, 138, 0, .5); }
 
-/* layar kunci (alarm bunyi) */
+/* lock screen (alarm ringing) */
 .ring {
   position: absolute; inset: 0; z-index: 30;
   display: flex; flex-direction: column;
@@ -410,7 +408,7 @@ button.row:active { background: var(--fill); }
 .ring.open { opacity: 1; visibility: visible; transform: none; transition: opacity .3s, transform .4s cubic-bezier(.2, .9, .25, 1), border-radius .4s, filter .4s; }
 .ls-top { text-align: center; }
 .ls-date { margin: 0; font-size: 20px; font-weight: 600; opacity: .9; }
-.ls-time { margin: -4px 0 0; font-size: 98px; font-weight: 700; line-height: 1.05; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+.ls-time { margin: -4px 0 0; font-size: 100px; font-weight: 700; line-height: 1.05; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
 .ls-alarm { margin-top: auto; padding-bottom: 28px; text-align: center; }
 .ls-kind { display: inline-flex; align-items: center; gap: 6px; margin: 0; font-size: 15px; font-weight: 600; opacity: .8; }
 .ls-kind svg { width: 16px; height: 16px; }
@@ -439,7 +437,7 @@ button.row:active { background: var(--fill); }
 @keyframes nudge { 30% { transform: translateX(26px); } 60% { transform: translateX(-3px); } }
 .ls-free { justify-self: center; padding: 4px 8px; font-size: 15px; color: rgba(255, 255, 255, .78); }
 
-/* sheet */
+/* sheets */
 .scrim { position: absolute; inset: 0; z-index: 40; background: var(--scrim); opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s; }
 .scrim.open { opacity: 1; visibility: visible; transition: opacity .3s; }
 .screen.stacked .scrim.open { opacity: 0; }
@@ -511,7 +509,7 @@ button.row:active { background: var(--fill); }
 .ad-fine { margin: 0 0 20px; font-size: 12px; opacity: .65; }
 .ad-cta { height: 50px; border-radius: 12px; background: var(--ad-ink); color: var(--ad-1); font-size: 17px; font-weight: 600; text-align: center; }
 
-/* alert & action sheet */
+/* alerts & action sheets */
 .dialog { position: absolute; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; visibility: hidden; opacity: 0; transition: opacity .2s, visibility 0s .2s; }
 .dialog.open { visibility: visible; opacity: 1; transition: opacity .2s; }
 .dlg-scrim { position: absolute; inset: 0; background: var(--scrim); }
@@ -537,7 +535,7 @@ button.row:active { background: var(--fill); }
 .as-btn { display: block; width: 100%; height: 57px; border-top: 1px solid var(--alert-sep); font-size: 20px; color: var(--blue); text-align: center; }
 .as-cancel { height: 57px; border-radius: 14px; background: var(--as-cancel); font-size: 20px; font-weight: 600; color: var(--blue); text-align: center; }
 
-/* banner notifikasi */
+/* notification banner */
 .banner {
   position: absolute; top: 52px; left: 8px; right: 8px; z-index: 90;
   display: flex; gap: 10px; align-items: center;
@@ -567,9 +565,8 @@ button.row:active { background: var(--fill); }
 <main class="stage">
   <section class="intro">
     <h1>Coin Alarm</h1>
-    <p class="sub">Alarm dan timer yang harus dibayar dulu sebelum bisa dihentikan.</p>
-    <p class="body">Coba bunyikan alarm dari panel di samping, lalu geser untuk menghentikan. Tagihannya Rp 2.000 ditambah biaya admin Rp 500. Menunda juga bayar, dan tarifnya naik setiap kali ditunda. Yang tidak mau bayar bisa langganan Pro, menjawab soal perkalian, atau menonton iklan.</p>
-    <p class="note">Mockup iseng. Semua harga dan pembayaran di sini pura-pura.</p>
+    <p class="sub">The alarm clock that makes you pay to stop it.</p>
+    <p class="body">Slide to stop and you get a bill: $0.99 plus a $0.29 service fee. Snoozing costs money too, and the price goes up every time. Too cheap to pay? Go Pro, solve three math problems, or sit through an ad.</p>
   </section>
 
   <div class="device-col">
@@ -581,7 +578,7 @@ button.row:active { background: var(--fill); }
         <span class="btn-hw side" aria-hidden="true"></span>
         <div class="screen" id="screen">
           <div class="statusbar" aria-hidden="true">
-            <span class="sb-time" id="sb-time">09.41</span>
+            <span class="sb-time" id="sb-time">9:41</span>
             <span class="sb-icons">
               <svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
               <svg viewBox="0 0 16 12"><path d="M8 2.4c2.3 0 4.4.9 6 2.4l1.3-1.4A10.4 10.4 0 0 0 8 .4 10.4 10.4 0 0 0 .7 3.4L2 4.8a8.4 8.4 0 0 1 6-2.4zm0 3.6c1.3 0 2.5.5 3.4 1.4l1.4-1.4A6.8 6.8 0 0 0 8 4a6.8 6.8 0 0 0-4.8 2l1.4 1.4C5.5 6.5 6.7 6 8 6zm0 5.6 2-2.1a2.8 2.8 0 0 0-4 0z"/></svg>
@@ -593,16 +590,16 @@ button.row:active { background: var(--fill); }
           <div class="app" id="app" data-tab="alarm">
             <div class="navbar" id="navbar"></div>
             <div class="view" id="view"></div>
-            <nav class="tabbar" id="tabbar" aria-label="Tab"></nav>
+            <nav class="tabbar" id="tabbar" aria-label="Tabs"></nav>
           </div>
 
-          <div class="ring" id="ring" role="alertdialog" aria-label="Alarm berbunyi" inert></div>
+          <div class="ring" id="ring" role="alertdialog" aria-label="Alarm ringing" inert></div>
           <div class="scrim" id="scrim"></div>
           <div class="sheet" id="sheet" role="dialog" aria-modal="true" inert></div>
           <div class="dialog" id="dialog" inert></div>
           <div class="banner" id="banner" role="status" aria-live="polite">
             <span class="app-ico xs" id="bn-ico"></span>
-            <div class="bn-txt"><div class="bn-top"><b>Coin Alarm</b><span>sekarang</span></div><p id="bn-msg"></p></div>
+            <div class="bn-txt"><div class="bn-top"><b>Coin Alarm</b><span>now</span></div><p id="bn-msg"></p></div>
           </div>
           <div class="homebar" aria-hidden="true"></div>
         </div>
@@ -610,26 +607,19 @@ button.row:active { background: var(--fill); }
     </div>
   </div>
 
-  <aside class="controls" aria-label="Panel demo">
-    <p class="ctl-h">Panel demo</p>
+  <aside class="controls" aria-label="Demo controls">
+    <p class="ctl-h">Try It</p>
     <div class="pg-group">
-      <button class="pg-row link" id="ctl-alarm" type="button"><span>Bunyikan alarm sekarang</span><kbd>A</kbd></button>
-      <button class="pg-row link" id="ctl-timer" type="button"><span>Selesaikan timer sekarang</span><kbd>T</kbd></button>
+      <button class="pg-row link" id="ctl-alarm" type="button"><span>Ring Alarm Now</span><kbd>A</kbd></button>
+      <button class="pg-row link" id="ctl-timer" type="button"><span>Finish Timer Now</span><kbd>T</kbd></button>
     </div>
-    <p class="ctl-h">Pengaturan</p>
+    <p class="ctl-h">Settings</p>
     <div class="pg-group">
-      <div class="pg-row"><span id="lbl-sound">Suara alarm</span><button class="pg-sw" id="ctl-sound" type="button" role="switch" aria-checked="true" aria-labelledby="lbl-sound"></button></div>
-      <div class="pg-row"><span id="lbl-pro">Langganan Pro</span><button class="pg-sw" id="ctl-pro" type="button" role="switch" aria-checked="false" aria-labelledby="lbl-pro"></button></div>
+      <div class="pg-row"><span id="lbl-sound">Alarm Sound</span><button class="pg-sw" id="ctl-sound" type="button" role="switch" aria-checked="true" aria-labelledby="lbl-sound"></button></div>
+      <div class="pg-row"><span id="lbl-pro">Pro Subscription</span><button class="pg-sw" id="ctl-pro" type="button" role="switch" aria-checked="false" aria-labelledby="lbl-pro"></button></div>
+      <button class="pg-row danger" id="ctl-reset" type="button">Reset Demo Data</button>
     </div>
-    <p class="ctl-h">Dompet</p>
-    <div class="pg-group">
-      <div class="pg-row"><span>Saldo</span><span class="pg-val" id="ro-wallet">Rp 0</span></div>
-      <div class="pg-row"><span>Total dibayar</span><span class="pg-val" id="ro-spent">Rp 0</span></div>
-    </div>
-    <div class="pg-group" style="margin-top:18px">
-      <button class="pg-row danger" id="ctl-reset" type="button">Reset data</button>
-    </div>
-    <p class="ctl-f">Data cuma tersimpan di browser ini. Klik halaman sekali dulu supaya suara alarm boleh bunyi.</p>
+    <p class="ctl-f">A just-for-fun mockup. Every price and payment is pretend. Click the page once so your browser lets the alarm make sound.</p>
   </aside>
 </main>
 
@@ -637,37 +627,46 @@ button.row:active { background: var(--fill); }
 (() => {
   'use strict';
 
-  /* ---------- helper ---------- */
+  /* ---------- helpers ---------- */
   const $ = (s, r = document) => r.querySelector(s);
   const pad = n => String(n).padStart(2, '0');
-  const hm = (h, m) => `${pad(h)}.${pad(m)}`;
-  const hmOf = d => hm(d.getHours(), d.getMinutes());
-  const rp = n => 'Rp ' + Math.round(n).toLocaleString('id-ID');
+  const h12 = h => (h % 12) || 12;
+  const ampm = h => (h < 12 ? 'AM' : 'PM');
+  const clock = (h, m) => `${h12(h)}:${pad(m)}`;
+  const clockAP = (h, m) => `${clock(h, m)} ${ampm(h)}`;
+  const clockOf = d => clock(d.getHours(), d.getMinutes());
+  const clockAPOf = d => clockAP(d.getHours(), d.getMinutes());
+  const usd = c => '$' + (c / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const usdShort = c => (c % 100 === 0 ? '$' + (c / 100).toLocaleString('en-US') : usd(c));
   const dur = s => (s >= 3600 ? `${Math.floor(s / 3600)}:${pad(Math.floor(s % 3600 / 60))}:${pad(s % 60)}` : `${pad(Math.floor(s / 60))}:${pad(s % 60)}`);
   const durShort = s => (s >= 3600 ? dur(s) : `${Math.floor(s / 60)}:${pad(s % 60)}`);
   const durWords = s => {
     const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), d = s % 60;
-    return [h && `${h} jam`, m && `${m} mnt`, d && `${d} dtk`].filter(Boolean).join(' ') || '0 dtk';
+    return [h && `${h} hr`, m && `${m} min`, d && `${d} sec`].filter(Boolean).join(' ') || '0 sec';
   };
+  const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+  const times = n => (n === 1 ? 'once' : n === 2 ? 'twice' : `${n} times`);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const fmtMult = m => m.toLocaleString('id-ID', { maximumFractionDigits: 1 }) + '×';
-  const DAY = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
-  const DAY_LONG = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
-  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+  const fmtMult = m => `${m}×`;
+  const DAY_SHORT = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const DAY_LONG = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const DAY_ORDER = [6, 0, 1, 2, 3, 4, 5];
+  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const DAYMS = 864e5;
 
-  const PRICE = { stopAlarm: 2000, stopTimer: 1000, snooze: 1000, admin: 500, monthly: 15000, yearly: 99000, discount: 7500 };
-  const STORE = 'coinalarm-mockup-v2';
+  /* prices in cents */
+  const PRICE = { stopAlarm: 99, stopTimer: 49, snooze: 49, fee: 29, monthly: 499, yearly: 2999, discount: 249 };
+  const STORE = 'coinalarm-mockup-v3';
   const METHODS = [
-    { id: 'wallet', name: 'Dompet Coin', tile: 'orange', glyph: 'Rp' },
-    { id: 'paylater', name: 'PayLater Ngantuk', sub: 'Bangun sekarang, bayar bulan depan', tile: 'blue', glyph: 'PL' },
-    { id: 'daun', name: 'Uang Daun', sub: 'Petik langsung dari pohon', tile: 'green leaf', glyph: '' },
+    { id: 'wallet', name: 'Coin Wallet', tile: 'orange', glyph: '$' },
+    { id: 'later', name: 'Sleep Later', sub: 'Wake up now, pay next month', tile: 'blue', glyph: 'SL' },
+    { id: 'leaf', name: 'Leaf Cash', sub: 'Picked fresh from the tree', tile: 'green leaf', glyph: '' },
   ];
   const PRESETS = [
-    { s: 180, label: 'Mi instan' },
-    { s: 420, label: 'Telur rebus' },
-    { s: 1500, label: 'Fokus' },
-    { s: 60, label: 'Tes' },
+    { s: 180, label: 'Instant noodles' },
+    { s: 420, label: 'Boiled egg' },
+    { s: 1500, label: 'Focus' },
+    { s: 60, label: 'Quick test' },
   ];
 
   const pathIcon = d => `<svg class="f" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="${d}"/></svg>`;
@@ -700,16 +699,16 @@ button.row:active { background: var(--fill); }
     const at = (daysAgo, h, m) => { const d = new Date(now - daysAgo * DAYMS); d.setHours(h, m, 0, 0); return d.getTime(); };
     return {
       alarms: [
-        { id: 'a1', h: 5, m: 30, label: 'Subuh, jangan skip', days: [1, 1, 1, 1, 1, 1, 1], on: true, snooze: true },
-        { id: 'a2', h: 6, m: 15, label: 'Berangkat kerja', days: [1, 1, 1, 1, 1, 0, 0], on: true, snooze: true },
-        { id: 'a3', h: 13, m: 0, label: 'Tidur siang', days: [0, 0, 0, 0, 0, 1, 1], on: false, snooze: true },
+        { id: 'a1', h: 5, m: 30, label: 'Rise and shine', days: [1, 1, 1, 1, 1, 1, 1], on: true, snooze: true },
+        { id: 'a2', h: 6, m: 15, label: 'Leave for work', days: [1, 1, 1, 1, 1, 0, 0], on: true, snooze: true },
+        { id: 'a3', h: 13, m: 0, label: 'Power nap', days: [0, 0, 0, 0, 0, 1, 1], on: false, snooze: true },
       ],
-      wallet: 42000,
+      wallet: 2092,
       history: [
-        { t: at(1, 5, 40), title: 'Hentikan alarm 05.30', note: 'Tarif 2×', amount: -4500, kind: 'stop' },
-        { t: at(1, 5, 35), title: 'Tunda alarm 05.30', note: 'Tarif 1,5×', amount: -2000, kind: 'snooze' },
-        { t: at(1, 5, 30), title: 'Tunda alarm 05.30', note: 'Tarif normal', amount: -1500, kind: 'snooze' },
-        { t: at(2, 20, 12), title: 'Top up saldo', note: 'Uang bohongan', amount: 50000, kind: 'topup' },
+        { t: at(1, 5, 40), title: 'Stopped 5:30 AM alarm', note: '2× surge', amount: -227, kind: 'stop' },
+        { t: at(1, 5, 35), title: 'Snoozed 5:30 AM alarm', note: '1.5× surge', amount: -103, kind: 'snooze' },
+        { t: at(1, 5, 30), title: 'Snoozed 5:30 AM alarm', note: 'Normal price', amount: -78, kind: 'snooze' },
+        { t: at(2, 20, 12), title: 'Wallet top-up', note: 'Pretend money', amount: 2500, kind: 'topup' },
       ],
       pro: null,
       proSaved: 0,
@@ -723,10 +722,10 @@ button.row:active { background: var(--fill); }
         const d = JSON.parse(raw);
         if (d && Array.isArray(d.alarms) && Array.isArray(d.history)) return Object.assign(seed(), d);
       }
-    } catch (e) { /* storage diblokir: pakai data contoh */ }
+    } catch (e) { /* storage blocked: use the sample data */ }
     return seed();
   }
-  function save() { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) { /* abaikan */ } }
+  function save() { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) { /* ignore */ } }
 
   let S = load();
   const R = {
@@ -744,13 +743,13 @@ button.row:active { background: var(--fill); }
     procT: 0,
   };
   const isPro = () => !!S.pro;
-  const planName = p => ({ monthly: 'Bulanan', yearly: 'Tahunan', discount: 'Bulanan (diskon 50%)' }[p] || 'Bulanan');
+  const planName = p => ({ monthly: 'Monthly', yearly: 'Yearly', discount: 'Monthly (50% off)' }[p] || 'Monthly');
 
-  /* ---------- elemen ---------- */
+  /* ---------- elements ---------- */
   const screen = $('#screen'), appEl = $('#app'), viewEl = $('#view'), navEl = $('#navbar'), ringEl = $('#ring');
   const sheetEl = $('#sheet'), scrimEl = $('#scrim'), dialogEl = $('#dialog'), bannerEl = $('#banner'), slot = $('#device-slot');
 
-  /* ---------- waktu ---------- */
+  /* ---------- time ---------- */
   function nextOccurrence(a, now) {
     const once = !a.days.some(Boolean);
     for (let i = 0; i < 8; i++) {
@@ -771,64 +770,74 @@ button.row:active { background: var(--fill); }
     }
     return best;
   }
-  function inWords(ms) {
+  function splitMs(ms) {
     const mins = Math.max(1, Math.ceil(ms / 60000));
-    const h = Math.floor(mins / 60), m = mins % 60;
-    if (h >= 24) return `${Math.floor(h / 24)} hari ${h % 24} jam`;
-    if (h) return m ? `${h} jam ${m} menit` : `${h} jam`;
-    return `${m} menit`;
+    return { d: Math.floor(mins / 1440), h: Math.floor(mins % 1440 / 60), m: mins % 60 };
+  }
+  function inShort(ms) {
+    const { d, h, m } = splitMs(ms);
+    return [d && `${d} day${d === 1 ? '' : 's'}`, h && `${h} hr`, m && `${m} min`].filter(Boolean).join(' ');
+  }
+  function inLong(ms) {
+    const { d, h, m } = splitMs(ms);
+    const parts = [d && plural(d, 'day'), h && plural(h, 'hour'), m && plural(m, 'minute')].filter(Boolean);
+    return parts.length > 1 ? parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1] : parts[0];
   }
   function relTime(t) {
     const d = new Date(t), now = new Date();
     const a = new Date(now); a.setHours(0, 0, 0, 0);
     const b = new Date(d); b.setHours(0, 0, 0, 0);
     const diff = Math.round((a - b) / DAYMS);
-    if (diff === 0) return `Hari ini ${hmOf(d)}`;
-    if (diff === 1) return `Kemarin ${hmOf(d)}`;
-    return `${d.getDate()} ${MON[d.getMonth()]} ${hmOf(d)}`;
+    if (diff === 0) return `Today, ${clockAPOf(d)}`;
+    if (diff === 1) return `Yesterday, ${clockAPOf(d)}`;
+    return `${MON[d.getMonth()]} ${d.getDate()}, ${clockAPOf(d)}`;
   }
-  const fmtDate = t => { const d = new Date(t); return `${d.getDate()} ${MON[d.getMonth()]} ${d.getFullYear()}`; };
+  const fmtDate = t => { const d = new Date(t); return `${MON[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`; };
   function repeatText(days) {
     const on = days.map(Boolean), n = on.filter(Boolean).length;
-    if (n === 0) return 'Tidak Pernah';
-    if (n === 7) return 'Setiap Hari';
-    if (n === 5 && on.slice(0, 5).every(Boolean)) return 'Hari Kerja';
-    if (n === 2 && on[5] && on[6]) return 'Akhir Pekan';
-    return DAY.filter((_, i) => on[i]).join(' ');
+    if (n === 0) return 'Never';
+    if (n === 7) return 'Every Day';
+    if (n === 5 && on.slice(0, 5).every(Boolean)) return 'Weekdays';
+    if (n === 2 && on[5] && on[6]) return 'Weekends';
+    return DAY_ORDER.filter(i => on[i]).map(i => DAY_SHORT[i]).join(' ');
   }
   function subText(a) {
     const n = a.days.filter(Boolean).length;
     const r = repeatText(a.days);
     const label = a.label || 'Alarm';
     if (n === 0) return label;
-    const special = n === 7 || r === 'Hari Kerja' || r === 'Akhir Pekan';
-    return `${label}, ${special ? r.toLowerCase() : r}`;
+    const named = n === 7 || r === 'Weekdays' || r === 'Weekends';
+    return `${label}, ${named ? r.toLowerCase() : r}`;
   }
 
-  /* ---------- harga ---------- */
+  /* ---------- pricing ---------- */
   function quote(action, ring, plan) {
     if (action === 'pro') {
       const base = plan === 'yearly' ? PRICE.yearly : PRICE.monthly;
-      return { lines: [[`Pro ${planName(plan)}`, base], ['Biaya admin', PRICE.admin]], total: base + PRICE.admin, mult: 1 };
+      return { lines: [[`Pro, ${planName(plan)}`, base], ['Service fee', PRICE.fee]], total: base + PRICE.fee, mult: 1 };
     }
     const base = action === 'snooze' ? PRICE.snooze : (ring.kind === 'timer' ? PRICE.stopTimer : PRICE.stopAlarm);
     const mult = 1 + 0.5 * (ring.snoozes || 0);
     const surge = Math.round(base * (mult - 1));
-    const lines = [[action === 'snooze' ? 'Tunda 5 menit' : (ring.kind === 'timer' ? 'Hentikan timer' : 'Hentikan alarm'), base]];
-    if (surge) lines.push([`Tarif naik ${fmtMult(mult)}`, surge]);
-    lines.push(['Biaya admin', PRICE.admin]);
-    return { lines, total: base + surge + PRICE.admin, mult };
+    const lines = [[action === 'snooze' ? 'Snooze for 5 minutes' : (ring.kind === 'timer' ? 'Stop timer' : 'Stop alarm'), base]];
+    if (surge) lines.push([`${fmtMult(mult)} surge`, surge]);
+    lines.push(['Service fee', PRICE.fee]);
+    return { lines, total: base + surge + PRICE.fee, mult };
   }
   function actionTitle(action, r) {
     if (!r) return '';
-    if (action === 'snooze') return `Tunda alarm ${r.timeLabel}`;
-    return r.kind === 'timer' ? 'Hentikan timer' : `Hentikan alarm ${r.timeLabel}`;
+    if (action === 'snooze') return `Snooze ${r.timeLabel} Alarm`;
+    return r.kind === 'timer' ? 'Stop Timer' : `Stop ${r.timeLabel} Alarm`;
+  }
+  function historyTitle(action, r) {
+    if (!r) return '';
+    if (action === 'snooze') return `Snoozed ${r.timeLabel} alarm`;
+    return r.kind === 'timer' ? 'Stopped timer' : `Stopped ${r.timeLabel} alarm`;
   }
   function addHistory(h) {
     S.history.unshift(Object.assign({ t: Date.now() }, h));
     if (S.history.length > 60) S.history.length = 60;
   }
-  const spentTotal = () => S.history.reduce((s, h) => s + (h.amount < 0 ? -h.amount : 0), 0);
   function monthSpent() {
     const now = new Date();
     return S.history.reduce((s, h) => {
@@ -837,7 +846,7 @@ button.row:active { background: var(--fill); }
     }, 0);
   }
 
-  /* ---------- suara ---------- */
+  /* ---------- sound ---------- */
   let actx = null, beepIv = 0;
   function audio() {
     if (!actx) {
@@ -869,16 +878,20 @@ button.row:active { background: var(--fill); }
   function stopBeep() { clearInterval(beepIv); beepIv = 0; }
   document.addEventListener('pointerdown', () => { audio(); }, { passive: true });
 
-  /* ---------- roda pemilih ---------- */
+  /* ---------- picker wheels ---------- */
   const ITEM = 36, LOOPS = 5, MID = 2;
+  /* col: { key, labels: [...], loop, unit, aria } */
   function wheelHTML(cols) {
-    return `<div class="wheel"><div class="wheel-band" aria-hidden="true"></div>${cols.map(c => `
-      <div class="wheel-col ${c.unit ? 'unit' : ''}">
-        <div class="wheel-scroll" tabindex="0" aria-label="${c.aria}" data-key="${c.key}" data-n="${c.n}">
-          <div class="wheel-pad"></div>${Array.from({ length: c.n * LOOPS }, (_, i) => `<div class="wheel-item" data-i="${i}">${c.pad ? pad(i % c.n) : i % c.n}</div>`).join('')}<div class="wheel-pad"></div>
+    return `<div class="wheel"><div class="wheel-band" aria-hidden="true"></div>${cols.map(c => {
+      const n = c.labels.length, count = c.loop === false ? n : n * LOOPS;
+      return `<div class="wheel-col ${c.unit ? 'unit' : ''}">
+        <div class="wheel-scroll" tabindex="0" aria-label="${c.aria}" data-key="${c.key}" data-n="${n}" data-loop="${c.loop !== false}">
+          <div class="wheel-pad"></div>${Array.from({ length: count }, (_, i) => `<div class="wheel-item" data-i="${i}">${c.labels[i % n]}</div>`).join('')}<div class="wheel-pad"></div>
         </div>${c.unit ? `<span class="wheel-unit" aria-hidden="true">${c.unit}</span>` : ''}
-      </div>`).join('')}</div>`;
+      </div>`;
+    }).join('')}</div>`;
   }
+  const range = (n, f = String) => Array.from({ length: n }, (_, i) => f(i));
   function paintWheel(sc) {
     const pos = sc.scrollTop / ITEM;
     const first = Math.max(0, Math.floor(pos) - 1), last = Math.min(sc.children.length - 3, first + 9);
@@ -892,13 +905,13 @@ button.row:active { background: var(--fill); }
   }
   function initWheels(root, values, onChange) {
     root.querySelectorAll('.wheel-scroll').forEach(sc => {
-      const key = sc.dataset.key, n = Number(sc.dataset.n);
-      const announce = v => sc.setAttribute('aria-valuetext', String(v));
+      const key = sc.dataset.key, n = Number(sc.dataset.n), loop = sc.dataset.loop === 'true';
+      const offset = loop ? MID * n : 0;
       sc.setAttribute('role', 'spinbutton');
       sc.setAttribute('aria-valuemin', '0');
       sc.setAttribute('aria-valuemax', String(n - 1));
       sc.setAttribute('aria-valuenow', String(values[key]));
-      sc.scrollTop = (MID * n + values[key]) * ITEM;
+      sc.scrollTop = (offset + values[key]) * ITEM;
       paintWheel(sc);
       let t = 0, raf = 0;
       sc.addEventListener('scroll', () => {
@@ -906,9 +919,9 @@ button.row:active { background: var(--fill); }
         clearTimeout(t);
         t = setTimeout(() => {
           const idx = Math.round(sc.scrollTop / ITEM);
-          const v = ((idx % n) + n) % n;
-          if (idx < n || idx >= (LOOPS - 1) * n) { sc.scrollTop = (MID * n + v) * ITEM; paintWheel(sc); }
-          sc.setAttribute('aria-valuenow', String(v)); announce(v);
+          const v = loop ? ((idx % n) + n) % n : Math.min(n - 1, Math.max(0, idx));
+          if (loop && (idx < n || idx >= (LOOPS - 1) * n)) { sc.scrollTop = (offset + v) * ITEM; paintWheel(sc); }
+          sc.setAttribute('aria-valuenow', String(v));
           onChange(key, v);
         }, 110);
       }, { passive: true });
@@ -925,13 +938,13 @@ button.row:active { background: var(--fill); }
     });
   }
 
-  /* ---------- tab ---------- */
+  /* ---------- tabs ---------- */
   function navHTML() {
-    const title = { alarm: 'Alarm', timer: 'Timer', wallet: 'Dompet', pro: 'Pro' }[R.tab];
+    const title = { alarm: 'Alarms', timer: 'Timers', wallet: 'Wallet', pro: 'Pro' }[R.tab];
     let left = '<span></span>', right = '<span></span>';
     if (R.tab === 'alarm') {
-      left = `<button class="nav-btn ${R.editMode ? 'bold' : ''}" type="button" data-action="edit-mode">${R.editMode ? 'Selesai' : 'Edit'}</button>`;
-      right = `<button class="nav-btn r" type="button" data-action="add-alarm" aria-label="Tambah alarm">${I.plus}</button>`;
+      left = `<button class="nav-btn ${R.editMode ? 'bold' : ''}" type="button" data-action="edit-mode">${R.editMode ? 'Done' : 'Edit'}</button>`;
+      right = `<button class="nav-btn r" type="button" data-action="add-alarm" aria-label="Add alarm">${I.plus}</button>`;
     }
     return `${left}<span class="nav-title">${title}</span>${right}`;
   }
@@ -939,34 +952,38 @@ button.row:active { background: var(--fill); }
   function alarmView() {
     const list = S.alarms.slice().sort((x, y) => (x.h * 60 + x.m) - (y.h * 60 + y.m));
     const now = new Date(), nx = nextAlarm(now);
-    const stopPrice = isPro() ? 'gratis' : rp(PRICE.stopAlarm + PRICE.admin);
-    const snzPrice = isPro() ? 'gratis' : rp(PRICE.snooze + PRICE.admin);
-    const snz = R.snooze ? `<div class="sec-plain" style="margin-top:20px">${I.zz}Ditunda</div>
+    const stopPrice = isPro() ? 'free' : usd(PRICE.stopAlarm + PRICE.fee);
+    const snzPrice = isPro() ? 'free' : usd(PRICE.snooze + PRICE.fee);
+    const snz = R.snooze ? `<div class="sec-plain">${I.zz}Snoozed</div>
       <ul class="plist"><li class="prow">
-        <div class="prow-main"><span class="bal-plain" id="snz-left">${dur(Math.max(0, Math.ceil((R.snooze.until - now) / 1000)))}</span><span class="bal-note">${esc(R.snooze.ring.label)} bunyi lagi jam ${hmOf(new Date(R.snooze.until))}</span></div>
-        <button class="pill" type="button" data-action="snooze-now">Bunyikan</button>
+        <div class="prow-main"><span class="bal-plain" id="snz-left">${dur(Math.max(0, Math.ceil((R.snooze.until - now) / 1000)))}</span><span class="bal-note">${esc(R.snooze.ring.label)} rings again at ${clockAPOf(new Date(R.snooze.until))}</span></div>
+        <button class="pill" type="button" data-action="snooze-now">Ring Now</button>
       </li></ul>` : '';
+    const foot = [
+      nx ? `Next alarm: ${clockAP(nx.a.h, nx.a.m)}, in ${inShort(nx.d - now)}.` : 'No alarms are on.',
+      isPro() ? 'You’re Pro, so stopping and snoozing are free.' : 'The snooze price goes up 0.5× every time you snooze.',
+    ].join(' ');
     return `
-      <h1 class="lt">Alarm</h1>
-      <div class="sec-plain">${I.card}Saldo${isPro() ? `<span class="sultan">${I.crown}Pro</span>` : ''}</div>
+      <h1 class="lt">Alarms</h1>
+      <div class="sec-plain">${I.card}Coin Wallet${isPro() ? `<span class="badge-pro">${I.crown}PRO</span>` : ''}</div>
       <ul class="plist"><li class="prow">
-        <div class="prow-main"><span class="bal-plain">${rp(S.wallet)}</span><span class="bal-note">Hentikan ${stopPrice} · Tunda ${snzPrice}</span></div>
+        <div class="prow-main"><span class="bal-plain">${usd(S.wallet)}</span><span class="bal-note">Stop ${stopPrice} · Snooze ${snzPrice}</span></div>
         <button class="pill" type="button" data-action="tab" data-v="wallet">Top Up</button>
       </li></ul>
       ${snz}
-      <div class="sec-plain" style="margin-top:20px">${I.alarm}Lainnya</div>
-      <ul class="plist">${list.map(alarmRow).join('') || '<li class="prow"><span class="al-sub" style="color:var(--label2)">Tidak Ada Alarm</span></li>'}</ul>
-      <p class="foot" id="next-in">${nx ? `Alarm berikutnya ${hm(nx.a.h, nx.a.m)}, ${inWords(nx.d - now)} lagi.` : 'Tidak ada alarm yang menyala.'} ${isPro() ? 'Kamu Pro, jadi menghentikan dan menunda gratis.' : 'Tarif tunda naik 0,5× setiap kali ditunda.'}</p>`;
+      <div class="sec-plain">${I.alarm}Other</div>
+      <ul class="plist">${list.map(alarmRow).join('') || '<li class="prow"><span class="al-sub" style="color:var(--label2)">No Alarms</span></li>'}</ul>
+      <p class="foot">${foot}</p>`;
   }
   function alarmRow(a) {
-    const t = hm(a.h, a.m);
+    const t = clockAP(a.h, a.m);
     return `<li class="prow ${a.on ? '' : 'off'}">
-      ${R.editMode ? `<button class="del-dot" type="button" data-action="del-row" data-id="${a.id}" aria-label="Hapus alarm ${t}"></button>` : ''}
-      <button class="prow-main" type="button" data-action="edit-alarm" data-id="${a.id}" aria-label="Edit alarm ${t}">
-        <span class="al-time">${t}</span>
+      ${R.editMode ? `<button class="del-dot" type="button" data-action="del-row" data-id="${a.id}" aria-label="Delete ${t} alarm"></button>` : ''}
+      <button class="prow-main" type="button" data-action="edit-alarm" data-id="${a.id}" aria-label="Edit ${t} alarm">
+        <span class="al-time">${clock(a.h, a.m)}<small>${ampm(a.h)}</small></span>
         <span class="al-sub">${esc(subText(a))}</span>
       </button>
-      ${R.editMode ? chev() : `<button class="sw" type="button" role="switch" aria-checked="${a.on}" aria-label="Alarm ${t}" data-action="toggle-alarm" data-id="${a.id}"></button>`}
+      ${R.editMode ? chev() : `<button class="sw" type="button" role="switch" aria-checked="${a.on}" aria-label="${t} alarm" data-action="toggle-alarm" data-id="${a.id}"></button>`}
     </li>`;
   }
 
@@ -979,28 +996,28 @@ button.row:active { background: var(--fill); }
           <svg viewBox="0 0 248 248" aria-hidden="true"><circle class="cd-track" cx="124" cy="124" r="118"/><circle class="cd-prog" id="cd-prog" cx="124" cy="124" r="118" stroke-dasharray="${CIRC.toFixed(2)}" stroke-dashoffset="${(CIRC * (1 - t.remaining / t.total)).toFixed(2)}"/></svg>
           <div class="cd-center">
             <span class="cd-time" id="cd-time">${dur(t.remaining)}</span>
-            <span class="cd-end">${I.bell}<span>${t.running ? hmOf(new Date(t.endAt)) : 'Dijeda'}</span></span>
+            <span class="cd-end">${I.bell}<span>${t.running ? clockAPOf(new Date(t.endAt)) : 'Paused'}</span></span>
           </div>
         </div>`
       : wheelHTML([
-          { key: 'h', n: 24, unit: 'jam', aria: 'Jam' },
-          { key: 'm', n: 60, unit: 'mnt', aria: 'Menit' },
-          { key: 's', n: 60, unit: 'dtk', aria: 'Detik' },
+          { key: 'h', labels: range(24), unit: 'hours', aria: 'Hours' },
+          { key: 'm', labels: range(60), unit: 'min', aria: 'Minutes' },
+          { key: 's', labels: range(60), unit: 'sec', aria: 'Seconds' },
         ]);
-    const main = !t.active ? 'Mulai' : (t.running ? 'Jeda' : 'Lanjutkan');
+    const main = !t.active ? 'Start' : (t.running ? 'Pause' : 'Resume');
     const cls = t.active && t.running ? 'orange' : 'green';
     return `
-      <h1 class="lt">Timer</h1>
+      <h1 class="lt">Timers</h1>
       ${top}
       <div class="circ-row">
-        <button class="circ gray" type="button" data-action="t-cancel" ${t.active ? '' : 'disabled'}>Batalkan</button>
+        <button class="circ gray" type="button" data-action="t-cancel" ${t.active ? '' : 'disabled'}>Cancel</button>
         <button class="circ ${cls}" type="button" data-action="t-toggle" id="t-main" ${!t.active && pickTotal() === 0 ? 'disabled' : ''}>${main}</button>
       </div>
-      <div class="group"><div class="row"><span>Saat Timer Berakhir</span><span class="val">${isPro() ? 'Gratis (Pro)' : 'Bayar ' + rp(PRICE.stopTimer + PRICE.admin)}</span></div></div>
-      <div class="sec-plain" style="margin-top:22px">Terbaru</div>
+      <div class="group"><div class="row"><span>When Timer Ends</span><span class="val">${isPro() ? 'Free with Pro' : 'Pay ' + usd(PRICE.stopTimer + PRICE.fee)}</span></div></div>
+      <div class="sec-plain">Recents</div>
       <ul class="plist">${PRESETS.map(p => `<li class="prow">
         <div class="prow-main"><span class="rec-t">${durShort(p.s)}</span><span class="rec-l">${p.label}</span></div>
-        <button class="play-btn" type="button" data-action="t-preset" data-v="${p.s}" aria-label="Mulai timer ${p.label} ${durWords(p.s)}">${I.play}</button>
+        <button class="play-btn" type="button" data-action="t-preset" data-v="${p.s}" aria-label="Start ${p.label} timer, ${durWords(p.s)}">${I.play}</button>
       </li>`).join('')}</ul>`;
   }
 
@@ -1014,25 +1031,25 @@ button.row:active { background: var(--fill); }
       pro: `<span class="tile purple">${I.crown}</span>`,
       free: `<span class="tile gray">${lineIcon(CHECK)}</span>`,
     }[k] || `<span class="tile gray">${I.alarm}</span>`);
-    const amt = h => h.amount === 0 ? '<span class="h-amt zero">Rp 0</span>' : `<span class="h-amt ${h.amount > 0 ? 'pos' : ''}">${h.amount > 0 ? '+' : '−'}${rp(Math.abs(h.amount))}</span>`;
+    const amt = h => h.amount === 0 ? '<span class="h-amt zero">Free</span>' : `<span class="h-amt ${h.amount > 0 ? 'pos' : ''}">${h.amount > 0 ? '+' : '−'}${usd(Math.abs(h.amount))}</span>`;
     return `
-      <h1 class="lt">Dompet</h1>
+      <h1 class="lt">Wallet</h1>
       <div class="group" style="margin-top:8px"><div class="bal">
-        <span class="bal-k">Saldo Dompet Coin</span>
-        <span class="bal-v">${rp(S.wallet)}</span>
+        <span class="bal-k">Coin Wallet Balance</span>
+        <span class="bal-v">${usd(S.wallet)}</span>
         <div class="bal-btns">
-          <button class="tinted" type="button" data-action="topup" data-v="10000">Top Up 10.000</button>
-          <button class="tinted" type="button" data-action="topup" data-v="50000">Top Up 50.000</button>
+          <button class="tinted" type="button" data-action="topup" data-v="500">Add $5</button>
+          <button class="tinted" type="button" data-action="topup" data-v="2000">Add $20</button>
         </div>
       </div></div>
-      <p class="sec-f">Uang bohongan. Tidak bisa dicairkan dan tidak bisa dipakai jajan.</p>
-      <p class="sec-h">Bulan ini</p>
+      <p class="sec-f">Pretend money. It can’t be withdrawn or spent on snacks.</p>
+      <p class="sec-h">This Month</p>
       <div class="group">
-        <div class="row"><span>Dipakai buat bangun</span><span class="val">${rp(monthSpent())}</span></div>
-        <div class="row"><span>Bayar hentikan</span><span class="val">${stops}×</span></div>
-        <div class="row"><span>Bayar tunda</span><span class="val">${snoozes}×</span></div>
+        <div class="row"><span>Spent on waking up</span><span class="val">${usd(monthSpent())}</span></div>
+        <div class="row"><span>Paid stops</span><span class="val">${stops}</span></div>
+        <div class="row"><span>Paid snoozes</span><span class="val">${snoozes}</span></div>
       </div>
-      <p class="sec-h">Riwayat</p>
+      <p class="sec-h">History</p>
       <div class="group tiles">${S.history.slice(0, 30).map(h => `<div class="row">
         ${tile(h.kind)}
         <span class="r-txt"><b>${esc(h.title)}</b><small>${esc(h.note)} · ${relTime(h.t)}</small></span>
@@ -1041,10 +1058,10 @@ button.row:active { background: var(--fill); }
   }
 
   const FEATURES = [
-    ['orange', I.alarm, 'Hentikan gratis', 'Alarm dan timer, sepuasnya'],
-    ['green', I.zz, 'Tunda gratis', 'Tarif tidak pernah naik'],
-    ['blue', I.tag, 'Tanpa biaya admin', 'Kecuali waktu berlangganan'],
-    ['purple', I.crown, 'Lencana Pro', 'Tampil di daftar alarm'],
+    ['orange', I.alarm, 'Free stops', 'Alarms and timers, unlimited'],
+    ['green', I.zz, 'Free snoozes', 'The price never goes up'],
+    ['blue', I.tag, 'No service fee', 'Except when you subscribe'],
+    ['purple', I.crown, 'Pro badge', 'Shown on your alarms list'],
   ];
   function proView() {
     const feats = `<div class="group tiles">${FEATURES.map(([c, ic, t, s]) => `<div class="row"><span class="tile ${c}">${ic}</span><span class="r-txt"><b>${t}</b><small>${s}</small></span></div>`).join('')}</div>`;
@@ -1052,33 +1069,33 @@ button.row:active { background: var(--fill); }
       const y = R.proPlan === 'yearly';
       return `
         <h1 class="lt">Pro</h1>
-        <div class="pro-head"><span class="app-ico lg">${I.alarm}</span><h2>Coin Alarm Pro</h2><p>Hentikan alarm tanpa memikirkan tagihan setiap pagi.</p></div>
-        <p class="sec-h">Yang kamu dapat</p>
+        <div class="pro-head"><span class="app-ico lg">${I.alarm}</span><h2>Coin Alarm Pro</h2><p>Stop your alarms without thinking about the bill every morning.</p></div>
+        <p class="sec-h">What You Get</p>
         ${feats}
-        <p class="sec-h">Pilih paket</p>
-        <div class="group" role="radiogroup" aria-label="Paket">
-          <button class="row" type="button" role="radio" aria-checked="${!y}" data-action="plan" data-v="monthly"><span class="r-txt"><b>Bulanan</b><small>${rp(PRICE.monthly)} per bulan</small></span>${check(!y)}</button>
-          <button class="row" type="button" role="radio" aria-checked="${y}" data-action="plan" data-v="yearly"><span class="r-txt"><b>Tahunan<span class="badge">Hemat 45%</span></b><small>${rp(PRICE.yearly)} per tahun, sekitar ${rp(PRICE.yearly / 12)} per bulan</small></span>${check(y)}</button>
+        <p class="sec-h">Choose a Plan</p>
+        <div class="group" role="radiogroup" aria-label="Plan">
+          <button class="row" type="button" role="radio" aria-checked="${!y}" data-action="plan" data-v="monthly"><span class="r-txt"><b>Monthly</b><small>${usd(PRICE.monthly)} per month</small></span>${check(!y)}</button>
+          <button class="row" type="button" role="radio" aria-checked="${y}" data-action="plan" data-v="yearly"><span class="r-txt"><b>Yearly<span class="badge">Save 50%</span></b><small>${usd(PRICE.yearly)} per year, about ${usd(Math.round(PRICE.yearly / 12))} a month</small></span>${check(y)}</button>
         </div>
-        <div class="cta"><button class="big-btn" type="button" data-action="buy-pro">Langganan</button></div>
-        <p class="sec-f center">Pembayaran pura-pura. Langganan diperpanjang otomatis sampai dibatalkan.</p>`;
+        <div class="cta"><button class="big-btn" type="button" data-action="buy-pro">Subscribe</button></div>
+        <p class="sec-f center">Payments are pretend. Renews automatically until canceled.</p>`;
     }
     return `
       <h1 class="lt">Pro</h1>
-      <div class="pro-head"><span class="app-ico lg">${I.alarm}</span><h2>Kamu Pro</h2><p>Menghentikan dan menunda alarm sekarang gratis.</p></div>
-      <p class="sec-h">Langganan</p>
+      <div class="pro-head"><span class="app-ico lg">${I.alarm}</span><h2>You’re Pro</h2><p>Stopping and snoozing alarms is free now.</p></div>
+      <p class="sec-h">Subscription</p>
       <div class="group">
-        <div class="row"><span>Paket</span><span class="val">${planName(S.pro.plan)}</span></div>
-        <div class="row"><span>Diperpanjang</span><span class="val">${fmtDate(S.pro.until)}</span></div>
-        <div class="row"><span>Sudah dihemat</span><span class="val">${rp(S.proSaved || 0)}</span></div>
+        <div class="row"><span>Plan</span><span class="val">${planName(S.pro.plan)}</span></div>
+        <div class="row"><span>Renews</span><span class="val">${fmtDate(S.pro.until)}</span></div>
+        <div class="row"><span>Saved so far</span><span class="val">${usd(S.proSaved || 0)}</span></div>
       </div>
-      <p class="sec-h">Yang kamu dapat</p>
+      <p class="sec-h">What You Get</p>
       ${feats}
-      <div class="group" style="margin-top:28px"><button class="row center danger" type="button" data-action="cancel-pro">Batalkan Langganan</button></div>`;
+      <div class="group" style="margin-top:28px"><button class="row center danger" type="button" data-action="cancel-pro">Cancel Subscription</button></div>`;
   }
 
   const VIEWS = { alarm: alarmView, timer: timerView, wallet: walletView, pro: proView };
-  const TABS = [['alarm', 'Alarm', I.alarm], ['timer', 'Timer', I.timer], ['wallet', 'Dompet', I.card], ['pro', 'Pro', I.crown]];
+  const TABS = [['alarm', 'Alarms', I.alarm], ['timer', 'Timers', I.timer], ['wallet', 'Wallet', I.card], ['pro', 'Pro', I.crown]];
   $('#tabbar').innerHTML = TABS.map(([id, label, ic]) => `<button class="tab" type="button" data-action="tab" data-v="${id}">${ic}<span>${label}</span></button>`).join('');
 
   function render() {
@@ -1101,32 +1118,32 @@ button.row:active { background: var(--fill); }
   }
   viewEl.addEventListener('scroll', () => appEl.classList.toggle('scrolled', viewEl.scrollTop > 34), { passive: true });
 
-  /* ---------- layar kunci ---------- */
+  /* ---------- lock screen ---------- */
   function renderRing() {
     const r = R.ringing;
     if (!r) return;
     const pro = isPro();
     const qs = quote('stop', r), qz = quote('snooze', r);
-    const dateTxt = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
+    const dateTxt = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
     ringEl.innerHTML = `
       <div class="ls-top">
         <p class="ls-date">${esc(dateTxt)}</p>
-        <p class="ls-time" id="ring-clock">${hmOf(new Date())}</p>
+        <p class="ls-time" id="ring-clock">${clockOf(new Date())}</p>
       </div>
       <div class="ls-alarm">
-        <p class="ls-kind">${r.kind === 'timer' ? I.timer + 'Timer' : I.alarm + 'Alarm ' + esc(r.timeLabel)}</p>
+        <p class="ls-kind">${r.kind === 'timer' ? `${I.timer}Timer · ${esc(r.timeLabel)}` : `${I.alarm}Alarm · ${esc(r.timeLabel)}`}</p>
         <p class="ls-label">${esc(r.label)}</p>
-        <p class="ls-price">${pro ? 'Gratis, kamu Pro' : `Biaya menghentikan ${rp(qs.total)}`}</p>
-        ${r.snoozes && !pro ? `<p class="ls-surge">Tarif naik ${fmtMult(qs.mult)} karena sudah ditunda ${r.snoozes}×</p>` : ''}
+        <p class="ls-price">${pro ? 'Free with Pro' : `${usd(qs.total)} to stop`}</p>
+        ${r.snoozes && !pro ? `<p class="ls-surge">${fmtMult(qs.mult)} price because you snoozed ${times(r.snoozes)}</p>` : ''}
       </div>
       <div class="ls-bottom">
-        ${r.kind === 'alarm' && r.snooze !== false ? `<button class="ls-snooze" type="button" data-action="snooze">Tunda <small>${pro ? 'gratis' : rp(qz.total)}</small></button>` : ''}
+        ${r.kind === 'alarm' && r.snooze !== false ? `<button class="ls-snooze" type="button" data-action="snooze">Snooze <small>${pro ? 'free' : usd(qz.total)}</small></button>` : ''}
         <div class="slide" id="slide">
           <div class="slide-fill" id="slide-fill"></div>
-          <span class="slide-text">geser untuk menghentikan</span>
-          <button class="slide-knob" id="knob" type="button" aria-label="Geser untuk menghentikan. Tekan Enter untuk memicu.">${I.arrow}</button>
+          <span class="slide-text">slide to stop</span>
+          <button class="slide-knob" id="knob" type="button" aria-label="Slide to stop. Press Enter to stop.">${I.arrow}</button>
         </div>
-        ${pro ? '' : '<button class="ls-free" type="button" data-action="free">Hentikan tanpa bayar</button>'}
+        ${pro ? '' : '<button class="ls-free" type="button" data-action="free">Stop without paying</button>'}
       </div>`;
     bindSlider();
   }
@@ -1142,7 +1159,7 @@ button.row:active { background: var(--fill); }
       max = slide.clientWidth - knob.offsetWidth - 8;
       start = e.clientX; base = x;
       knob.style.transition = 'none'; fill.style.transition = 'none';
-      try { knob.setPointerCapture(e.pointerId); } catch (err) { /* abaikan */ }
+      try { knob.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
     });
     knob.addEventListener('pointermove', e => {
       if (!dragging) return;
@@ -1174,10 +1191,10 @@ button.row:active { background: var(--fill); }
     if (!r) return;
     if (isPro()) {
       S.proSaved = (S.proSaved || 0) + quote('stop', r).total;
-      addHistory({ title: actionTitle('stop', r), note: 'Gratis karena Pro', amount: 0, kind: 'free' });
+      addHistory({ title: historyTitle('stop', r), note: 'Free with Pro', amount: 0, kind: 'free' });
       save();
       stopRinging();
-      toast(`${r.kind === 'timer' ? 'Timer' : 'Alarm'} dihentikan. Gratis karena kamu Pro.`);
+      toast(`${r.kind === 'timer' ? 'Timer' : 'Alarm'} stopped. Free with Pro.`);
       return;
     }
     openSheet('pay', { action: 'stop', method: 'wallet', phase: 'confirm' });
@@ -1223,10 +1240,10 @@ button.row:active { background: var(--fill); }
     R.snooze = { until, ring: Object.assign({}, r, { snoozes: r.snoozes + 1 }) };
     closeSheet();
     render();
-    toast(`Ditunda 5 menit. Bunyi lagi jam ${hmOf(new Date(until))}.`);
+    toast(`Snoozed for 5 minutes. It rings again at ${clockAPOf(new Date(until))}.`);
   }
 
-  /* ---------- sheet ---------- */
+  /* ---------- sheets ---------- */
   const SHEET_TYPE = { pay: 'medium', edit: 'page', math: 'page', ad: 'full' };
   function openSheet(view, ctx = {}) {
     clearInterval(R.adT); clearTimeout(R.procT);
@@ -1249,9 +1266,15 @@ button.row:active { background: var(--fill); }
   }
   function renderSheet() {
     const { view, ctx } = R.sheet;
-    sheetEl.setAttribute('aria-label', { pay: 'Pembayaran', edit: 'Edit alarm', math: 'Soal perkalian', ad: 'Iklan' }[view]);
+    sheetEl.setAttribute('aria-label', { pay: 'Payment', edit: 'Edit alarm', math: 'Math problem', ad: 'Ad' }[view]);
     sheetEl.innerHTML = SHEETS[view](ctx);
-    if (view === 'edit' && ctx.page !== 'repeat') initWheels(sheetEl, ctx, (k, v) => { ctx[k] = v; });
+    if (view === 'edit' && ctx.page !== 'repeat') {
+      initWheels(sheetEl, { hh: ctx.h % 12, mm: ctx.m, ap: ctx.h >= 12 ? 1 : 0 }, (k, v) => {
+        if (k === 'hh') ctx.h = v + (ctx.h >= 12 ? 12 : 0);
+        else if (k === 'mm') ctx.m = v;
+        else ctx.h = (ctx.h % 12) + (v ? 12 : 0);
+      });
+    }
   }
 
   const spinner = () => `<span class="spinner" aria-hidden="true">${Array.from({ length: 8 }, (_, i) => `<i style="transform:rotate(${i * 45}deg);animation-delay:${(-0.8 + i * 0.1).toFixed(1)}s"></i>`).join('')}</span>`;
@@ -1264,76 +1287,81 @@ button.row:active { background: var(--fill); }
       const q = quote(ctx.action, r, ctx.plan);
       const m = METHODS.find(x => x.id === ctx.method) || METHODS[0];
       const busy = ctx.phase !== 'confirm';
+      const sub = x => (x.id === 'wallet' ? 'Balance ' + usd(S.wallet) : x.sub);
       let cta;
-      if (ctx.phase === 'processing') cta = `<div class="busy" role="status">${spinner()}Memproses…</div>`;
-      else if (ctx.phase === 'done') cta = `<div class="busy done" role="status">${I.checkCircle}Selesai</div>`;
-      else cta = `<button class="big-btn" type="button" data-action="pay">Bayar ${rp(q.total)}</button>`;
+      if (ctx.phase === 'processing') cta = `<div class="busy" role="status">${spinner()}Processing…</div>`;
+      else if (ctx.phase === 'done') cta = `<div class="busy done" role="status">${I.checkCircle}Done</div>`;
+      else cta = `<button class="big-btn" type="button" data-action="pay">Pay ${usd(q.total)}</button>`;
       const methodBlock = ctx.showMethods
         ? METHODS.map(x => `<button class="row" type="button" role="radio" aria-checked="${x.id === ctx.method}" data-action="method" data-v="${x.id}">
             <span class="tile ${x.tile}">${x.glyph}</span>
-            <span class="r-txt"><b>${x.name}</b><small>${x.id === 'wallet' ? 'Saldo ' + rp(S.wallet) : x.sub}</small></span>
+            <span class="r-txt"><b>${x.name}</b><small>${sub(x)}</small></span>
             ${check(x.id === ctx.method)}
           </button>`).join('')
         : `<button class="row" type="button" data-action="toggle-methods" ${busy ? 'disabled' : ''}>
             <span class="tile ${m.tile}">${m.glyph}</span>
-            <span class="r-txt"><b>${m.name}</b><small>${m.id === 'wallet' ? 'Saldo ' + rp(S.wallet) : m.sub}</small></span>
+            <span class="r-txt"><b>${m.name}</b><small>${sub(m)}</small></span>
             ${chev()}
           </button>`;
       return `
         <div class="grabber" aria-hidden="true"></div>
         <div class="pay-top">
           <span class="app-ico sm">${I.alarm}</span>
-          <span class="r-txt"><b>Coin Alarm</b><small>Pembelian dalam aplikasi</small></span>
-          <button class="x-btn" type="button" data-action="close-sheet" aria-label="Tutup" ${busy ? 'disabled' : ''}>${I.xmark}</button>
+          <span class="r-txt"><b>Coin Alarm</b><small>In-App Purchase</small></span>
+          <button class="x-btn" type="button" data-action="close-sheet" aria-label="Close" ${busy ? 'disabled' : ''}>${I.xmark}</button>
         </div>
         <h2 class="pay-title">${buyPro ? 'Coin Alarm Pro' : esc(actionTitle(ctx.action, r))}</h2>
-        ${buyPro ? `<div class="seg" role="radiogroup" aria-label="Paket">
-          <button type="button" role="radio" aria-checked="${ctx.plan !== 'yearly'}" data-action="pay-plan" data-v="monthly" ${busy ? 'disabled' : ''}>Bulanan</button>
-          <button type="button" role="radio" aria-checked="${ctx.plan === 'yearly'}" data-action="pay-plan" data-v="yearly" ${busy ? 'disabled' : ''}>Tahunan</button>
+        ${buyPro ? `<div class="seg" role="radiogroup" aria-label="Plan">
+          <button type="button" role="radio" aria-checked="${ctx.plan !== 'yearly'}" data-action="pay-plan" data-v="monthly" ${busy ? 'disabled' : ''}>Monthly</button>
+          <button type="button" role="radio" aria-checked="${ctx.plan === 'yearly'}" data-action="pay-plan" data-v="yearly" ${busy ? 'disabled' : ''}>Yearly</button>
         </div>` : ''}
         <div class="group">
-          ${q.lines.map(([k, v]) => `<div class="row"><span>${esc(k)}</span><span class="val">${rp(v)}</span></div>`).join('')}
-          <div class="row total"><span>Total</span><span class="val">${rp(q.total)}</span></div>
+          ${q.lines.map(([k, v]) => `<div class="row"><span>${esc(k)}</span><span class="val">${usd(v)}</span></div>`).join('')}
+          <div class="row total"><span>Total</span><span class="val">${usd(q.total)}</span></div>
         </div>
-        <p class="sec-h" style="margin-top:20px">Bayar dengan</p>
-        <div class="group tiles" role="radiogroup" aria-label="Metode pembayaran">${methodBlock}</div>
+        <p class="sec-h" style="margin-top:20px">Pay With</p>
+        <div class="group tiles" role="radiogroup" aria-label="Payment method">${methodBlock}</div>
         <div class="cta">${cta}</div>
         ${busy ? '' : `<div class="tlinks">
           ${buyPro
-            ? (ctx.back ? '<button class="tlink" type="button" data-action="pay-back">Kembali ke tagihan</button>' : '')
-            : `<button class="tlink" type="button" data-action="go-pro">Langganan Pro, hentikan sepuasnya</button>
-               <button class="tlink" type="button" data-action="free">Hentikan tanpa bayar</button>`}
+            ? (ctx.back ? '<button class="tlink" type="button" data-action="pay-back">Back to Bill</button>' : '')
+            : `<button class="tlink" type="button" data-action="go-pro">Go Pro and stop for free</button>
+               <button class="tlink" type="button" data-action="free">Stop without paying</button>`}
         </div>`}`;
     },
     edit(c) {
       if (c.page === 'repeat') {
         return `
-          <div class="sh-nav"><button class="l" type="button" data-action="repeat-back">${I.back}Kembali</button><span class="t">Ulangi</span><span></span></div>
+          <div class="sh-nav"><button class="l" type="button" data-action="repeat-back">${I.back}Back</button><span class="t">Repeat</span><span></span></div>
           <div class="pg-body">
-            <div class="group" style="margin-top:12px">${DAY_LONG.map((d, i) => `<button class="row" type="button" role="checkbox" aria-checked="${!!c.days[i]}" data-action="day" data-i="${i}"><span>Setiap ${d}</span>${check(c.days[i])}</button>`).join('')}</div>
+            <div class="group" style="margin-top:12px">${DAY_ORDER.map(i => `<button class="row" type="button" role="checkbox" aria-checked="${!!c.days[i]}" data-action="day" data-i="${i}"><span>Every ${DAY_LONG[i]}</span>${check(c.days[i])}</button>`).join('')}</div>
           </div>`;
       }
       return `
-        <div class="sh-nav"><button class="l" type="button" data-action="close-sheet">Batalkan</button><span class="t">${c.id ? 'Edit Alarm' : 'Tambah Alarm'}</span><button class="r" type="button" data-action="save-alarm">Simpan</button></div>
+        <div class="sh-nav"><button class="l" type="button" data-action="close-sheet">Cancel</button><span class="t">${c.id ? 'Edit Alarm' : 'Add Alarm'}</span><button class="r" type="button" data-action="save-alarm">Save</button></div>
         <div class="pg-body">
-          ${wheelHTML([{ key: 'h', n: 24, pad: true, aria: 'Jam' }, { key: 'm', n: 60, pad: true, aria: 'Menit' }])}
+          ${wheelHTML([
+            { key: 'hh', labels: range(12, i => String(i || 12)), aria: 'Hour' },
+            { key: 'mm', labels: range(60, pad), aria: 'Minute' },
+            { key: 'ap', labels: ['AM', 'PM'], loop: false, aria: 'AM or PM' },
+          ])}
           <div class="group" style="margin-top:8px">
-            <button class="row" type="button" data-action="edit-repeat"><span>Ulangi</span><span class="val">${repeatText(c.days)}</span>${chev()}</button>
+            <button class="row" type="button" data-action="edit-repeat"><span>Repeat</span><span class="val">${repeatText(c.days)}</span>${chev()}</button>
             <label class="row" for="alarm-label"><span>Label</span><input id="alarm-label" type="text" maxlength="40" autocomplete="off" value="${esc(c.label)}" placeholder="Alarm"></label>
-            <div class="row"><span>Bunyi</span><span class="val">Radar</span></div>
-            <div class="row"><span id="snz-lbl">Tunda</span><button class="sw" type="button" role="switch" aria-checked="${c.snooze !== false}" aria-labelledby="snz-lbl" data-action="snooze-sw" style="margin-left:auto"></button></div>
+            <div class="row"><span>Sound</span><span class="val">Radar</span></div>
+            <div class="row"><span id="snz-lbl">Snooze</span><button class="sw" type="button" role="switch" aria-checked="${c.snooze !== false}" aria-labelledby="snz-lbl" data-action="snooze-sw"></button></div>
           </div>
-          <p class="sec-f">Menghentikan alarm ini ${rp(PRICE.stopAlarm + PRICE.admin)}. Menunda ${rp(PRICE.snooze + PRICE.admin)}, dan tarifnya naik 0,5× setiap kali ditunda.</p>
+          <p class="sec-f">Stopping this alarm costs ${usd(PRICE.stopAlarm + PRICE.fee)}. Snoozing costs ${usd(PRICE.snooze + PRICE.fee)}, and the price goes up 0.5× every time you snooze.</p>
           <div class="group" style="margin-top:26px">
-            <button class="row tint" type="button" data-action="edit-soon">Atur ke 1 menit dari sekarang</button>
-            <button class="row tint" type="button" data-action="edit-test">Coba bunyikan sekarang</button>
+            <button class="row tint" type="button" data-action="edit-soon">Set to 1 Minute From Now</button>
+            <button class="row tint" type="button" data-action="edit-test">Test Alarm Now</button>
           </div>
-          ${c.id ? '<div class="group" style="margin-top:26px"><button class="row center danger" type="button" data-action="del-alarm">Hapus Alarm</button></div>' : ''}
+          ${c.id ? '<div class="group" style="margin-top:26px"><button class="row center danger" type="button" data-action="del-alarm">Delete Alarm</button></div>' : ''}
         </div>`;
     },
     math(c) {
       return `
-        <div class="sh-nav"><button class="l" type="button" data-action="close-sheet">Batalkan</button><span class="t">Soal ${c.n + 1} dari 3</span><button class="r" type="button" data-action="key" data-v="ok" id="m-ok" ${c.input ? '' : 'disabled'}>Cek</button></div>
+        <div class="sh-nav"><button class="l" type="button" data-action="close-sheet">Cancel</button><span class="t">Problem ${c.n + 1} of 3</span><button class="r" type="button" data-action="key" data-v="ok" id="m-ok" ${c.input ? '' : 'disabled'}>Check</button></div>
         <div class="m-prog" aria-hidden="true">${[0, 1, 2].map(i => `<i class="${i < c.n ? 'on' : ''}"></i>`).join('')}</div>
         <p class="m-q">${c.a} × ${c.b}</p>
         <div class="m-field" id="m-field" aria-live="polite"><span id="m-ans">${c.input}</span><span class="caret" aria-hidden="true"></span></div>
@@ -1342,34 +1370,34 @@ button.row:active { background: var(--fill); }
           `<button class="key" type="button" data-action="key" data-v="${d}"><b>${d}</b><small>${l || '&nbsp;'}</small></button>`).join('')}
           <span class="key flat" aria-hidden="true"></span>
           <button class="key" type="button" data-action="key" data-v="0"><b>0</b></button>
-          <button class="key flat" type="button" data-action="key" data-v="del" aria-label="Hapus">${I.del}</button>
+          <button class="key flat" type="button" data-action="key" data-v="del" aria-label="Delete">${I.del}</button>
         </div>`;
     },
     ad(c) {
       return `
         <div class="ad">
           <div class="ad-top">
-            <span class="ad-tag">Iklan</span>
-            <button class="ad-count" type="button" id="ad-btn" data-action="ad-done" ${c.left > 0 ? 'disabled aria-label="Iklan bisa ditutup sebentar lagi"' : 'aria-label="Tutup iklan"'}>${c.left > 0 ? c.left : I.xmark}</button>
+            <span class="ad-tag">Ad</span>
+            <button class="ad-count" type="button" id="ad-btn" data-action="ad-done" ${c.left > 0 ? 'disabled aria-label="You can close the ad soon"' : 'aria-label="Close ad"'}>${c.left > 0 ? c.left : I.xmark}</button>
           </div>
           <div class="ad-art" aria-hidden="true"><div class="pillow"></div></div>
-          <p class="ad-brand">Bantal Budek</p>
-          <p class="ad-copy">Bantal peredam suara. Alarm bunyi, kamu tetap pulas.</p>
-          <p class="ad-fine">Produk fiktif. Diskon 0% khusus hari ini.</p>
-          <button class="ad-cta" type="button" data-action="ad-cta">Pelajari</button>
+          <p class="ad-brand">Hush Pillow</p>
+          <p class="ad-copy">The noise-blocking pillow. Your alarm rings, you keep sleeping.</p>
+          <p class="ad-fine">Fictional product. 0% off, today only.</p>
+          <button class="ad-cta" type="button" data-action="ad-cta">Learn More</button>
         </div>`;
     },
   };
 
-  /* ---------- alert, action sheet, banner ---------- */
+  /* ---------- alerts, action sheets, banners ---------- */
   function showDialog(o) {
     R.dialog = o;
     const btn = (a, i) => `<button type="button" class="${o.kind === 'sheet' ? 'as-btn' : 'al-btn'} ${a.style || ''}" data-dlg="${i}">${esc(a.label)}</button>`;
     if (o.kind === 'sheet') {
       dialogEl.innerHTML = `<div class="dlg-scrim" data-dlg="cancel"></div>
-        <div class="asheet" role="dialog" aria-label="${esc(o.title || 'Pilihan')}">
+        <div class="asheet" role="dialog" aria-label="${esc(o.title || 'Options')}">
           <div class="as-group">${o.title || o.msg ? `<div class="as-head">${o.title ? `<b>${esc(o.title)}</b>` : ''}${o.msg ? `<p>${esc(o.msg)}</p>` : ''}</div>` : ''}${o.actions.map(btn).join('')}</div>
-          <button type="button" class="as-cancel" data-dlg="cancel">Batalkan</button>
+          <button type="button" class="as-cancel" data-dlg="cancel">Cancel</button>
         </div>`;
     } else {
       dialogEl.innerHTML = `<div class="dlg-scrim"></div>
@@ -1402,7 +1430,7 @@ button.row:active { background: var(--fill); }
     bannerT = setTimeout(() => bannerEl.classList.remove('show'), 3400);
   }
 
-  /* ---------- pembayaran ---------- */
+  /* ---------- payments ---------- */
   function pay() {
     const ctx = R.sheet && R.sheet.ctx;
     if (!ctx) return;
@@ -1415,20 +1443,20 @@ button.row:active { background: var(--fill); }
   function settle(ctx, q) {
     if (!R.sheet || R.sheet.ctx !== ctx) return;
     const back = () => { ctx.phase = 'confirm'; renderSheet(); };
-    const useWallet = { label: 'Pakai Dompet', style: 'bold', fn: () => { ctx.method = 'wallet'; renderSheet(); } };
-    if (ctx.method === 'paylater') {
+    const useWallet = { label: 'Use Wallet', style: 'bold', fn: () => { ctx.method = 'wallet'; renderSheet(); } };
+    if (ctx.method === 'later') {
       back();
-      return showDialog({ title: 'Pembayaran Ditolak', msg: 'PayLater Ngantuk menolak transaksi ini. Skor kredit tidurmu terlalu rendah.', actions: [{ label: 'OK' }, useWallet] });
+      return showDialog({ title: 'Payment Declined', msg: 'Sleep Later declined this purchase. Your sleep credit score is too low.', actions: [{ label: 'OK' }, useWallet] });
     }
-    if (ctx.method === 'daun') {
+    if (ctx.method === 'leaf') {
       back();
-      return showDialog({ title: 'Uang Daun Tidak Diterima', msg: 'Kasir cuma menerima daun yang masih segar. Coba bayar pakai Dompet Coin.', actions: [{ label: 'OK' }, useWallet] });
+      return showDialog({ title: 'Leaf Cash Not Accepted', msg: 'The cashier only takes fresh leaves. Try your Coin Wallet instead.', actions: [{ label: 'OK' }, useWallet] });
     }
     if (S.wallet < q.total) {
       back();
-      return showDialog({ title: 'Saldo Tidak Cukup', msg: `Butuh ${rp(q.total)}, saldo kamu ${rp(S.wallet)}.`, actions: [
-        { label: 'Batalkan' },
-        { label: 'Top Up 50.000', style: 'bold', fn: () => { topup(50000); render(); pay(); } },
+      return showDialog({ title: 'Not Enough Money', msg: `This costs ${usd(q.total)}, and your wallet has ${usd(S.wallet)}.`, actions: [
+        { label: 'Cancel' },
+        { label: 'Add $20', style: 'bold', fn: () => { topup(2000); render(); pay(); } },
       ] });
     }
     const r = R.ringing;
@@ -1436,9 +1464,9 @@ button.row:active { background: var(--fill); }
     if (ctx.action === 'pro') {
       const days = ctx.plan === 'yearly' ? 365 : 30;
       S.pro = { plan: ctx.plan, since: Date.now(), until: Date.now() + days * DAYMS };
-      addHistory({ title: `Langganan Pro ${planName(ctx.plan)}`, note: 'Termasuk biaya admin', amount: -q.total, kind: 'pro' });
+      addHistory({ title: `Pro subscription, ${planName(ctx.plan).toLowerCase()}`, note: 'Includes service fee', amount: -q.total, kind: 'pro' });
     } else {
-      addHistory({ title: actionTitle(ctx.action, r), note: q.mult > 1 ? `Tarif ${fmtMult(q.mult)}` : 'Tarif normal', amount: -q.total, kind: ctx.action });
+      addHistory({ title: historyTitle(ctx.action, r), note: q.mult > 1 ? `${fmtMult(q.mult)} surge` : 'Normal price', amount: -q.total, kind: ctx.action });
     }
     save();
     renderControls();
@@ -1448,40 +1476,40 @@ button.row:active { background: var(--fill); }
       if (ctx.action === 'pro') {
         closeSheet(); render();
         if (R.ringing) renderRing();
-        toast(R.ringing ? 'Pro aktif. Sekarang geser untuk menghentikan, gratis.' : 'Coin Alarm Pro aktif. Menghentikan alarm sekarang gratis.');
+        toast(R.ringing ? 'You’re Pro now. Slide to stop, no charge.' : 'Coin Alarm Pro is on. Stopping alarms is free now.');
       } else if (ctx.action === 'snooze') {
         doSnooze();
       } else {
         const what = r && r.kind === 'timer' ? 'Timer' : 'Alarm';
         stopRinging(); closeSheet();
-        toast(`${what} dihentikan. ${rp(q.total)} terpotong dari Dompet Coin.`);
+        toast(`${what} stopped. ${usd(q.total)} was charged to your Coin Wallet.`);
       }
     }, 900);
   }
-  function topup(v) {
-    S.wallet += v;
-    addHistory({ title: 'Top up saldo', note: 'Uang bohongan', amount: v, kind: 'topup' });
+  function topup(c) {
+    S.wallet += c;
+    addHistory({ title: 'Wallet top-up', note: 'Pretend money', amount: c, kind: 'topup' });
     save();
   }
   function freeDone(how) {
     const r = R.ringing;
     if (!r) { closeSheet(); return; }
-    addHistory({ title: actionTitle('stop', r), note: how === 'iklan' ? 'Gratis, nonton iklan' : 'Gratis, jawab soal', amount: 0, kind: 'free' });
+    addHistory({ title: historyTitle('stop', r), note: how === 'ad' ? 'Free, watched an ad' : 'Free, solved math', amount: 0, kind: 'free' });
     save();
     stopRinging();
     closeSheet();
-    toast(how === 'iklan' ? 'Iklan selesai. Alarm dihentikan tanpa bayar.' : 'Tiga soal benar. Alarm dihentikan tanpa bayar.');
+    toast(how === 'ad' ? 'Ad finished. Alarm stopped for free.' : 'Three right answers. Alarm stopped for free.');
   }
   const newQ = () => ({ a: 6 + Math.floor(Math.random() * 14), b: 3 + Math.floor(Math.random() * 7) });
   function offerFree() {
     if (!R.ringing) return;
     showDialog({
       kind: 'sheet',
-      title: 'Hentikan tanpa bayar?',
-      msg: 'Buktikan dulu kamu sudah benar-benar bangun.',
+      title: 'Stop Without Paying?',
+      msg: 'Prove you’re really awake first.',
       actions: [
-        { label: 'Jawab 3 Soal Perkalian', fn: () => openSheet('math', Object.assign({ n: 0, input: '', err: '' }, newQ())) },
-        { label: 'Tonton Iklan 10 Detik', fn: () => openSheet('ad', { left: 10 }) },
+        { label: 'Solve 3 Math Problems', fn: () => openSheet('math', Object.assign({ n: 0, input: '', err: '' }, newQ())) },
+        { label: 'Watch a 10-Second Ad', fn: () => openSheet('ad', { left: 10 }) },
       ],
     });
   }
@@ -1493,11 +1521,11 @@ button.row:active { background: var(--fill); }
       if (!c.input) return;
       if (Number(c.input) === c.a * c.b) {
         c.n++; c.err = '';
-        if (c.n >= 3) { freeDone('soal'); return; }
+        if (c.n >= 3) { freeDone('math'); return; }
         Object.assign(c, newQ(), { input: '' });
         renderSheet();
       } else {
-        c.err = `Salah, ${c.a} × ${c.b} = ${c.a * c.b}. Ulang dari soal pertama.`;
+        c.err = `Not quite. ${c.a} × ${c.b} = ${c.a * c.b}. Back to problem 1.`;
         c.n = 0;
         Object.assign(c, newQ(), { input: '' });
         renderSheet();
@@ -1518,13 +1546,14 @@ button.row:active { background: var(--fill); }
       if (!b) return;
       if (s.ctx.left <= 0) {
         clearInterval(R.adT);
-        b.disabled = false; b.innerHTML = I.xmark; b.setAttribute('aria-label', 'Tutup iklan');
+        b.disabled = false; b.innerHTML = I.xmark; b.setAttribute('aria-label', 'Close ad');
       } else b.textContent = s.ctx.left;
     }, 1000);
   }
 
-  /* ---------- aksi ---------- */
+  /* ---------- actions ---------- */
   const findAlarm = id => S.alarms.find(a => a.id === id);
+  const alarmSetMsg = d => `Alarm set for ${inLong(d - new Date())} from now.`;
   const A = {
     tab(el) { R.tab = el.dataset.v; R.editMode = false; viewEl.scrollTop = 0; appEl.classList.remove('scrolled'); render(); },
     'edit-mode'() { R.editMode = !R.editMode; render(); },
@@ -1532,7 +1561,7 @@ button.row:active { background: var(--fill); }
       const a = findAlarm(el.dataset.id);
       S.alarms = S.alarms.filter(x => x.id !== el.dataset.id);
       save(); render();
-      if (a) toast(`Alarm ${hm(a.h, a.m)} dihapus.`);
+      if (a) toast(`${clockAP(a.h, a.m)} alarm deleted.`);
     },
     'add-alarm'() { R.editMode = false; render(); openSheet('edit', { h: 7, m: 0, label: '', days: [0, 0, 0, 0, 0, 0, 0], snooze: true, page: 'main' }); },
     'edit-alarm'(el) {
@@ -1545,8 +1574,8 @@ button.row:active { background: var(--fill); }
       a.on = !a.on; save();
       el.setAttribute('aria-checked', String(a.on));
       el.closest('.prow').classList.toggle('off', !a.on);
-      const now = new Date(), nx = nextOccurrence(a, now);
-      if (a.on && nx) toast(`Alarm ${hm(a.h, a.m)} menyala, ${inWords(nx - now)} lagi. Siapkan ${isPro() ? 'Rp 0' : rp(PRICE.stopAlarm + PRICE.admin)}.`);
+      const nx = nextOccurrence(a, new Date());
+      if (a.on && nx) toast(alarmSetMsg(nx));
       setTimeout(render, 260);
     },
     'edit-repeat'() { R.sheet.ctx.page = 'repeat'; renderSheet(); },
@@ -1561,12 +1590,12 @@ button.row:active { background: var(--fill); }
     'edit-soon'() {
       const c = R.sheet.ctx, d = new Date(Date.now() + 60000);
       c.h = d.getHours(); c.m = d.getMinutes();
-      if (!c.label) c.label = 'Tes alarm';
+      if (!c.label) c.label = 'Test alarm';
       renderSheet();
     },
     'edit-test'() {
       const c = R.sheet.ctx;
-      ring({ kind: 'alarm', label: (c.label || '').trim() || 'Alarm', timeLabel: hm(c.h, c.m), snooze: c.snooze !== false });
+      ring({ kind: 'alarm', label: (c.label || '').trim() || 'Alarm', timeLabel: clockAP(c.h, c.m), snooze: c.snooze !== false });
     },
     'save-alarm'() {
       const c = R.sheet.ctx;
@@ -1575,14 +1604,14 @@ button.row:active { background: var(--fill); }
       if (c.id) { const a = findAlarm(c.id); if (a) Object.assign(a, data); delete R.lastFired[c.id]; }
       else S.alarms.push(Object.assign({ id: 'a' + Date.now().toString(36) }, data));
       save(); closeSheet(); R.tab = 'alarm'; render();
-      const now = new Date(), nx = nextOccurrence(data, now);
-      toast(`Alarm ${hm(c.h, c.m)} disetel, ${nx ? inWords(nx - now) : 'sebentar'} lagi.`);
+      const nx = nextOccurrence(data, new Date());
+      if (nx) toast(alarmSetMsg(nx));
     },
     'del-alarm'() {
       const c = R.sheet.ctx;
       S.alarms = S.alarms.filter(a => a.id !== c.id);
       save(); closeSheet(); render();
-      toast(`Alarm ${hm(c.h, c.m)} dihapus.`);
+      toast(`${clockAP(c.h, c.m)} alarm deleted.`);
     },
     't-toggle'() {
       const t = R.timer, now = Date.now();
@@ -1605,18 +1634,18 @@ button.row:active { background: var(--fill); }
       viewEl.scrollTop = 0; appEl.classList.remove('scrolled');
       render();
     },
-    topup(el) { const v = Number(el.dataset.v); topup(v); render(); toast(`Saldo bertambah ${rp(v)}. Tetap uang bohongan.`); },
+    topup(el) { const c = Number(el.dataset.v); topup(c); render(); toast(`Added ${usdShort(c)} to your Coin Wallet. Still pretend money.`); },
     plan(el) { R.proPlan = el.dataset.v; render(); },
     'buy-pro'() { openSheet('pay', { action: 'pro', plan: R.proPlan, method: 'wallet', phase: 'confirm' }); },
     'cancel-pro'() {
-      showDialog({ title: 'Batalkan Langganan?', msg: `Mulai besok, setiap menghentikan alarm bayar lagi ${rp(PRICE.stopAlarm + PRICE.admin)}. Menunda juga, dan tarifnya naik terus.`, actions: [
-        { label: 'Tetap Pro', style: 'bold', fn: () => toast('Pilihan bijak. Dompet kami berterima kasih.') },
-        { label: 'Batalkan Langganan', style: 'destructive', fn: () => setTimeout(() => showDialog({
-          title: 'Tunggu Dulu',
-          msg: `Diskon 50% selama 3 bulan: cukup ${rp(PRICE.discount)} per bulan. Lebih murah dari tiga kali menghentikan alarm.`,
+      showDialog({ title: 'Cancel Subscription?', msg: `Starting tomorrow, every alarm costs ${usd(PRICE.stopAlarm + PRICE.fee)} to stop. Snoozing costs money again too.`, actions: [
+        { label: 'Keep Pro', style: 'bold', fn: () => toast('Good call. Our wallet thanks you.') },
+        { label: 'Cancel Subscription', style: 'destructive', fn: () => setTimeout(() => showDialog({
+          title: 'Wait!',
+          msg: `Get 50% off for 3 months: just ${usd(PRICE.discount)} a month. That’s less than stopping two alarms.`,
           actions: [
-            { label: 'Ambil Diskon', style: 'bold', fn: () => { S.pro.plan = 'discount'; save(); render(); toast(`Diskon dipakai: ${rp(PRICE.discount)} per bulan selama 3 bulan.`); } },
-            { label: 'Tetap Batalkan', style: 'destructive', fn: () => { S.pro = null; save(); render(); toast('Langganan dibatalkan. Kami bakal kangen uangmu.'); } },
+            { label: 'Take Discount', style: 'bold', fn: () => { S.pro.plan = 'discount'; save(); render(); toast(`Discount applied: ${usd(PRICE.discount)} a month for 3 months.`); } },
+            { label: 'Cancel Anyway', style: 'destructive', fn: () => { S.pro = null; save(); render(); toast('Subscription canceled. We’ll miss your money.'); } },
           ],
         }), 260) },
       ] });
@@ -1626,7 +1655,7 @@ button.row:active { background: var(--fill); }
       if (!r) return;
       if (isPro()) {
         S.proSaved = (S.proSaved || 0) + quote('snooze', r).total;
-        addHistory({ title: actionTitle('snooze', r), note: 'Gratis karena Pro', amount: 0, kind: 'free' });
+        addHistory({ title: historyTitle('snooze', r), note: 'Free with Pro', amount: 0, kind: 'free' });
         save(); doSnooze(); return;
       }
       openSheet('pay', { action: 'snooze', method: 'wallet', phase: 'confirm' });
@@ -1641,8 +1670,8 @@ button.row:active { background: var(--fill); }
     pay() { pay(); },
     'close-sheet'() { closeSheet(); },
     key(el) { mathKey(el.dataset.v); },
-    'ad-done'() { freeDone('iklan'); },
-    'ad-cta'() { toast('Bantal Budek itu produk fiktif. Sabar, iklannya hampir selesai.'); },
+    'ad-done'() { freeDone('ad'); },
+    'ad-cta'() { toast('Hush Pillow isn’t real. Hang in there, the ad is almost over.'); },
   };
 
   screen.addEventListener('click', e => {
@@ -1657,23 +1686,21 @@ button.row:active { background: var(--fill); }
     if (R.sheet && R.sheet.type === 'medium' && R.sheet.ctx.phase === 'confirm') closeSheet();
   });
 
-  /* ---------- panel demo ---------- */
+  /* ---------- demo panel ---------- */
   function demoAlarm() {
-    if (R.ringing) { toast('Alarm masih bunyi. Hentikan dulu, bayar dulu.'); return; }
+    if (R.ringing) { toast('It’s already ringing. Stop it first (and pay).'); return; }
     const now = new Date(), nx = nextAlarm(now);
     const a = nx ? nx.a : S.alarms[0];
-    ring(a ? { kind: 'alarm', label: a.label || 'Alarm', timeLabel: hm(a.h, a.m), snooze: a.snooze !== false } : { kind: 'alarm', label: 'Alarm', timeLabel: hmOf(now) });
+    ring(a ? { kind: 'alarm', label: a.label || 'Alarm', timeLabel: clockAP(a.h, a.m), snooze: a.snooze !== false } : { kind: 'alarm', label: 'Alarm', timeLabel: clockAPOf(now) });
   }
   function demoTimer() {
-    if (R.ringing) { toast('Alarm masih bunyi. Hentikan dulu, bayar dulu.'); return; }
+    if (R.ringing) { toast('It’s already ringing. Stop it first (and pay).'); return; }
     const t = R.timer;
     const total = t.active ? t.total : (pickTotal() || 300);
     Object.assign(t, { active: false, running: false });
-    ring({ kind: 'timer', label: `Timer ${durWords(total)} selesai`, timeLabel: dur(total) });
+    ring({ kind: 'timer', label: 'Timer Done', timeLabel: durWords(total) });
   }
   function renderControls() {
-    $('#ro-wallet').textContent = rp(S.wallet);
-    $('#ro-spent').textContent = rp(spentTotal());
     $('#ctl-pro').setAttribute('aria-checked', String(isPro()));
     $('#ctl-sound').setAttribute('aria-checked', String(!S.muted));
   }
@@ -1692,13 +1719,13 @@ button.row:active { background: var(--fill); }
   $('#ctl-reset').addEventListener('click', e => {
     const b = e.currentTarget;
     if (!resetArmed) {
-      b.textContent = 'Klik sekali lagi untuk reset';
-      resetArmed = setTimeout(() => { resetArmed = 0; b.textContent = 'Reset data'; }, 3000);
+      b.textContent = 'Click Again to Reset';
+      resetArmed = setTimeout(() => { resetArmed = 0; b.textContent = 'Reset Demo Data'; }, 3000);
       return;
     }
     clearTimeout(resetArmed); resetArmed = 0;
-    b.textContent = 'Reset data';
-    try { localStorage.removeItem(STORE); } catch (err) { /* abaikan */ }
+    b.textContent = 'Reset Demo Data';
+    try { localStorage.removeItem(STORE); } catch (err) { /* ignore */ }
     S = seed();
     R.snooze = null; R.tab = 'alarm'; R.editMode = false;
     R.pick = { h: 0, m: 5, s: 0 };
@@ -1706,7 +1733,7 @@ button.row:active { background: var(--fill); }
     if (R.dialog) closeDialog();
     closeSheet();
     if (R.ringing) stopRinging(); else render();
-    toast('Data mockup kembali seperti awal.');
+    toast('Demo data reset.');
   });
 
   document.addEventListener('keydown', e => {
@@ -1726,7 +1753,7 @@ button.row:active { background: var(--fill); }
     else if (e.key === 't' || e.key === 'T') demoTimer();
   });
 
-  /* ---------- jam utama ---------- */
+  /* ---------- main clock ---------- */
   let lastMin = -1;
   function checkAlarms(now) {
     if (R.ringing) return;
@@ -1740,14 +1767,14 @@ button.row:active { background: var(--fill); }
       if (R.lastFired[a.id] === key) continue;
       R.lastFired[a.id] = key;
       if (once) { a.on = false; save(); }
-      ring({ kind: 'alarm', label: a.label || 'Alarm', timeLabel: hm(a.h, a.m), snooze: a.snooze !== false });
+      ring({ kind: 'alarm', label: a.label || 'Alarm', timeLabel: clockAP(a.h, a.m), snooze: a.snooze !== false });
       return;
     }
   }
   function tick() {
     const now = new Date();
-    $('#sb-time').textContent = hmOf(now);
-    if (R.ringing) { const rc = $('#ring-clock'); if (rc) rc.textContent = hmOf(now); }
+    $('#sb-time').textContent = clockOf(now);
+    if (R.ringing) { const rc = $('#ring-clock'); if (rc) rc.textContent = clockOf(now); }
 
     const t = R.timer;
     if (t.active && t.running) {
@@ -1762,7 +1789,7 @@ button.row:active { background: var(--fill); }
       }
       if (left === 0) {
         Object.assign(t, { active: false, running: false });
-        if (!R.ringing) ring({ kind: 'timer', label: `Timer ${durWords(t.total)} selesai`, timeLabel: dur(t.total) });
+        if (!R.ringing) ring({ kind: 'timer', label: 'Timer Done', timeLabel: durWords(t.total) });
         else render();
       }
     }
@@ -1778,13 +1805,12 @@ button.row:active { background: var(--fill); }
     checkAlarms(now);
   }
 
-  /* ---------- ukuran HP ---------- */
+  /* ---------- phone size ---------- */
   function fit() {
     const w = window.innerWidth, h = window.innerHeight - 48;
     const stageW = $('.stage').clientWidth;
     let s;
-    if (w >= 1100) s = Math.min(1, h / 876);
-    else if (w >= 760) s = Math.min(1, h / 876, (stageW * 0.56) / 417);
+    if (w >= 860) s = Math.min(1, h / 876, (stageW - 300 - 48) / 417);
     else s = Math.min(1, stageW / 425);
     SCALE = Math.max(0.3, s);
     document.documentElement.style.setProperty('--s', SCALE.toFixed(4));
