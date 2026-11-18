@@ -1,0 +1,1828 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Coin Alarm</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap">
+<style>
+/* Layout: two columns. Copy and a Settings-style demo panel on the left, the phone on the right.
+   The phone recreates the look of the built-in iOS Clock app and follows light/dark mode like a real iPhone. */
+:root {
+  /* page */
+  --pg-bg: #F5F5F7;
+  --pg-fg: #1D1D1F;
+  --pg-fg2: #6E6E73;
+  --pg-card: #FFFFFF;
+  --pg-sep: #D2D2D7;
+  --pg-link: #0066CC;
+  --pg-red: #E30000;
+  --pg-green: #34C759;
+  --pg-off: #E9E9EB;
+  --pg-shadow: rgba(0, 0, 0, .22);
+
+  /* iOS, light mode */
+  --bg: #FFFFFF;
+  --bg-grouped: #F2F2F7;
+  --cell: #FFFFFF;
+  --cell2: #F2F2F7;
+  --sheet-bg: #F2F2F7;
+  --sheet-cell: #FFFFFF;
+  --label: #000000;
+  --label2: rgba(60, 60, 67, .6);
+  --label3: rgba(60, 60, 67, .3);
+  --sep: rgba(60, 60, 67, .2);
+  --fill: rgba(120, 120, 128, .14);
+  --tint: #FF9500;
+  --tint-bg: rgba(255, 149, 0, .14);
+  --green: #34C759;
+  --green-bg: rgba(52, 199, 89, .16);
+  --gray-bg: rgba(120, 120, 128, .16);
+  --red: #FF3B30;
+  --blue: #007AFF;
+  --purple: #AF52DE;
+  --gray: #8E8E93;
+  --on-tint: #FFFFFF;
+  --switch-off: #E9E9EA;
+  --knob: #FFFFFF;
+  --bar: rgba(249, 249, 249, .92);
+  --alert: rgba(242, 242, 242, .9);
+  --alert-sep: rgba(60, 60, 67, .2);
+  --as-cancel: #FFFFFF;
+  --banner: rgba(246, 246, 246, .9);
+  --key: #FFFFFF;
+  --key-down: #BCC0C8;
+  --key-ink: #000000;
+  --key-shadow: #898A8D;
+  --key-tray: #D1D3D9;
+  --scrim: rgba(0, 0, 0, .3);
+
+  /* fixed: device, app icon, lock screen, ad */
+  --frame: #BDB7AE;
+  --frame-edge: #8D877E;
+  --bezel: #000000;
+  --black: #000000;
+  --icon-1: #FFB340;
+  --icon-2: #FF8A00;
+  --ls-1: #0C1322;
+  --ls-2: #1E2A44;
+  --ls-3: #5E4652;
+  --ls-4: #C9774C;
+  --ls-5: #E8A35F;
+  --ls-ink: #FFFFFF;
+  --ls-orange: #FF9F0A;
+  --ls-warn: #FFD60A;
+  --ls-knob: #1C1C1E;
+  --ad-1: #E9F3EA;
+  --ad-2: #FBE7C6;
+  --ad-ink: #1E2B22;
+  --ad-pillow: #FFFFFF;
+
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --s: 1;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --pg-bg: #000000; --pg-fg: #F5F5F7; --pg-fg2: #86868B; --pg-card: #1C1C1E; --pg-sep: #38383A;
+    --pg-link: #2997FF; --pg-red: #FF453A; --pg-green: #30D158; --pg-off: #39393D; --pg-shadow: rgba(0, 0, 0, .7);
+    --bg: #000000; --bg-grouped: #000000; --cell: #1C1C1E; --cell2: #1C1C1E; --sheet-bg: #1C1C1E; --sheet-cell: #2C2C2E;
+    --label: #FFFFFF; --label2: rgba(235, 235, 245, .6); --label3: rgba(235, 235, 245, .3); --sep: rgba(84, 84, 88, .55);
+    --fill: rgba(118, 118, 128, .24); --tint: #FF9F0A; --tint-bg: rgba(255, 159, 10, .2); --green: #30D158; --green-bg: rgba(48, 209, 88, .2);
+    --gray-bg: rgba(118, 118, 128, .3); --red: #FF453A; --blue: #0A84FF; --purple: #BF5AF2; --gray: #8E8E93;
+    --switch-off: #39393D; --bar: rgba(22, 22, 22, .9); --alert: rgba(40, 40, 40, .92); --alert-sep: rgba(84, 84, 88, .6);
+    --as-cancel: #2C2C2E; --banner: rgba(48, 48, 48, .9); --key: #6B6B6E; --key-down: #4A4A4C; --key-ink: #FFFFFF;
+    --key-shadow: #000000; --key-tray: #2B2B2D; --scrim: rgba(0, 0, 0, .5); --frame: #4A4A4C; --frame-edge: #2A2A2C;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --pg-bg: #000000; --pg-fg: #F5F5F7; --pg-fg2: #86868B; --pg-card: #1C1C1E; --pg-sep: #38383A;
+  --pg-link: #2997FF; --pg-red: #FF453A; --pg-green: #30D158; --pg-off: #39393D; --pg-shadow: rgba(0, 0, 0, .7);
+  --bg: #000000; --bg-grouped: #000000; --cell: #1C1C1E; --cell2: #1C1C1E; --sheet-bg: #1C1C1E; --sheet-cell: #2C2C2E;
+  --label: #FFFFFF; --label2: rgba(235, 235, 245, .6); --label3: rgba(235, 235, 245, .3); --sep: rgba(84, 84, 88, .55);
+  --fill: rgba(118, 118, 128, .24); --tint: #FF9F0A; --tint-bg: rgba(255, 159, 10, .2); --green: #30D158; --green-bg: rgba(48, 209, 88, .2);
+  --gray-bg: rgba(118, 118, 128, .3); --red: #FF453A; --blue: #0A84FF; --purple: #BF5AF2; --gray: #8E8E93;
+  --switch-off: #39393D; --bar: rgba(22, 22, 22, .9); --alert: rgba(40, 40, 40, .92); --alert-sep: rgba(84, 84, 88, .6);
+  --as-cancel: #2C2C2E; --banner: rgba(48, 48, 48, .9); --key: #6B6B6E; --key-down: #4A4A4C; --key-ink: #FFFFFF;
+  --key-shadow: #000000; --key-tray: #2B2B2D; --scrim: rgba(0, 0, 0, .5); --frame: #4A4A4C; --frame-edge: #2A2A2C;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--pg-bg);
+  color: var(--pg-fg);
+  font-family: var(--font);
+  font-size: 17px;
+  line-height: 1.47;
+  letter-spacing: -.011em;
+  -webkit-font-smoothing: antialiased;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px;
+}
+button { font: inherit; color: inherit; letter-spacing: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+button:disabled { cursor: default; }
+:focus-visible { outline: 2px solid var(--pg-link); outline-offset: 2px; }
+.screen :focus-visible { outline-color: var(--blue); }
+
+/* ---------- page ---------- */
+.stage {
+  min-height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 360px) auto;
+  grid-template-rows: 1fr auto auto 1fr;
+  grid-template-areas: ". device" "intro device" "controls device" ". device";
+  justify-content: center;
+  column-gap: clamp(48px, 7vw, 112px);
+}
+.intro { grid-area: intro; padding-bottom: 36px; }
+.controls { grid-area: controls; }
+.device-col { grid-area: device; align-self: center; display: grid; place-items: center; }
+@media (max-width: 859px) {
+  .stage { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; grid-template-areas: "intro" "device" "controls"; row-gap: 36px; }
+  .intro { padding-bottom: 0; }
+}
+
+.intro h1 { margin: 0 0 6px; font-size: clamp(40px, 4vw, 56px); font-weight: 700; line-height: 1.07; letter-spacing: -.028em; }
+.intro .sub { margin: 0 0 20px; max-width: 22ch; font-size: 24px; font-weight: 600; line-height: 1.25; letter-spacing: -.02em; color: var(--pg-fg2); text-wrap: balance; }
+.intro .body { margin: 0; max-width: 34ch; }
+
+.controls { display: grid; gap: 6px; align-content: start; }
+.ctl-h { margin: 0 16px; font-size: 13px; text-transform: uppercase; letter-spacing: 0; color: var(--pg-fg2); }
+.ctl-h:not(:first-child) { margin-top: 20px; }
+.pg-group { background: var(--pg-card); border-radius: 12px; overflow: hidden; }
+.pg-row { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 46px; padding: 0 16px; font-size: 16px; text-align: left; }
+.pg-row + .pg-row::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--pg-sep); }
+button.pg-row:active { background: var(--pg-sep); }
+.pg-row.link { color: var(--pg-link); }
+.pg-row.danger { color: var(--pg-red); }
+kbd { font: inherit; font-size: 12px; line-height: 18px; min-width: 22px; text-align: center; color: var(--pg-fg2); border: 1px solid var(--pg-sep); border-radius: 5px; padding: 0 5px; }
+.pg-sw { flex: none; position: relative; width: 51px; height: 31px; border-radius: 16px; background: var(--pg-off); transition: background .25s; }
+.pg-sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 3px 8px rgba(0, 0, 0, .15), 0 3px 1px rgba(0, 0, 0, .06); transition: transform .25s; }
+.pg-sw[aria-checked="true"] { background: var(--pg-green); }
+.pg-sw[aria-checked="true"]::after { transform: translateX(20px); }
+.ctl-f { margin: 8px 16px 0; font-size: 13px; line-height: 1.38; color: var(--pg-fg2); }
+
+/* ---------- device ---------- */
+.device-slot { position: relative; width: calc(417px * var(--s)); height: calc(876px * var(--s)); }
+.device-slot.is-ringing { animation: buzz 1.2s infinite; }
+@keyframes buzz {
+  0%, 40%, 100% { transform: none; }
+  5%, 15%, 25% { transform: translateX(-2px); }
+  10%, 20%, 30% { transform: translateX(2px); }
+}
+.device {
+  position: relative;
+  width: 417px; height: 876px;
+  transform: scale(var(--s)); transform-origin: 0 0;
+  border-radius: 68px;
+  background: var(--bezel);
+  box-shadow:
+    0 0 0 1px var(--frame-edge),
+    0 0 0 4px var(--frame),
+    0 0 0 5px var(--frame-edge),
+    0 40px 80px -30px var(--pg-shadow);
+}
+.btn-hw { position: absolute; width: 4px; border-radius: 2px; background: var(--frame); }
+.btn-hw.action { left: -8px; top: 150px; height: 32px; }
+.btn-hw.vol-up { left: -8px; top: 214px; height: 60px; }
+.btn-hw.vol-dn { left: -8px; top: 290px; height: 60px; }
+.btn-hw.side { right: -8px; top: 240px; height: 96px; }
+
+.screen {
+  position: absolute; inset: 12px;
+  border-radius: 56px; overflow: hidden; overflow: clip;
+  background: var(--black);
+  color: var(--label);
+  font-family: var(--font);
+  font-size: 17px; line-height: 1.29; letter-spacing: -.012em;
+  isolation: isolate;
+}
+.statusbar {
+  position: absolute; top: 0; left: 0; right: 0; height: 54px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 34px 0 52px;
+  font-size: 17px; font-weight: 600; letter-spacing: -.02em;
+  color: var(--label);
+  z-index: 80; pointer-events: none;
+  transition: color .3s;
+}
+.screen.ringing .statusbar, .screen.stacked .statusbar, .screen.full .statusbar { color: var(--ls-ink); }
+.screen.adshow .statusbar { color: var(--ad-ink); }
+.sb-time { min-width: 44px; text-align: center; font-variant-numeric: tabular-nums; }
+.sb-icons { display: flex; gap: 6px; align-items: center; }
+.sb-icons svg { height: 12px; width: auto; fill: currentColor; }
+.island { position: absolute; top: 11px; left: 50%; translate: -50% 0; width: 124px; height: 36px; border-radius: 20px; background: var(--black); z-index: 85; }
+.homebar { position: absolute; bottom: 8px; left: 50%; translate: -50% 0; width: 138px; height: 5px; border-radius: 3px; background: var(--label); z-index: 95; pointer-events: none; }
+.screen.ringing .homebar, .screen.full .homebar { background: var(--ls-ink); }
+.screen.adshow .homebar { background: var(--ad-ink); }
+
+svg.f { fill: currentColor; }
+svg.s { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* app */
+.app {
+  position: absolute; inset: 0;
+  background: var(--bg);
+  overflow: hidden; overflow: clip;
+  transform-origin: 50% 0;
+  transition: transform .4s cubic-bezier(.2, .9, .25, 1), border-radius .4s, filter .4s;
+}
+.app[data-tab="wallet"], .app[data-tab="pro"] { background: var(--bg-grouped); }
+.screen.stacked .app, .screen.stacked .ring.open { transform: translateY(10px) scale(.92); border-radius: 14px; filter: brightness(.8); }
+.view { position: absolute; inset: 0; overflow-y: auto; padding: 98px 0 108px; scrollbar-width: none; }
+.view::-webkit-scrollbar, .sheet::-webkit-scrollbar, .pg-body::-webkit-scrollbar { display: none; }
+.navbar {
+  position: absolute; top: 0; left: 0; right: 0; height: 98px;
+  padding: 54px 16px 0;
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+  z-index: 4;
+  border-bottom: 1px solid transparent;
+  transition: background .2s, border-color .2s;
+}
+.app.scrolled .navbar { background: var(--bar); -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%); border-bottom-color: var(--sep); }
+.nav-title { font-weight: 600; opacity: 0; transition: opacity .2s; }
+.app.scrolled .nav-title { opacity: 1; }
+.nav-btn { justify-self: start; display: inline-flex; align-items: center; height: 44px; color: var(--tint); }
+.nav-btn.r { justify-self: end; }
+.nav-btn.bold { font-weight: 600; }
+.nav-btn svg { width: 22px; height: 22px; stroke-width: 2.2; }
+.lt { margin: 0 16px 4px; font-size: 34px; font-weight: 700; line-height: 41px; letter-spacing: .01em; }
+.tabbar {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 83px;
+  padding: 7px 0 34px;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  background: var(--bar);
+  -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid var(--sep);
+  z-index: 5;
+}
+.tab { display: flex; flex-direction: column; align-items: center; gap: 1px; font-size: 10px; font-weight: 500; letter-spacing: .01em; color: var(--gray); }
+.tab svg { width: 28px; height: 28px; }
+.tab[aria-current="page"] { color: var(--tint); }
+
+/* plain lists (alarms, recents) */
+.sec-plain { display: flex; align-items: center; gap: 6px; margin: 20px 16px 0; padding-bottom: 8px; font-weight: 600; border-bottom: 1px solid var(--sep); }
+.lt + .sec-plain { margin-top: 10px; }
+.sec-plain svg { width: 20px; height: 20px; color: var(--label2); }
+.sec-plain .badge-pro { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: var(--tint); }
+.sec-plain .badge-pro svg { width: 15px; height: 15px; color: var(--tint); }
+.plist { list-style: none; margin: 0 0 0 16px; padding: 0; }
+.prow { display: flex; align-items: center; gap: 12px; min-height: 86px; padding: 6px 16px 8px 0; border-bottom: 1px solid var(--sep); }
+.prow-main { flex: 1; min-width: 0; display: grid; text-align: left; }
+.al-time { font-size: 56px; font-weight: 300; line-height: 1.04; letter-spacing: -.015em; font-variant-numeric: tabular-nums; }
+.al-time small { margin-left: 3px; font-size: 32px; letter-spacing: 0; }
+.al-sub { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.prow.off .al-time, .prow.off .al-sub { color: var(--label2); }
+.bal-plain { font-size: 34px; font-weight: 300; line-height: 1.15; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.bal-note { font-size: 13px; color: var(--label2); }
+.pill { flex: none; padding: 5px 12px; border-radius: 999px; background: var(--fill); color: var(--tint); font-size: 15px; font-weight: 600; text-transform: uppercase; }
+.del-dot { flex: none; position: relative; width: 22px; height: 22px; border-radius: 50%; background: var(--red); }
+.del-dot::after { content: ""; position: absolute; left: 5px; right: 5px; top: 10px; height: 2px; border-radius: 1px; background: #FFFFFF; }
+.chev { flex: none; width: 14px; height: 14px; color: var(--label3); stroke-width: 3; }
+.foot { margin: 10px 16px 0; font-size: 13px; line-height: 1.38; color: var(--label2); }
+
+/* grouped lists */
+.group { margin: 0 16px; background: var(--cell); border-radius: 10px; overflow: hidden; }
+.app[data-tab="timer"] .group, .app[data-tab="alarm"] .group { background: var(--cell2); }
+.sheet .group { background: var(--sheet-cell); }
+.row { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 44px; padding: 10px 16px; text-align: left; }
+.row + .row::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--sep); }
+.group.tiles .row + .row::before { left: 57px; }
+button.row:active { background: var(--fill); }
+.row .val { margin-left: auto; color: var(--label2); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.row.center { justify-content: center; }
+.row.tint { color: var(--tint); }
+.row.danger { color: var(--red); }
+.row.total { font-weight: 600; }
+.row.total .val { color: var(--label); }
+.row input { flex: 1; min-width: 0; border: 0; padding: 0; background: transparent; color: var(--label2); text-align: right; font: inherit; letter-spacing: inherit; outline: none; }
+.row input:focus { color: var(--label); }
+.row input::placeholder { color: var(--label3); }
+.r-txt { flex: 1; min-width: 0; display: grid; }
+.r-txt b { font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.r-txt small { font-size: 13px; line-height: 1.3; color: var(--label2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sec-h { margin: 24px 32px 7px; font-size: 13px; text-transform: uppercase; letter-spacing: 0; color: var(--label2); }
+.sec-f { margin: 7px 32px 0; font-size: 13px; line-height: 1.38; color: var(--label2); }
+.sec-f.center { text-align: center; margin-inline: 24px; }
+.tile { flex: none; width: 29px; height: 29px; border-radius: 7px; display: grid; place-items: center; color: #FFFFFF; font-size: 12px; font-weight: 700; letter-spacing: 0; }
+.tile svg { width: 19px; height: 19px; }
+.tile.orange { background: var(--tint); }
+.tile.green { background: var(--green); }
+.tile.blue { background: var(--blue); }
+.tile.purple { background: var(--purple); }
+.tile.red { background: var(--red); }
+.tile.gray { background: var(--gray); }
+.tile.leaf::before { content: ""; width: 13px; height: 13px; border-radius: 0 11px; background: #FFFFFF; transform: rotate(-8deg); }
+.sw { flex: none; position: relative; width: 51px; height: 31px; border-radius: 16px; background: var(--switch-off); transition: background .25s; }
+.sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: var(--knob); box-shadow: 0 3px 8px rgba(0, 0, 0, .15), 0 3px 1px rgba(0, 0, 0, .06); transition: transform .25s cubic-bezier(.3, .7, .4, 1); }
+.sw[aria-checked="true"] { background: var(--green); }
+.sw[aria-checked="true"]::after { transform: translateX(20px); }
+.row .sw { margin-left: auto; }
+.check { flex: none; width: 20px; height: 20px; margin-left: auto; color: var(--tint); stroke-width: 2.6; }
+.check.off { visibility: hidden; }
+
+/* picker wheels */
+.wheel { position: relative; display: flex; justify-content: center; align-items: center; height: 216px; margin: 6px 16px; }
+.wheel-band { position: absolute; left: 0; right: 0; top: 90px; height: 36px; border-radius: 8px; background: var(--fill); pointer-events: none; }
+.wheel-col { position: relative; width: 64px; }
+.wheel-col.unit { width: 108px; }
+.wheel-scroll {
+  position: relative; height: 216px;
+  overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none;
+  perspective: 500px;
+  -webkit-mask-image: linear-gradient(transparent, #000 30%, #000 70%, transparent);
+          mask-image: linear-gradient(transparent, #000 30%, #000 70%, transparent);
+  outline: none;
+}
+.wheel-scroll::-webkit-scrollbar { display: none; }
+.wheel-scroll:focus-visible { background: var(--fill); border-radius: 8px; }
+.wheel-pad { height: 90px; }
+.wheel-item { height: 36px; line-height: 36px; text-align: center; font-size: 23px; font-variant-numeric: tabular-nums; scroll-snap-align: center; cursor: pointer; user-select: none; -webkit-user-select: none; }
+.unit .wheel-item { text-align: right; padding-right: 60px; }
+.wheel-unit { position: absolute; top: 90px; left: 54px; height: 36px; line-height: 36px; font-size: 17px; font-weight: 600; pointer-events: none; }
+
+/* timers */
+.circ-row { display: flex; justify-content: space-between; padding: 4px 18px 26px; }
+.circ { width: 82px; height: 82px; border-radius: 50%; font-size: 16px; font-weight: 500; text-align: center; }
+.circ.gray { background: var(--gray-bg); color: var(--label); box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--gray-bg); }
+.circ.green { background: var(--green-bg); color: var(--green); box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--green-bg); }
+.circ.orange { background: var(--tint-bg); color: var(--tint); box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--tint-bg); }
+.circ:disabled { opacity: .5; }
+.cd { position: relative; width: 248px; height: 248px; margin: 0 auto -6px; }
+.cd svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.cd-track { fill: none; stroke: var(--fill); stroke-width: 7; }
+.cd-prog { fill: none; stroke: var(--tint); stroke-width: 7; stroke-linecap: round; transition: stroke-dashoffset .9s linear; }
+.cd-center { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; gap: 4px; }
+.cd-time { font-size: 62px; font-weight: 200; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.cd-end { display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 17px; color: var(--label2); font-variant-numeric: tabular-nums; }
+.cd-end svg { width: 15px; height: 15px; }
+.rec-t { font-size: 40px; font-weight: 300; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.rec-l { font-size: 15px; color: var(--label2); }
+.play-btn { flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--green-bg); color: var(--green); display: grid; place-items: center; }
+.play-btn svg { width: 17px; height: 17px; margin-left: 2px; }
+.app[data-tab="timer"] .prow { min-height: 72px; }
+
+/* wallet & pro */
+.bal { padding: 16px; display: grid; gap: 2px; }
+.bal-k { font-size: 15px; color: var(--label2); }
+.bal-v { font-size: 34px; font-weight: 700; line-height: 1.2; letter-spacing: .005em; font-variant-numeric: tabular-nums; }
+.bal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.tinted { height: 36px; border-radius: 9px; background: var(--tint-bg); color: var(--tint); font-size: 15px; font-weight: 600; text-align: center; }
+.h-amt { margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.h-amt.pos { color: var(--green); }
+.h-amt.zero { color: var(--label2); }
+.pro-head { display: grid; justify-items: center; text-align: center; padding: 6px 24px 4px; }
+.pro-head h2 { margin: 14px 0 4px; font-size: 28px; font-weight: 700; letter-spacing: .005em; }
+.pro-head p { margin: 0; color: var(--label2); font-size: 15px; max-width: 30ch; }
+.badge { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 5px; background: var(--green); color: #FFFFFF; font-size: 11px; font-weight: 600; vertical-align: 2px; }
+.cta { padding: 20px 16px 0; }
+.big-btn { display: block; width: 100%; height: 50px; border-radius: 12px; background: var(--tint); color: var(--on-tint); font-size: 17px; font-weight: 600; text-align: center; }
+.big-btn:disabled { opacity: .45; }
+
+/* app icon */
+.app-ico { flex: none; display: grid; place-items: center; color: #FFFFFF; background: linear-gradient(180deg, var(--icon-1), var(--icon-2)); }
+.app-ico svg { width: 64%; height: 64%; }
+.app-ico.xs { width: 38px; height: 38px; border-radius: 9px; }
+.app-ico.sm { width: 44px; height: 44px; border-radius: 10px; }
+.app-ico.lg { width: 88px; height: 88px; border-radius: 20px; box-shadow: 0 6px 16px -6px rgba(255, 138, 0, .5); }
+
+/* lock screen (alarm ringing) */
+.ring {
+  position: absolute; inset: 0; z-index: 30;
+  display: flex; flex-direction: column;
+  padding: 66px 22px 44px;
+  color: var(--ls-ink);
+  background: linear-gradient(180deg, var(--ls-1) 0%, var(--ls-2) 38%, var(--ls-3) 66%, var(--ls-4) 88%, var(--ls-5) 100%);
+  overflow: hidden;
+  opacity: 0; visibility: hidden; transform: scale(1.06); transform-origin: 50% 0;
+  transition: opacity .3s, transform .3s, visibility 0s .3s, border-radius .4s, filter .4s;
+}
+.ring.open { opacity: 1; visibility: visible; transform: none; transition: opacity .3s, transform .4s cubic-bezier(.2, .9, .25, 1), border-radius .4s, filter .4s; }
+.ls-top { text-align: center; }
+.ls-date { margin: 0; font-size: 20px; font-weight: 600; opacity: .9; }
+.ls-time { margin: -4px 0 0; font-size: 100px; font-weight: 700; line-height: 1.05; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+.ls-alarm { margin-top: auto; padding-bottom: 28px; text-align: center; }
+.ls-kind { display: inline-flex; align-items: center; gap: 6px; margin: 0; font-size: 15px; font-weight: 600; opacity: .8; }
+.ls-kind svg { width: 16px; height: 16px; }
+.ls-label { margin: 6px 0 4px; font-size: 28px; font-weight: 700; letter-spacing: -.01em; line-height: 1.15; }
+.ls-price { margin: 0; font-size: 15px; opacity: .85; font-variant-numeric: tabular-nums; }
+.ls-surge { margin: 6px 0 0; font-size: 15px; font-weight: 600; color: var(--ls-warn); }
+.ls-bottom { display: grid; gap: 14px; }
+.ls-snooze { height: 60px; border-radius: 30px; background: var(--ls-orange); color: var(--ls-ink); font-size: 20px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.ls-snooze small { font-size: 15px; font-weight: 500; opacity: .85; }
+.slide { position: relative; height: 64px; border-radius: 32px; background: rgba(255, 255, 255, .2); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; }
+.slide-fill { position: absolute; left: 4px; top: 4px; bottom: 4px; width: 56px; border-radius: 28px; background: rgba(255, 255, 255, .22); transition: width .3s; }
+.slide-text {
+  position: absolute; inset: 0; display: grid; place-items: center; padding-left: 52px;
+  font-size: 18px; font-weight: 500;
+  color: transparent;
+  background: linear-gradient(90deg, rgba(255, 255, 255, .5) 0%, rgba(255, 255, 255, .5) 40%, var(--ls-ink) 50%, rgba(255, 255, 255, .5) 60%, rgba(255, 255, 255, .5) 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  animation: shimmer 2.8s linear infinite;
+  pointer-events: none;
+}
+@keyframes shimmer { from { background-position: 100% 0; } to { background-position: -150% 0; } }
+.slide-knob { position: absolute; left: 4px; top: 4px; width: 56px; height: 56px; border-radius: 50%; background: var(--ls-ink); color: var(--ls-knob); display: grid; place-items: center; transition: transform .3s; touch-action: none; cursor: grab; box-shadow: 0 2px 8px rgba(0, 0, 0, .2); }
+.slide-knob svg { width: 24px; height: 24px; stroke-width: 2.4; }
+.slide.nudge .slide-knob { animation: nudge .6s; }
+@keyframes nudge { 30% { transform: translateX(26px); } 60% { transform: translateX(-3px); } }
+.ls-free { justify-self: center; padding: 4px 8px; font-size: 15px; color: rgba(255, 255, 255, .78); }
+
+/* sheets */
+.scrim { position: absolute; inset: 0; z-index: 40; background: var(--scrim); opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s; }
+.scrim.open { opacity: 1; visibility: visible; transition: opacity .3s; }
+.screen.stacked .scrim.open { opacity: 0; }
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 45;
+  background: var(--sheet-bg);
+  transform: translateY(105%);
+  transition: transform .42s cubic-bezier(.2, .9, .25, 1);
+  overflow-y: auto; scrollbar-width: none;
+}
+.sheet.medium { max-height: 90%; border-radius: 14px 14px 0 0; padding: 6px 0 38px; }
+.sheet.page { top: 64px; border-radius: 12px 12px 0 0; display: flex; flex-direction: column; overflow: hidden; }
+.sheet.full { top: 0; border-radius: 0; background: var(--black); overflow: hidden; }
+.sheet.open { transform: none; }
+.grabber { width: 36px; height: 5px; margin: 0 auto 10px; border-radius: 3px; background: var(--label3); }
+.pay-top { display: flex; align-items: center; gap: 10px; padding: 2px 16px 16px; }
+.pay-top .r-txt b { font-size: 15px; font-weight: 600; }
+.x-btn { flex: none; margin-left: auto; width: 30px; height: 30px; border-radius: 50%; background: var(--fill); color: var(--label2); display: grid; place-items: center; }
+.x-btn svg { width: 13px; height: 13px; stroke-width: 3; }
+.pay-title { margin: 0 16px 14px; font-size: 22px; font-weight: 700; letter-spacing: .005em; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; margin: 0 16px 14px; padding: 2px; border-radius: 9px; background: var(--fill); }
+.seg button { height: 30px; border-radius: 7px; font-size: 13px; font-weight: 500; text-align: center; }
+.seg button[aria-checked="true"] { background: var(--sheet-cell); font-weight: 600; box-shadow: 0 3px 8px rgba(0, 0, 0, .12), 0 3px 1px rgba(0, 0, 0, .04); }
+.busy { height: 50px; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; }
+.busy.done { color: var(--green); }
+.busy.done svg { width: 26px; height: 26px; stroke-width: 2.6; }
+.spinner { position: relative; width: 22px; height: 22px; }
+.spinner i { position: absolute; left: 9.75px; top: 0; width: 2.5px; height: 6.5px; border-radius: 2px; background: var(--label2); transform-origin: 1.25px 11px; animation: spin-fade .8s linear infinite; }
+@keyframes spin-fade { from { opacity: 1; } to { opacity: .15; } }
+.tlinks { display: grid; justify-items: center; gap: 2px; padding-top: 12px; }
+.tlink { padding: 6px; font-size: 15px; color: var(--tint); }
+
+.sh-nav { flex: none; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 56px; padding: 0 16px; }
+.sh-nav .t { font-weight: 600; }
+.sh-nav .l { justify-self: start; display: inline-flex; align-items: center; gap: 2px; color: var(--tint); }
+.sh-nav .l svg { width: 20px; height: 20px; margin-left: -6px; stroke-width: 2.6; }
+.sh-nav .r { justify-self: end; color: var(--tint); font-weight: 600; }
+.sh-nav .r:disabled { color: var(--label3); }
+.pg-body { flex: 1; overflow-y: auto; padding-bottom: 40px; scrollbar-width: none; }
+
+.m-prog { display: flex; gap: 6px; margin: 2px 16px 0; }
+.m-prog i { flex: 1; height: 4px; border-radius: 2px; background: var(--fill); }
+.m-prog i.on { background: var(--green); }
+.m-q { margin: 34px 0 18px; text-align: center; font-size: 56px; font-weight: 300; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.m-field { margin: 0 16px; height: 52px; border-radius: 10px; background: var(--sheet-cell); display: flex; align-items: center; justify-content: center; font-size: 28px; font-variant-numeric: tabular-nums; }
+.m-field.shake { animation: shake .4s; }
+@keyframes shake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+.caret { width: 2px; height: 30px; margin-left: 2px; background: var(--tint); animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.m-msg { margin: 12px 16px 0; min-height: 20px; text-align: center; font-size: 15px; color: var(--red); }
+.numpad { margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 6px 6px 36px; background: var(--key-tray); }
+.key { height: 46px; border-radius: 5px; background: var(--key); color: var(--key-ink); box-shadow: 0 1px 0 var(--key-shadow); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; text-align: center; }
+.key:active { background: var(--key-down); }
+.key b { font-size: 25px; font-weight: 400; }
+.key small { margin-top: 1px; font-size: 9.5px; font-weight: 700; letter-spacing: 2px; padding-left: 2px; }
+.key.flat { background: transparent; box-shadow: none; }
+.key.flat:active { background: var(--key-down); }
+.key svg { width: 26px; height: 26px; }
+
+.ad { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 60px 24px 46px; background: linear-gradient(170deg, var(--ad-1), var(--ad-2)); color: var(--ad-ink); }
+.ad-top { display: flex; justify-content: space-between; align-items: center; }
+.ad-tag { padding: 3px 8px; border-radius: 5px; background: rgba(0, 0, 0, .08); font-size: 12px; font-weight: 600; }
+.ad-count { width: 32px; height: 32px; border-radius: 50%; background: rgba(0, 0, 0, .5); color: #FFFFFF; font-size: 14px; font-weight: 600; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.ad-count svg { width: 14px; height: 14px; stroke-width: 3; }
+.ad-art { flex: 1; display: grid; place-items: center; }
+.pillow { position: relative; width: 220px; height: 122px; border-radius: 60px 60px 52px 52px / 68px 68px 52px 52px; background: var(--ad-pillow); box-shadow: inset 0 -14px 0 rgba(0, 0, 0, .05), 0 26px 30px -18px rgba(0, 0, 0, .35); }
+.ad-brand { margin: 0; font-size: 40px; font-weight: 800; line-height: 1; letter-spacing: -.035em; }
+.ad-copy { margin: 10px 0 6px; max-width: 28ch; font-size: 17px; }
+.ad-fine { margin: 0 0 20px; font-size: 12px; opacity: .65; }
+.ad-cta { height: 50px; border-radius: 12px; background: var(--ad-ink); color: var(--ad-1); font-size: 17px; font-weight: 600; text-align: center; }
+
+/* alerts & action sheets */
+.dialog { position: absolute; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; visibility: hidden; opacity: 0; transition: opacity .2s, visibility 0s .2s; }
+.dialog.open { visibility: visible; opacity: 1; transition: opacity .2s; }
+.dlg-scrim { position: absolute; inset: 0; background: var(--scrim); }
+.alert { position: relative; width: 270px; border-radius: 14px; overflow: hidden; text-align: center; background: var(--alert); -webkit-backdrop-filter: blur(30px) saturate(180%); backdrop-filter: blur(30px) saturate(180%); transform: scale(1.12); transition: transform .25s cubic-bezier(.2, .9, .25, 1); }
+.dialog.open .alert { transform: none; }
+.al-body { display: grid; gap: 2px; padding: 19px 16px 18px; }
+.al-body b { font-size: 17px; font-weight: 600; }
+.al-body p { margin: 0; font-size: 13px; line-height: 1.35; }
+.al-btns { display: grid; border-top: 1px solid var(--alert-sep); }
+.al-btns.two { grid-template-columns: 1fr 1fr; }
+.al-btn { height: 44px; padding: 0 8px; color: var(--blue); text-align: center; }
+.al-btns:not(.two) .al-btn + .al-btn { border-top: 1px solid var(--alert-sep); }
+.al-btns.two .al-btn + .al-btn { border-left: 1px solid var(--alert-sep); }
+.al-btn.bold, .as-btn.bold { font-weight: 600; }
+.al-btn.destructive, .as-btn.destructive { color: var(--red); }
+.dialog.dlg-sheet { align-items: flex-end; padding: 0 8px 34px; }
+.asheet { position: relative; width: 100%; display: grid; gap: 8px; transform: translateY(115%); transition: transform .32s cubic-bezier(.2, .9, .25, 1); }
+.dialog.open .asheet { transform: none; }
+.as-group { border-radius: 14px; overflow: hidden; background: var(--alert); -webkit-backdrop-filter: blur(30px) saturate(180%); backdrop-filter: blur(30px) saturate(180%); }
+.as-head { display: grid; gap: 2px; padding: 14px 16px; text-align: center; font-size: 13px; color: var(--label2); }
+.as-head b { font-weight: 600; }
+.as-head p { margin: 0; }
+.as-btn { display: block; width: 100%; height: 57px; border-top: 1px solid var(--alert-sep); font-size: 20px; color: var(--blue); text-align: center; }
+.as-cancel { height: 57px; border-radius: 14px; background: var(--as-cancel); font-size: 20px; font-weight: 600; color: var(--blue); text-align: center; }
+
+/* notification banner */
+.banner {
+  position: absolute; top: 52px; left: 8px; right: 8px; z-index: 90;
+  display: flex; gap: 10px; align-items: center;
+  padding: 12px 14px; border-radius: 22px;
+  background: var(--banner);
+  -webkit-backdrop-filter: blur(30px) saturate(180%); backdrop-filter: blur(30px) saturate(180%);
+  color: var(--label);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+  transform: translateY(-140%); opacity: 0;
+  transition: transform .5s cubic-bezier(.2, .9, .25, 1), opacity .3s;
+  pointer-events: none;
+}
+.banner.show { transform: none; opacity: 1; }
+.bn-txt { flex: 1; min-width: 0; }
+.bn-top { display: flex; justify-content: space-between; gap: 8px; }
+.bn-top b { font-size: 15px; font-weight: 600; }
+.bn-top span { font-size: 13px; color: var(--label2); }
+.bn-txt p { margin: 1px 0 0; font-size: 15px; line-height: 1.3; }
+
+@media (prefers-reduced-motion: reduce) {
+  .device-slot.is-ringing, .slide-text, .caret { animation: none; }
+  .slide-text { color: var(--ls-ink); background: none; }
+}
+</style>
+</head>
+<body>
+<main class="stage">
+  <section class="intro">
+    <h1>Coin Alarm</h1>
+    <p class="sub">The alarm clock that makes you pay to stop it.</p>
+    <p class="body">Slide to stop and you get a bill: $0.99 plus a $0.29 service fee. Snoozing costs money too, and the price goes up every time. Too cheap to pay? Go Pro, solve three math problems, or sit through an ad.</p>
+  </section>
+
+  <div class="device-col">
+    <div class="device-slot" id="device-slot">
+      <div class="device">
+        <span class="btn-hw action" aria-hidden="true"></span>
+        <span class="btn-hw vol-up" aria-hidden="true"></span>
+        <span class="btn-hw vol-dn" aria-hidden="true"></span>
+        <span class="btn-hw side" aria-hidden="true"></span>
+        <div class="screen" id="screen">
+          <div class="statusbar" aria-hidden="true">
+            <span class="sb-time" id="sb-time">9:41</span>
+            <span class="sb-icons">
+              <svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+              <svg viewBox="0 0 16 12"><path d="M8 2.4c2.3 0 4.4.9 6 2.4l1.3-1.4A10.4 10.4 0 0 0 8 .4 10.4 10.4 0 0 0 .7 3.4L2 4.8a8.4 8.4 0 0 1 6-2.4zm0 3.6c1.3 0 2.5.5 3.4 1.4l1.4-1.4A6.8 6.8 0 0 0 8 4a6.8 6.8 0 0 0-4.8 2l1.4 1.4C5.5 6.5 6.7 6 8 6zm0 5.6 2-2.1a2.8 2.8 0 0 0-4 0z"/></svg>
+              <svg viewBox="0 0 27 12"><rect x=".5" y=".5" width="23" height="11" rx="3.2" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="15" height="8" rx="1.8"/><path d="M25 4v4c.8-.3 1.4-1.1 1.4-2s-.6-1.7-1.4-2z" opacity=".4"/></svg>
+            </span>
+          </div>
+          <div class="island" aria-hidden="true"></div>
+
+          <div class="app" id="app" data-tab="alarm">
+            <div class="navbar" id="navbar"></div>
+            <div class="view" id="view"></div>
+            <nav class="tabbar" id="tabbar" aria-label="Tabs"></nav>
+          </div>
+
+          <div class="ring" id="ring" role="alertdialog" aria-label="Alarm ringing" inert></div>
+          <div class="scrim" id="scrim"></div>
+          <div class="sheet" id="sheet" role="dialog" aria-modal="true" inert></div>
+          <div class="dialog" id="dialog" inert></div>
+          <div class="banner" id="banner" role="status" aria-live="polite">
+            <span class="app-ico xs" id="bn-ico"></span>
+            <div class="bn-txt"><div class="bn-top"><b>Coin Alarm</b><span>now</span></div><p id="bn-msg"></p></div>
+          </div>
+          <div class="homebar" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="controls" aria-label="Demo controls">
+    <p class="ctl-h">Try It</p>
+    <div class="pg-group">
+      <button class="pg-row link" id="ctl-alarm" type="button"><span>Ring Alarm Now</span><kbd>A</kbd></button>
+      <button class="pg-row link" id="ctl-timer" type="button"><span>Finish Timer Now</span><kbd>T</kbd></button>
+    </div>
+    <p class="ctl-h">Settings</p>
+    <div class="pg-group">
+      <div class="pg-row"><span id="lbl-sound">Alarm Sound</span><button class="pg-sw" id="ctl-sound" type="button" role="switch" aria-checked="true" aria-labelledby="lbl-sound"></button></div>
+      <div class="pg-row"><span id="lbl-pro">Pro Subscription</span><button class="pg-sw" id="ctl-pro" type="button" role="switch" aria-checked="false" aria-labelledby="lbl-pro"></button></div>
+      <button class="pg-row danger" id="ctl-reset" type="button">Reset Demo Data</button>
+    </div>
+    <p class="ctl-f">A just-for-fun mockup. Every price and payment is pretend. Click the page once so your browser lets the alarm make sound.</p>
+  </aside>
+</main>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ---------- helpers ---------- */
+  const $ = (s, r = document) => r.querySelector(s);
+  const pad = n => String(n).padStart(2, '0');
+  const h12 = h => (h % 12) || 12;
+  const ampm = h => (h < 12 ? 'AM' : 'PM');
+  const clock = (h, m) => `${h12(h)}:${pad(m)}`;
+  const clockAP = (h, m) => `${clock(h, m)} ${ampm(h)}`;
+  const clockOf = d => clock(d.getHours(), d.getMinutes());
+  const clockAPOf = d => clockAP(d.getHours(), d.getMinutes());
+  const usd = c => '$' + (c / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const usdShort = c => (c % 100 === 0 ? '$' + (c / 100).toLocaleString('en-US') : usd(c));
+  const dur = s => (s >= 3600 ? `${Math.floor(s / 3600)}:${pad(Math.floor(s % 3600 / 60))}:${pad(s % 60)}` : `${pad(Math.floor(s / 60))}:${pad(s % 60)}`);
+  const durShort = s => (s >= 3600 ? dur(s) : `${Math.floor(s / 60)}:${pad(s % 60)}`);
+  const durWords = s => {
+    const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), d = s % 60;
+    return [h && `${h} hr`, m && `${m} min`, d && `${d} sec`].filter(Boolean).join(' ') || '0 sec';
+  };
+  const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+  const times = n => (n === 1 ? 'once' : n === 2 ? 'twice' : `${n} times`);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fmtMult = m => `${m}×`;
+  const DAY_SHORT = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const DAY_LONG = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const DAY_ORDER = [6, 0, 1, 2, 3, 4, 5];
+  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const DAYMS = 864e5;
+
+  /* prices in cents */
+  const PRICE = { stopAlarm: 99, stopTimer: 49, snooze: 49, fee: 29, monthly: 499, yearly: 2999, discount: 249 };
+  const STORE = 'coinalarm-mockup-v3';
+  const METHODS = [
+    { id: 'wallet', name: 'Coin Wallet', tile: 'orange', glyph: '$' },
+    { id: 'later', name: 'Sleep Later', sub: 'Wake up now, pay next month', tile: 'blue', glyph: 'SL' },
+    { id: 'leaf', name: 'Leaf Cash', sub: 'Picked fresh from the tree', tile: 'green leaf', glyph: '' },
+  ];
+  const PRESETS = [
+    { s: 180, label: 'Instant noodles' },
+    { s: 420, label: 'Boiled egg' },
+    { s: 1500, label: 'Focus' },
+    { s: 60, label: 'Quick test' },
+  ];
+
+  const pathIcon = d => `<svg class="f" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="${d}"/></svg>`;
+  const lineIcon = (d, cls = '') => `<svg class="s ${cls}" viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
+  const CHEV = '<path d="M9 5.5l6.5 6.5L9 18.5"/>';
+  const CHECK = '<path d="M5 12.5l4.5 4.5L19 7.5"/>';
+  const I = {
+    alarm: pathIcon('M12 4.5A8 8 0 1 1 12 20.5 8 8 0 0 1 12 4.5ZM11.1 8.2v5.1l4 2.4.9-1.5-3.1-1.8V8.2ZM6.4 2.4l1.1 1.3L3.8 6.8 2.7 5.5ZM17.6 2.4l3.7 3.1-1.1 1.3-3.7-3.1Z'),
+    timer: pathIcon('M12 6A8 8 0 1 1 12 22 8 8 0 0 1 12 6ZM11.1 9.5h1.8v5.2h-1.8ZM9.5 2h5v1.8h-5ZM11.1 3.8h1.8V6h-1.8Z'),
+    card: pathIcon('M2 6.5A2.5 2.5 0 0 1 4.5 4h15A2.5 2.5 0 0 1 22 6.5V8H2ZM2 10h20v7.5a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 17.5ZM5 14.5h5V16H5Z'),
+    crown: pathIcon('M3 7.5l4.6 3.8L12 4.5l4.4 6.8L21 7.5 19.3 17.5H4.7ZM4.7 19h14.6v1.6H4.7Z'),
+    bell: pathIcon('M12 2.5A1.5 1.5 0 0 1 13.5 4v.6A6 6 0 0 1 18 10.5v4l1.8 2.4a.7.7 0 0 1-.6 1.1H4.8a.7.7 0 0 1-.6-1.1L6 14.5v-4a6 6 0 0 1 4.5-5.9V4A1.5 1.5 0 0 1 12 2.5ZM9.5 19.5h5a2.5 2.5 0 0 1-5 0Z'),
+    zz: pathIcon('M4 5h7v1.6L6.6 12H11v1.6H4V12l4.4-5.4H4ZM13 11h6v1.4l-3.8 4.6H19v1.4h-6V17l3.8-4.6H13Z'),
+    tag: pathIcon('M3 4.5A1.5 1.5 0 0 1 4.5 3h6.4a1.5 1.5 0 0 1 1.1.4l8.6 8.6a1.5 1.5 0 0 1 0 2.1l-6.4 6.4a1.5 1.5 0 0 1-2.1 0L3.4 12a1.5 1.5 0 0 1-.4-1.1ZM7.5 6a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z'),
+    play: pathIcon('M7 4.8v14.4a.8.8 0 0 0 1.2.7l11.6-7.2a.8.8 0 0 0 0-1.4L8.2 4.1A.8.8 0 0 0 7 4.8Z'),
+    del: pathIcon('M8.5 5h11A1.5 1.5 0 0 1 21 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-11a1.5 1.5 0 0 1-1.1-.5L2.6 12.5a.8.8 0 0 1 0-1L7.4 5.5A1.5 1.5 0 0 1 8.5 5ZM11.3 8.7l-1.1 1.1 2.2 2.2-2.2 2.2 1.1 1.1 2.2-2.2 2.2 2.2 1.1-1.1-2.2-2.2 2.2-2.2-1.1-1.1-2.2 2.2Z'),
+    plus: lineIcon('<path d="M12 4.5v15M4.5 12h15"/>'),
+    back: lineIcon('<path d="M15 5.5L8.5 12l6.5 6.5"/>'),
+    xmark: lineIcon('<path d="M7 7l10 10M17 7 7 17"/>'),
+    arrow: lineIcon('<path d="M5 12h13M12.5 6l6 6-6 6"/>'),
+    checkCircle: lineIcon('<circle cx="12" cy="12" r="9.5"/><path d="M7.8 12.3l2.8 2.8 5.6-5.6"/>'),
+  };
+  const chev = () => lineIcon(CHEV, 'chev');
+  const check = on => lineIcon(CHECK, `check ${on ? '' : 'off'}`);
+  $('#bn-ico').innerHTML = I.alarm;
+
+  /* ---------- state ---------- */
+  function seed() {
+    const now = Date.now();
+    const at = (daysAgo, h, m) => { const d = new Date(now - daysAgo * DAYMS); d.setHours(h, m, 0, 0); return d.getTime(); };
+    return {
+      alarms: [
+        { id: 'a1', h: 5, m: 30, label: 'Rise and shine', days: [1, 1, 1, 1, 1, 1, 1], on: true, snooze: true },
+        { id: 'a2', h: 6, m: 15, label: 'Leave for work', days: [1, 1, 1, 1, 1, 0, 0], on: true, snooze: true },
+        { id: 'a3', h: 13, m: 0, label: 'Power nap', days: [0, 0, 0, 0, 0, 1, 1], on: false, snooze: true },
+      ],
+      wallet: 2092,
+      history: [
+        { t: at(1, 5, 40), title: 'Stopped 5:30 AM alarm', note: '2× surge', amount: -227, kind: 'stop' },
+        { t: at(1, 5, 35), title: 'Snoozed 5:30 AM alarm', note: '1.5× surge', amount: -103, kind: 'snooze' },
+        { t: at(1, 5, 30), title: 'Snoozed 5:30 AM alarm', note: 'Normal price', amount: -78, kind: 'snooze' },
+        { t: at(2, 20, 12), title: 'Wallet top-up', note: 'Pretend money', amount: 2500, kind: 'topup' },
+      ],
+      pro: null,
+      proSaved: 0,
+      muted: false,
+    };
+  }
+  function load() {
+    try {
+      const raw = localStorage.getItem(STORE);
+      if (raw) {
+        const d = JSON.parse(raw);
+        if (d && Array.isArray(d.alarms) && Array.isArray(d.history)) return Object.assign(seed(), d);
+      }
+    } catch (e) { /* storage blocked: use the sample data */ }
+    return seed();
+  }
+  function save() { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) { /* ignore */ } }
+
+  let S = load();
+  const R = {
+    tab: 'alarm',
+    editMode: false,
+    pick: { h: 0, m: 5, s: 0 },
+    timer: { total: 300, remaining: 300, running: false, active: false, endAt: 0 },
+    ringing: null,
+    snooze: null,
+    sheet: null,
+    dialog: null,
+    lastFired: {},
+    proPlan: 'monthly',
+    adT: 0,
+    procT: 0,
+  };
+  const isPro = () => !!S.pro;
+  const planName = p => ({ monthly: 'Monthly', yearly: 'Yearly', discount: 'Monthly (50% off)' }[p] || 'Monthly');
+
+  /* ---------- elements ---------- */
+  const screen = $('#screen'), appEl = $('#app'), viewEl = $('#view'), navEl = $('#navbar'), ringEl = $('#ring');
+  const sheetEl = $('#sheet'), scrimEl = $('#scrim'), dialogEl = $('#dialog'), bannerEl = $('#banner'), slot = $('#device-slot');
+
+  /* ---------- time ---------- */
+  function nextOccurrence(a, now) {
+    const once = !a.days.some(Boolean);
+    for (let i = 0; i < 8; i++) {
+      const d = new Date(now);
+      d.setDate(d.getDate() + i);
+      d.setHours(a.h, a.m, 0, 0);
+      if (d <= now) continue;
+      if (once || a.days[(d.getDay() + 6) % 7]) return d;
+    }
+    return null;
+  }
+  function nextAlarm(now) {
+    let best = null;
+    for (const a of S.alarms) {
+      if (!a.on) continue;
+      const d = nextOccurrence(a, now);
+      if (d && (!best || d < best.d)) best = { a, d };
+    }
+    return best;
+  }
+  function splitMs(ms) {
+    const mins = Math.max(1, Math.ceil(ms / 60000));
+    return { d: Math.floor(mins / 1440), h: Math.floor(mins % 1440 / 60), m: mins % 60 };
+  }
+  function inShort(ms) {
+    const { d, h, m } = splitMs(ms);
+    return [d && `${d} day${d === 1 ? '' : 's'}`, h && `${h} hr`, m && `${m} min`].filter(Boolean).join(' ');
+  }
+  function inLong(ms) {
+    const { d, h, m } = splitMs(ms);
+    const parts = [d && plural(d, 'day'), h && plural(h, 'hour'), m && plural(m, 'minute')].filter(Boolean);
+    return parts.length > 1 ? parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1] : parts[0];
+  }
+  function relTime(t) {
+    const d = new Date(t), now = new Date();
+    const a = new Date(now); a.setHours(0, 0, 0, 0);
+    const b = new Date(d); b.setHours(0, 0, 0, 0);
+    const diff = Math.round((a - b) / DAYMS);
+    if (diff === 0) return `Today, ${clockAPOf(d)}`;
+    if (diff === 1) return `Yesterday, ${clockAPOf(d)}`;
+    return `${MON[d.getMonth()]} ${d.getDate()}, ${clockAPOf(d)}`;
+  }
+  const fmtDate = t => { const d = new Date(t); return `${MON[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`; };
+  function repeatText(days) {
+    const on = days.map(Boolean), n = on.filter(Boolean).length;
+    if (n === 0) return 'Never';
+    if (n === 7) return 'Every Day';
+    if (n === 5 && on.slice(0, 5).every(Boolean)) return 'Weekdays';
+    if (n === 2 && on[5] && on[6]) return 'Weekends';
+    return DAY_ORDER.filter(i => on[i]).map(i => DAY_SHORT[i]).join(' ');
+  }
+  function subText(a) {
+    const n = a.days.filter(Boolean).length;
+    const r = repeatText(a.days);
+    const label = a.label || 'Alarm';
+    if (n === 0) return label;
+    const named = n === 7 || r === 'Weekdays' || r === 'Weekends';
+    return `${label}, ${named ? r.toLowerCase() : r}`;
+  }
+
+  /* ---------- pricing ---------- */
+  function quote(action, ring, plan) {
+    if (action === 'pro') {
+      const base = plan === 'yearly' ? PRICE.yearly : PRICE.monthly;
+      return { lines: [[`Pro, ${planName(plan)}`, base], ['Service fee', PRICE.fee]], total: base + PRICE.fee, mult: 1 };
+    }
+    const base = action === 'snooze' ? PRICE.snooze : (ring.kind === 'timer' ? PRICE.stopTimer : PRICE.stopAlarm);
+    const mult = 1 + 0.5 * (ring.snoozes || 0);
+    const surge = Math.round(base * (mult - 1));
+    const lines = [[action === 'snooze' ? 'Snooze for 5 minutes' : (ring.kind === 'timer' ? 'Stop timer' : 'Stop alarm'), base]];
+    if (surge) lines.push([`${fmtMult(mult)} surge`, surge]);
+    lines.push(['Service fee', PRICE.fee]);
+    return { lines, total: base + surge + PRICE.fee, mult };
+  }
+  function actionTitle(action, r) {
+    if (!r) return '';
+    if (action === 'snooze') return `Snooze ${r.timeLabel} Alarm`;
+    return r.kind === 'timer' ? 'Stop Timer' : `Stop ${r.timeLabel} Alarm`;
+  }
+  function historyTitle(action, r) {
+    if (!r) return '';
+    if (action === 'snooze') return `Snoozed ${r.timeLabel} alarm`;
+    return r.kind === 'timer' ? 'Stopped timer' : `Stopped ${r.timeLabel} alarm`;
+  }
+  function addHistory(h) {
+    S.history.unshift(Object.assign({ t: Date.now() }, h));
+    if (S.history.length > 60) S.history.length = 60;
+  }
+  function monthSpent() {
+    const now = new Date();
+    return S.history.reduce((s, h) => {
+      const d = new Date(h.t);
+      return s + (h.amount < 0 && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear() ? -h.amount : 0);
+    }, 0);
+  }
+
+  /* ---------- sound ---------- */
+  let actx = null, beepIv = 0;
+  function audio() {
+    if (!actx) {
+      const C = window.AudioContext || window.webkitAudioContext;
+      if (!C) return null;
+      try { actx = new C(); } catch (e) { return null; }
+    }
+    if (actx.state === 'suspended') actx.resume().catch(() => {});
+    return actx;
+  }
+  function beepBurst() {
+    const ac = audio();
+    if (!ac) return;
+    const t0 = ac.currentTime + 0.02;
+    for (let i = 0; i < 4; i++) {
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = 'sine';
+      o.frequency.value = 1760;
+      const t = t0 + i * 0.13;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.12, t + 0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
+      o.connect(g).connect(ac.destination);
+      o.start(t);
+      o.stop(t + 0.1);
+    }
+  }
+  function startBeep() { stopBeep(); if (S.muted) return; beepBurst(); beepIv = setInterval(beepBurst, 1000); }
+  function stopBeep() { clearInterval(beepIv); beepIv = 0; }
+  document.addEventListener('pointerdown', () => { audio(); }, { passive: true });
+
+  /* ---------- picker wheels ---------- */
+  const ITEM = 36, LOOPS = 5, MID = 2;
+  /* col: { key, labels: [...], loop, unit, aria } */
+  function wheelHTML(cols) {
+    return `<div class="wheel"><div class="wheel-band" aria-hidden="true"></div>${cols.map(c => {
+      const n = c.labels.length, count = c.loop === false ? n : n * LOOPS;
+      return `<div class="wheel-col ${c.unit ? 'unit' : ''}">
+        <div class="wheel-scroll" tabindex="0" aria-label="${c.aria}" data-key="${c.key}" data-n="${n}" data-loop="${c.loop !== false}">
+          <div class="wheel-pad"></div>${Array.from({ length: count }, (_, i) => `<div class="wheel-item" data-i="${i}">${c.labels[i % n]}</div>`).join('')}<div class="wheel-pad"></div>
+        </div>${c.unit ? `<span class="wheel-unit" aria-hidden="true">${c.unit}</span>` : ''}
+      </div>`;
+    }).join('')}</div>`;
+  }
+  const range = (n, f = String) => Array.from({ length: n }, (_, i) => f(i));
+  function paintWheel(sc) {
+    const pos = sc.scrollTop / ITEM;
+    const first = Math.max(0, Math.floor(pos) - 1), last = Math.min(sc.children.length - 3, first + 9);
+    for (let k = first; k <= last; k++) {
+      const it = sc.children[k + 1];
+      const d = k - pos;
+      const ad = Math.min(Math.abs(d), 4);
+      it.style.transform = `rotateX(${(-d * 16).toFixed(1)}deg)`;
+      it.style.opacity = Math.max(0.2, 1 - ad * 0.22).toFixed(2);
+    }
+  }
+  function initWheels(root, values, onChange) {
+    root.querySelectorAll('.wheel-scroll').forEach(sc => {
+      const key = sc.dataset.key, n = Number(sc.dataset.n), loop = sc.dataset.loop === 'true';
+      const offset = loop ? MID * n : 0;
+      sc.setAttribute('role', 'spinbutton');
+      sc.setAttribute('aria-valuemin', '0');
+      sc.setAttribute('aria-valuemax', String(n - 1));
+      sc.setAttribute('aria-valuenow', String(values[key]));
+      sc.scrollTop = (offset + values[key]) * ITEM;
+      paintWheel(sc);
+      let t = 0, raf = 0;
+      sc.addEventListener('scroll', () => {
+        if (!raf) raf = requestAnimationFrame(() => { raf = 0; paintWheel(sc); });
+        clearTimeout(t);
+        t = setTimeout(() => {
+          const idx = Math.round(sc.scrollTop / ITEM);
+          const v = loop ? ((idx % n) + n) % n : Math.min(n - 1, Math.max(0, idx));
+          if (loop && (idx < n || idx >= (LOOPS - 1) * n)) { sc.scrollTop = (offset + v) * ITEM; paintWheel(sc); }
+          sc.setAttribute('aria-valuenow', String(v));
+          onChange(key, v);
+        }, 110);
+      }, { passive: true });
+      sc.addEventListener('click', e => {
+        const it = e.target.closest('.wheel-item');
+        if (it) sc.scrollTo({ top: Number(it.dataset.i) * ITEM, behavior: 'smooth' });
+      });
+      sc.addEventListener('keydown', e => {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          sc.scrollBy({ top: e.key === 'ArrowDown' ? ITEM : -ITEM, behavior: 'smooth' });
+        }
+      });
+    });
+  }
+
+  /* ---------- tabs ---------- */
+  function navHTML() {
+    const title = { alarm: 'Alarms', timer: 'Timers', wallet: 'Wallet', pro: 'Pro' }[R.tab];
+    let left = '<span></span>', right = '<span></span>';
+    if (R.tab === 'alarm') {
+      left = `<button class="nav-btn ${R.editMode ? 'bold' : ''}" type="button" data-action="edit-mode">${R.editMode ? 'Done' : 'Edit'}</button>`;
+      right = `<button class="nav-btn r" type="button" data-action="add-alarm" aria-label="Add alarm">${I.plus}</button>`;
+    }
+    return `${left}<span class="nav-title">${title}</span>${right}`;
+  }
+
+  function alarmView() {
+    const list = S.alarms.slice().sort((x, y) => (x.h * 60 + x.m) - (y.h * 60 + y.m));
+    const now = new Date(), nx = nextAlarm(now);
+    const stopPrice = isPro() ? 'free' : usd(PRICE.stopAlarm + PRICE.fee);
+    const snzPrice = isPro() ? 'free' : usd(PRICE.snooze + PRICE.fee);
+    const snz = R.snooze ? `<div class="sec-plain">${I.zz}Snoozed</div>
+      <ul class="plist"><li class="prow">
+        <div class="prow-main"><span class="bal-plain" id="snz-left">${dur(Math.max(0, Math.ceil((R.snooze.until - now) / 1000)))}</span><span class="bal-note">${esc(R.snooze.ring.label)} rings again at ${clockAPOf(new Date(R.snooze.until))}</span></div>
+        <button class="pill" type="button" data-action="snooze-now">Ring Now</button>
+      </li></ul>` : '';
+    const foot = [
+      nx ? `Next alarm: ${clockAP(nx.a.h, nx.a.m)}, in ${inShort(nx.d - now)}.` : 'No alarms are on.',
+      isPro() ? 'You’re Pro, so stopping and snoozing are free.' : 'The snooze price goes up 0.5× every time you snooze.',
+    ].join(' ');
+    return `
+      <h1 class="lt">Alarms</h1>
+      <div class="sec-plain">${I.card}Coin Wallet${isPro() ? `<span class="badge-pro">${I.crown}PRO</span>` : ''}</div>
+      <ul class="plist"><li class="prow">
+        <div class="prow-main"><span class="bal-plain">${usd(S.wallet)}</span><span class="bal-note">Stop ${stopPrice} · Snooze ${snzPrice}</span></div>
+        <button class="pill" type="button" data-action="tab" data-v="wallet">Top Up</button>
+      </li></ul>
+      ${snz}
+      <div class="sec-plain">${I.alarm}Other</div>
+      <ul class="plist">${list.map(alarmRow).join('') || '<li class="prow"><span class="al-sub" style="color:var(--label2)">No Alarms</span></li>'}</ul>
+      <p class="foot">${foot}</p>`;
+  }
+  function alarmRow(a) {
+    const t = clockAP(a.h, a.m);
+    return `<li class="prow ${a.on ? '' : 'off'}">
+      ${R.editMode ? `<button class="del-dot" type="button" data-action="del-row" data-id="${a.id}" aria-label="Delete ${t} alarm"></button>` : ''}
+      <button class="prow-main" type="button" data-action="edit-alarm" data-id="${a.id}" aria-label="Edit ${t} alarm">
+        <span class="al-time">${clock(a.h, a.m)}<small>${ampm(a.h)}</small></span>
+        <span class="al-sub">${esc(subText(a))}</span>
+      </button>
+      ${R.editMode ? chev() : `<button class="sw" type="button" role="switch" aria-checked="${a.on}" aria-label="${t} alarm" data-action="toggle-alarm" data-id="${a.id}"></button>`}
+    </li>`;
+  }
+
+  const CIRC = 2 * Math.PI * 118;
+  const pickTotal = () => R.pick.h * 3600 + R.pick.m * 60 + R.pick.s;
+  function timerView() {
+    const t = R.timer;
+    const top = t.active
+      ? `<div class="cd">
+          <svg viewBox="0 0 248 248" aria-hidden="true"><circle class="cd-track" cx="124" cy="124" r="118"/><circle class="cd-prog" id="cd-prog" cx="124" cy="124" r="118" stroke-dasharray="${CIRC.toFixed(2)}" stroke-dashoffset="${(CIRC * (1 - t.remaining / t.total)).toFixed(2)}"/></svg>
+          <div class="cd-center">
+            <span class="cd-time" id="cd-time">${dur(t.remaining)}</span>
+            <span class="cd-end">${I.bell}<span>${t.running ? clockAPOf(new Date(t.endAt)) : 'Paused'}</span></span>
+          </div>
+        </div>`
+      : wheelHTML([
+          { key: 'h', labels: range(24), unit: 'hours', aria: 'Hours' },
+          { key: 'm', labels: range(60), unit: 'min', aria: 'Minutes' },
+          { key: 's', labels: range(60), unit: 'sec', aria: 'Seconds' },
+        ]);
+    const main = !t.active ? 'Start' : (t.running ? 'Pause' : 'Resume');
+    const cls = t.active && t.running ? 'orange' : 'green';
+    return `
+      <h1 class="lt">Timers</h1>
+      ${top}
+      <div class="circ-row">
+        <button class="circ gray" type="button" data-action="t-cancel" ${t.active ? '' : 'disabled'}>Cancel</button>
+        <button class="circ ${cls}" type="button" data-action="t-toggle" id="t-main" ${!t.active && pickTotal() === 0 ? 'disabled' : ''}>${main}</button>
+      </div>
+      <div class="group"><div class="row"><span>When Timer Ends</span><span class="val">${isPro() ? 'Free with Pro' : 'Pay ' + usd(PRICE.stopTimer + PRICE.fee)}</span></div></div>
+      <div class="sec-plain">Recents</div>
+      <ul class="plist">${PRESETS.map(p => `<li class="prow">
+        <div class="prow-main"><span class="rec-t">${durShort(p.s)}</span><span class="rec-l">${p.label}</span></div>
+        <button class="play-btn" type="button" data-action="t-preset" data-v="${p.s}" aria-label="Start ${p.label} timer, ${durWords(p.s)}">${I.play}</button>
+      </li>`).join('')}</ul>`;
+  }
+
+  function walletView() {
+    const stops = S.history.filter(h => h.kind === 'stop' && h.amount < 0).length;
+    const snoozes = S.history.filter(h => h.kind === 'snooze' && h.amount < 0).length;
+    const tile = k => ({
+      stop: `<span class="tile red">${I.alarm}</span>`,
+      snooze: `<span class="tile orange">${I.zz}</span>`,
+      topup: `<span class="tile green">${lineIcon('<path d="M12 5v14M5 12h14"/>')}</span>`,
+      pro: `<span class="tile purple">${I.crown}</span>`,
+      free: `<span class="tile gray">${lineIcon(CHECK)}</span>`,
+    }[k] || `<span class="tile gray">${I.alarm}</span>`);
+    const amt = h => h.amount === 0 ? '<span class="h-amt zero">Free</span>' : `<span class="h-amt ${h.amount > 0 ? 'pos' : ''}">${h.amount > 0 ? '+' : '−'}${usd(Math.abs(h.amount))}</span>`;
+    return `
+      <h1 class="lt">Wallet</h1>
+      <div class="group" style="margin-top:8px"><div class="bal">
+        <span class="bal-k">Coin Wallet Balance</span>
+        <span class="bal-v">${usd(S.wallet)}</span>
+        <div class="bal-btns">
+          <button class="tinted" type="button" data-action="topup" data-v="500">Add $5</button>
+          <button class="tinted" type="button" data-action="topup" data-v="2000">Add $20</button>
+        </div>
+      </div></div>
+      <p class="sec-f">Pretend money. It can’t be withdrawn or spent on snacks.</p>
+      <p class="sec-h">This Month</p>
+      <div class="group">
+        <div class="row"><span>Spent on waking up</span><span class="val">${usd(monthSpent())}</span></div>
+        <div class="row"><span>Paid stops</span><span class="val">${stops}</span></div>
+        <div class="row"><span>Paid snoozes</span><span class="val">${snoozes}</span></div>
+      </div>
+      <p class="sec-h">History</p>
+      <div class="group tiles">${S.history.slice(0, 30).map(h => `<div class="row">
+        ${tile(h.kind)}
+        <span class="r-txt"><b>${esc(h.title)}</b><small>${esc(h.note)} · ${relTime(h.t)}</small></span>
+        ${amt(h)}
+      </div>`).join('')}</div>`;
+  }
+
+  const FEATURES = [
+    ['orange', I.alarm, 'Free stops', 'Alarms and timers, unlimited'],
+    ['green', I.zz, 'Free snoozes', 'The price never goes up'],
+    ['blue', I.tag, 'No service fee', 'Except when you subscribe'],
+    ['purple', I.crown, 'Pro badge', 'Shown on your alarms list'],
+  ];
+  function proView() {
+    const feats = `<div class="group tiles">${FEATURES.map(([c, ic, t, s]) => `<div class="row"><span class="tile ${c}">${ic}</span><span class="r-txt"><b>${t}</b><small>${s}</small></span></div>`).join('')}</div>`;
+    if (!isPro()) {
+      const y = R.proPlan === 'yearly';
+      return `
+        <h1 class="lt">Pro</h1>
+        <div class="pro-head"><span class="app-ico lg">${I.alarm}</span><h2>Coin Alarm Pro</h2><p>Stop your alarms without thinking about the bill every morning.</p></div>
+        <p class="sec-h">What You Get</p>
+        ${feats}
+        <p class="sec-h">Choose a Plan</p>
+        <div class="group" role="radiogroup" aria-label="Plan">
+          <button class="row" type="button" role="radio" aria-checked="${!y}" data-action="plan" data-v="monthly"><span class="r-txt"><b>Monthly</b><small>${usd(PRICE.monthly)} per month</small></span>${check(!y)}</button>
+          <button class="row" type="button" role="radio" aria-checked="${y}" data-action="plan" data-v="yearly"><span class="r-txt"><b>Yearly<span class="badge">Save 50%</span></b><small>${usd(PRICE.yearly)} per year, about ${usd(Math.round(PRICE.yearly / 12))} a month</small></span>${check(y)}</button>
+        </div>
+        <div class="cta"><button class="big-btn" type="button" data-action="buy-pro">Subscribe</button></div>
+        <p class="sec-f center">Payments are pretend. Renews automatically until canceled.</p>`;
+    }
+    return `
+      <h1 class="lt">Pro</h1>
+      <div class="pro-head"><span class="app-ico lg">${I.alarm}</span><h2>You’re Pro</h2><p>Stopping and snoozing alarms is free now.</p></div>
+      <p class="sec-h">Subscription</p>
+      <div class="group">
+        <div class="row"><span>Plan</span><span class="val">${planName(S.pro.plan)}</span></div>
+        <div class="row"><span>Renews</span><span class="val">${fmtDate(S.pro.until)}</span></div>
+        <div class="row"><span>Saved so far</span><span class="val">${usd(S.proSaved || 0)}</span></div>
+      </div>
+      <p class="sec-h">What You Get</p>
+      ${feats}
+      <div class="group" style="margin-top:28px"><button class="row center danger" type="button" data-action="cancel-pro">Cancel Subscription</button></div>`;
+  }
+
+  const VIEWS = { alarm: alarmView, timer: timerView, wallet: walletView, pro: proView };
+  const TABS = [['alarm', 'Alarms', I.alarm], ['timer', 'Timers', I.timer], ['wallet', 'Wallet', I.card], ['pro', 'Pro', I.crown]];
+  $('#tabbar').innerHTML = TABS.map(([id, label, ic]) => `<button class="tab" type="button" data-action="tab" data-v="${id}">${ic}<span>${label}</span></button>`).join('');
+
+  function render() {
+    appEl.dataset.tab = R.tab;
+    navEl.innerHTML = navHTML();
+    const st = viewEl.scrollTop;
+    viewEl.innerHTML = VIEWS[R.tab]();
+    viewEl.scrollTop = st;
+    document.querySelectorAll('.tab').forEach(b => {
+      if (b.dataset.v === R.tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    });
+    if (R.tab === 'timer' && !R.timer.active) {
+      initWheels(viewEl, R.pick, (k, v) => {
+        R.pick[k] = v;
+        const b = $('#t-main');
+        if (b) b.disabled = pickTotal() === 0;
+      });
+    }
+    renderControls();
+  }
+  viewEl.addEventListener('scroll', () => appEl.classList.toggle('scrolled', viewEl.scrollTop > 34), { passive: true });
+
+  /* ---------- lock screen ---------- */
+  function renderRing() {
+    const r = R.ringing;
+    if (!r) return;
+    const pro = isPro();
+    const qs = quote('stop', r), qz = quote('snooze', r);
+    const dateTxt = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    ringEl.innerHTML = `
+      <div class="ls-top">
+        <p class="ls-date">${esc(dateTxt)}</p>
+        <p class="ls-time" id="ring-clock">${clockOf(new Date())}</p>
+      </div>
+      <div class="ls-alarm">
+        <p class="ls-kind">${r.kind === 'timer' ? `${I.timer}Timer · ${esc(r.timeLabel)}` : `${I.alarm}Alarm · ${esc(r.timeLabel)}`}</p>
+        <p class="ls-label">${esc(r.label)}</p>
+        <p class="ls-price">${pro ? 'Free with Pro' : `${usd(qs.total)} to stop`}</p>
+        ${r.snoozes && !pro ? `<p class="ls-surge">${fmtMult(qs.mult)} price because you snoozed ${times(r.snoozes)}</p>` : ''}
+      </div>
+      <div class="ls-bottom">
+        ${r.kind === 'alarm' && r.snooze !== false ? `<button class="ls-snooze" type="button" data-action="snooze">Snooze <small>${pro ? 'free' : usd(qz.total)}</small></button>` : ''}
+        <div class="slide" id="slide">
+          <div class="slide-fill" id="slide-fill"></div>
+          <span class="slide-text">slide to stop</span>
+          <button class="slide-knob" id="knob" type="button" aria-label="Slide to stop. Press Enter to stop.">${I.arrow}</button>
+        </div>
+        ${pro ? '' : '<button class="ls-free" type="button" data-action="free">Stop without paying</button>'}
+      </div>`;
+    bindSlider();
+  }
+
+  let SCALE = 1;
+  function bindSlider() {
+    const slide = $('#slide'), knob = $('#knob'), fill = $('#slide-fill');
+    if (!slide) return;
+    let x = 0, start = 0, base = 0, dragging = false, moved = false, max = 0;
+    const set = v => { x = v; knob.style.transform = `translateX(${v}px)`; fill.style.width = `${v + 56}px`; };
+    knob.addEventListener('pointerdown', e => {
+      dragging = true; moved = false;
+      max = slide.clientWidth - knob.offsetWidth - 8;
+      start = e.clientX; base = x;
+      knob.style.transition = 'none'; fill.style.transition = 'none';
+      try { knob.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+    });
+    knob.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      const dx = (e.clientX - start) / SCALE;
+      if (Math.abs(dx) > 4) moved = true;
+      set(Math.min(max, Math.max(0, base + dx)));
+    });
+    const end = () => {
+      if (!dragging) return;
+      dragging = false;
+      knob.style.transition = ''; fill.style.transition = '';
+      if (x >= max * 0.86) { set(max); setTimeout(slideDone, 150); }
+      else {
+        set(0);
+        if (!moved) { slide.classList.remove('nudge'); void slide.offsetWidth; slide.classList.add('nudge'); }
+      }
+    };
+    knob.addEventListener('pointerup', end);
+    knob.addEventListener('pointercancel', end);
+    knob.addEventListener('click', e => { if (e.detail === 0) slideDone(); });
+  }
+  function resetSlider() {
+    const knob = $('#knob'), fill = $('#slide-fill');
+    if (knob) knob.style.transform = '';
+    if (fill) fill.style.width = '';
+  }
+  function slideDone() {
+    const r = R.ringing;
+    if (!r) return;
+    if (isPro()) {
+      S.proSaved = (S.proSaved || 0) + quote('stop', r).total;
+      addHistory({ title: historyTitle('stop', r), note: 'Free with Pro', amount: 0, kind: 'free' });
+      save();
+      stopRinging();
+      toast(`${r.kind === 'timer' ? 'Timer' : 'Alarm'} stopped. Free with Pro.`);
+      return;
+    }
+    openSheet('pay', { action: 'stop', method: 'wallet', phase: 'confirm' });
+    setTimeout(resetSlider, 350);
+  }
+
+  function ring(opts) {
+    if (R.ringing) return;
+    R.ringing = Object.assign({ snoozes: 0, snooze: true }, opts);
+    if (R.dialog) closeDialog();
+    if (R.sheet) closeSheet();
+    renderRing();
+    ringEl.classList.add('open');
+    slot.classList.add('is-ringing');
+    syncInert();
+    startBeep();
+    render();
+  }
+  function stopRinging() {
+    R.ringing = null;
+    ringEl.classList.remove('open');
+    slot.classList.remove('is-ringing');
+    stopBeep();
+    syncInert();
+    render();
+  }
+  function syncInert() {
+    const dl = !!R.dialog, sh = !!R.sheet, rg = !!R.ringing;
+    appEl.inert = dl || sh || rg;
+    ringEl.inert = dl || sh || !rg;
+    sheetEl.inert = dl || !sh;
+    dialogEl.inert = !dl;
+    screen.classList.toggle('ringing', rg && !sh);
+    screen.classList.toggle('stacked', sh && R.sheet.type === 'page');
+    screen.classList.toggle('full', sh && R.sheet.type === 'full');
+    screen.classList.toggle('adshow', sh && R.sheet.view === 'ad');
+  }
+  function doSnooze() {
+    const r = R.ringing;
+    if (!r) return;
+    const until = Date.now() + 5 * 60000;
+    stopRinging();
+    R.snooze = { until, ring: Object.assign({}, r, { snoozes: r.snoozes + 1 }) };
+    closeSheet();
+    render();
+    toast(`Snoozed for 5 minutes. It rings again at ${clockAPOf(new Date(until))}.`);
+  }
+
+  /* ---------- sheets ---------- */
+  const SHEET_TYPE = { pay: 'medium', edit: 'page', math: 'page', ad: 'full' };
+  function openSheet(view, ctx = {}) {
+    clearInterval(R.adT); clearTimeout(R.procT);
+    R.sheet = { view, ctx, type: SHEET_TYPE[view] };
+    sheetEl.className = 'sheet ' + R.sheet.type;
+    renderSheet();
+    sheetEl.scrollTop = 0;
+    void sheetEl.offsetWidth;
+    sheetEl.classList.add('open');
+    scrimEl.classList.add('open');
+    syncInert();
+    if (view === 'ad') startAd();
+  }
+  function closeSheet() {
+    clearInterval(R.adT); clearTimeout(R.procT);
+    R.sheet = null;
+    sheetEl.classList.remove('open');
+    scrimEl.classList.remove('open');
+    syncInert();
+  }
+  function renderSheet() {
+    const { view, ctx } = R.sheet;
+    sheetEl.setAttribute('aria-label', { pay: 'Payment', edit: 'Edit alarm', math: 'Math problem', ad: 'Ad' }[view]);
+    sheetEl.innerHTML = SHEETS[view](ctx);
+    if (view === 'edit' && ctx.page !== 'repeat') {
+      initWheels(sheetEl, { hh: ctx.h % 12, mm: ctx.m, ap: ctx.h >= 12 ? 1 : 0 }, (k, v) => {
+        if (k === 'hh') ctx.h = v + (ctx.h >= 12 ? 12 : 0);
+        else if (k === 'mm') ctx.m = v;
+        else ctx.h = (ctx.h % 12) + (v ? 12 : 0);
+      });
+    }
+  }
+
+  const spinner = () => `<span class="spinner" aria-hidden="true">${Array.from({ length: 8 }, (_, i) => `<i style="transform:rotate(${i * 45}deg);animation-delay:${(-0.8 + i * 0.1).toFixed(1)}s"></i>`).join('')}</span>`;
+
+  const SHEETS = {
+    pay(ctx) {
+      const r = R.ringing;
+      const buyPro = ctx.action === 'pro';
+      if (!buyPro && !r) return '';
+      const q = quote(ctx.action, r, ctx.plan);
+      const m = METHODS.find(x => x.id === ctx.method) || METHODS[0];
+      const busy = ctx.phase !== 'confirm';
+      const sub = x => (x.id === 'wallet' ? 'Balance ' + usd(S.wallet) : x.sub);
+      let cta;
+      if (ctx.phase === 'processing') cta = `<div class="busy" role="status">${spinner()}Processing…</div>`;
+      else if (ctx.phase === 'done') cta = `<div class="busy done" role="status">${I.checkCircle}Done</div>`;
+      else cta = `<button class="big-btn" type="button" data-action="pay">Pay ${usd(q.total)}</button>`;
+      const methodBlock = ctx.showMethods
+        ? METHODS.map(x => `<button class="row" type="button" role="radio" aria-checked="${x.id === ctx.method}" data-action="method" data-v="${x.id}">
+            <span class="tile ${x.tile}">${x.glyph}</span>
+            <span class="r-txt"><b>${x.name}</b><small>${sub(x)}</small></span>
+            ${check(x.id === ctx.method)}
+          </button>`).join('')
+        : `<button class="row" type="button" data-action="toggle-methods" ${busy ? 'disabled' : ''}>
+            <span class="tile ${m.tile}">${m.glyph}</span>
+            <span class="r-txt"><b>${m.name}</b><small>${sub(m)}</small></span>
+            ${chev()}
+          </button>`;
+      return `
+        <div class="grabber" aria-hidden="true"></div>
+        <div class="pay-top">
+          <span class="app-ico sm">${I.alarm}</span>
+          <span class="r-txt"><b>Coin Alarm</b><small>In-App Purchase</small></span>
+          <button class="x-btn" type="button" data-action="close-sheet" aria-label="Close" ${busy ? 'disabled' : ''}>${I.xmark}</button>
+        </div>
+        <h2 class="pay-title">${buyPro ? 'Coin Alarm Pro' : esc(actionTitle(ctx.action, r))}</h2>
+        ${buyPro ? `<div class="seg" role="radiogroup" aria-label="Plan">
+          <button type="button" role="radio" aria-checked="${ctx.plan !== 'yearly'}" data-action="pay-plan" data-v="monthly" ${busy ? 'disabled' : ''}>Monthly</button>
+          <button type="button" role="radio" aria-checked="${ctx.plan === 'yearly'}" data-action="pay-plan" data-v="yearly" ${busy ? 'disabled' : ''}>Yearly</button>
+        </div>` : ''}
+        <div class="group">
+          ${q.lines.map(([k, v]) => `<div class="row"><span>${esc(k)}</span><span class="val">${usd(v)}</span></div>`).join('')}
+          <div class="row total"><span>Total</span><span class="val">${usd(q.total)}</span></div>
+        </div>
+        <p class="sec-h" style="margin-top:20px">Pay With</p>
+        <div class="group tiles" role="radiogroup" aria-label="Payment method">${methodBlock}</div>
+        <div class="cta">${cta}</div>
+        ${busy ? '' : `<div class="tlinks">
+          ${buyPro
+            ? (ctx.back ? '<button class="tlink" type="button" data-action="pay-back">Back to Bill</button>' : '')
+            : `<button class="tlink" type="button" data-action="go-pro">Go Pro and stop for free</button>
+               <button class="tlink" type="button" data-action="free">Stop without paying</button>`}
+        </div>`}`;
+    },
+    edit(c) {
+      if (c.page === 'repeat') {
+        return `
+          <div class="sh-nav"><button class="l" type="button" data-action="repeat-back">${I.back}Back</button><span class="t">Repeat</span><span></span></div>
+          <div class="pg-body">
+            <div class="group" style="margin-top:12px">${DAY_ORDER.map(i => `<button class="row" type="button" role="checkbox" aria-checked="${!!c.days[i]}" data-action="day" data-i="${i}"><span>Every ${DAY_LONG[i]}</span>${check(c.days[i])}</button>`).join('')}</div>
+          </div>`;
+      }
+      return `
+        <div class="sh-nav"><button class="l" type="button" data-action="close-sheet">Cancel</button><span class="t">${c.id ? 'Edit Alarm' : 'Add Alarm'}</span><button class="r" type="button" data-action="save-alarm">Save</button></div>
+        <div class="pg-body">
+          ${wheelHTML([
+            { key: 'hh', labels: range(12, i => String(i || 12)), aria: 'Hour' },
+            { key: 'mm', labels: range(60, pad), aria: 'Minute' },
+            { key: 'ap', labels: ['AM', 'PM'], loop: false, aria: 'AM or PM' },
+          ])}
+          <div class="group" style="margin-top:8px">
+            <button class="row" type="button" data-action="edit-repeat"><span>Repeat</span><span class="val">${repeatText(c.days)}</span>${chev()}</button>
+            <label class="row" for="alarm-label"><span>Label</span><input id="alarm-label" type="text" maxlength="40" autocomplete="off" value="${esc(c.label)}" placeholder="Alarm"></label>
+            <div class="row"><span>Sound</span><span class="val">Radar</span></div>
+            <div class="row"><span id="snz-lbl">Snooze</span><button class="sw" type="button" role="switch" aria-checked="${c.snooze !== false}" aria-labelledby="snz-lbl" data-action="snooze-sw"></button></div>
+          </div>
+          <p class="sec-f">Stopping this alarm costs ${usd(PRICE.stopAlarm + PRICE.fee)}. Snoozing costs ${usd(PRICE.snooze + PRICE.fee)}, and the price goes up 0.5× every time you snooze.</p>
+          <div class="group" style="margin-top:26px">
+            <button class="row tint" type="button" data-action="edit-soon">Set to 1 Minute From Now</button>
+            <button class="row tint" type="button" data-action="edit-test">Test Alarm Now</button>
+          </div>
+          ${c.id ? '<div class="group" style="margin-top:26px"><button class="row center danger" type="button" data-action="del-alarm">Delete Alarm</button></div>' : ''}
+        </div>`;
+    },
+    math(c) {
+      return `
+        <div class="sh-nav"><button class="l" type="button" data-action="close-sheet">Cancel</button><span class="t">Problem ${c.n + 1} of 3</span><button class="r" type="button" data-action="key" data-v="ok" id="m-ok" ${c.input ? '' : 'disabled'}>Check</button></div>
+        <div class="m-prog" aria-hidden="true">${[0, 1, 2].map(i => `<i class="${i < c.n ? 'on' : ''}"></i>`).join('')}</div>
+        <p class="m-q">${c.a} × ${c.b}</p>
+        <div class="m-field" id="m-field" aria-live="polite"><span id="m-ans">${c.input}</span><span class="caret" aria-hidden="true"></span></div>
+        <p class="m-msg" role="alert">${c.err ? esc(c.err) : '&nbsp;'}</p>
+        <div class="numpad">${[['1', ''], ['2', 'ABC'], ['3', 'DEF'], ['4', 'GHI'], ['5', 'JKL'], ['6', 'MNO'], ['7', 'PQRS'], ['8', 'TUV'], ['9', 'WXYZ']].map(([d, l]) =>
+          `<button class="key" type="button" data-action="key" data-v="${d}"><b>${d}</b><small>${l || '&nbsp;'}</small></button>`).join('')}
+          <span class="key flat" aria-hidden="true"></span>
+          <button class="key" type="button" data-action="key" data-v="0"><b>0</b></button>
+          <button class="key flat" type="button" data-action="key" data-v="del" aria-label="Delete">${I.del}</button>
+        </div>`;
+    },
+    ad(c) {
+      return `
+        <div class="ad">
+          <div class="ad-top">
+            <span class="ad-tag">Ad</span>
+            <button class="ad-count" type="button" id="ad-btn" data-action="ad-done" ${c.left > 0 ? 'disabled aria-label="You can close the ad soon"' : 'aria-label="Close ad"'}>${c.left > 0 ? c.left : I.xmark}</button>
+          </div>
+          <div class="ad-art" aria-hidden="true"><div class="pillow"></div></div>
+          <p class="ad-brand">Hush Pillow</p>
+          <p class="ad-copy">The noise-blocking pillow. Your alarm rings, you keep sleeping.</p>
+          <p class="ad-fine">Fictional product. 0% off, today only.</p>
+          <button class="ad-cta" type="button" data-action="ad-cta">Learn More</button>
+        </div>`;
+    },
+  };
+
+  /* ---------- alerts, action sheets, banners ---------- */
+  function showDialog(o) {
+    R.dialog = o;
+    const btn = (a, i) => `<button type="button" class="${o.kind === 'sheet' ? 'as-btn' : 'al-btn'} ${a.style || ''}" data-dlg="${i}">${esc(a.label)}</button>`;
+    if (o.kind === 'sheet') {
+      dialogEl.innerHTML = `<div class="dlg-scrim" data-dlg="cancel"></div>
+        <div class="asheet" role="dialog" aria-label="${esc(o.title || 'Options')}">
+          <div class="as-group">${o.title || o.msg ? `<div class="as-head">${o.title ? `<b>${esc(o.title)}</b>` : ''}${o.msg ? `<p>${esc(o.msg)}</p>` : ''}</div>` : ''}${o.actions.map(btn).join('')}</div>
+          <button type="button" class="as-cancel" data-dlg="cancel">Cancel</button>
+        </div>`;
+    } else {
+      dialogEl.innerHTML = `<div class="dlg-scrim"></div>
+        <div class="alert" role="alertdialog" aria-label="${esc(o.title)}">
+          <div class="al-body"><b>${esc(o.title)}</b>${o.msg ? `<p>${esc(o.msg)}</p>` : ''}</div>
+          <div class="al-btns ${o.actions.length === 2 && o.actions.every(x => x.label.length <= 14) ? 'two' : ''}">${o.actions.map(btn).join('')}</div>
+        </div>`;
+    }
+    dialogEl.className = 'dialog ' + (o.kind === 'sheet' ? 'dlg-sheet' : 'dlg-alert');
+    void dialogEl.offsetWidth;
+    dialogEl.classList.add('open');
+    syncInert();
+  }
+  function closeDialog() { R.dialog = null; dialogEl.classList.remove('open'); syncInert(); }
+  dialogEl.addEventListener('click', e => {
+    const el = e.target.closest('[data-dlg]');
+    if (!el || !R.dialog) return;
+    const o = R.dialog;
+    closeDialog();
+    if (el.dataset.dlg === 'cancel') return;
+    const a = o.actions[Number(el.dataset.dlg)];
+    if (a && a.fn) a.fn();
+  });
+
+  let bannerT = 0;
+  function toast(msg) {
+    $('#bn-msg').textContent = msg;
+    bannerEl.classList.add('show');
+    clearTimeout(bannerT);
+    bannerT = setTimeout(() => bannerEl.classList.remove('show'), 3400);
+  }
+
+  /* ---------- payments ---------- */
+  function pay() {
+    const ctx = R.sheet && R.sheet.ctx;
+    if (!ctx) return;
+    if (ctx.action !== 'pro' && !R.ringing) { closeSheet(); return; }
+    const q = quote(ctx.action, R.ringing, ctx.plan);
+    ctx.phase = 'processing'; ctx.showMethods = false;
+    renderSheet();
+    R.procT = setTimeout(() => settle(ctx, q), 1500);
+  }
+  function settle(ctx, q) {
+    if (!R.sheet || R.sheet.ctx !== ctx) return;
+    const back = () => { ctx.phase = 'confirm'; renderSheet(); };
+    const useWallet = { label: 'Use Wallet', style: 'bold', fn: () => { ctx.method = 'wallet'; renderSheet(); } };
+    if (ctx.method === 'later') {
+      back();
+      return showDialog({ title: 'Payment Declined', msg: 'Sleep Later declined this purchase. Your sleep credit score is too low.', actions: [{ label: 'OK' }, useWallet] });
+    }
+    if (ctx.method === 'leaf') {
+      back();
+      return showDialog({ title: 'Leaf Cash Not Accepted', msg: 'The cashier only takes fresh leaves. Try your Coin Wallet instead.', actions: [{ label: 'OK' }, useWallet] });
+    }
+    if (S.wallet < q.total) {
+      back();
+      return showDialog({ title: 'Not Enough Money', msg: `This costs ${usd(q.total)}, and your wallet has ${usd(S.wallet)}.`, actions: [
+        { label: 'Cancel' },
+        { label: 'Add $20', style: 'bold', fn: () => { topup(2000); render(); pay(); } },
+      ] });
+    }
+    const r = R.ringing;
+    S.wallet -= q.total;
+    if (ctx.action === 'pro') {
+      const days = ctx.plan === 'yearly' ? 365 : 30;
+      S.pro = { plan: ctx.plan, since: Date.now(), until: Date.now() + days * DAYMS };
+      addHistory({ title: `Pro subscription, ${planName(ctx.plan).toLowerCase()}`, note: 'Includes service fee', amount: -q.total, kind: 'pro' });
+    } else {
+      addHistory({ title: historyTitle(ctx.action, r), note: q.mult > 1 ? `${fmtMult(q.mult)} surge` : 'Normal price', amount: -q.total, kind: ctx.action });
+    }
+    save();
+    renderControls();
+    ctx.phase = 'done';
+    renderSheet();
+    R.procT = setTimeout(() => {
+      if (ctx.action === 'pro') {
+        closeSheet(); render();
+        if (R.ringing) renderRing();
+        toast(R.ringing ? 'You’re Pro now. Slide to stop, no charge.' : 'Coin Alarm Pro is on. Stopping alarms is free now.');
+      } else if (ctx.action === 'snooze') {
+        doSnooze();
+      } else {
+        const what = r && r.kind === 'timer' ? 'Timer' : 'Alarm';
+        stopRinging(); closeSheet();
+        toast(`${what} stopped. ${usd(q.total)} was charged to your Coin Wallet.`);
+      }
+    }, 900);
+  }
+  function topup(c) {
+    S.wallet += c;
+    addHistory({ title: 'Wallet top-up', note: 'Pretend money', amount: c, kind: 'topup' });
+    save();
+  }
+  function freeDone(how) {
+    const r = R.ringing;
+    if (!r) { closeSheet(); return; }
+    addHistory({ title: historyTitle('stop', r), note: how === 'ad' ? 'Free, watched an ad' : 'Free, solved math', amount: 0, kind: 'free' });
+    save();
+    stopRinging();
+    closeSheet();
+    toast(how === 'ad' ? 'Ad finished. Alarm stopped for free.' : 'Three right answers. Alarm stopped for free.');
+  }
+  const newQ = () => ({ a: 6 + Math.floor(Math.random() * 14), b: 3 + Math.floor(Math.random() * 7) });
+  function offerFree() {
+    if (!R.ringing) return;
+    showDialog({
+      kind: 'sheet',
+      title: 'Stop Without Paying?',
+      msg: 'Prove you’re really awake first.',
+      actions: [
+        { label: 'Solve 3 Math Problems', fn: () => openSheet('math', Object.assign({ n: 0, input: '', err: '' }, newQ())) },
+        { label: 'Watch a 10-Second Ad', fn: () => openSheet('ad', { left: 10 }) },
+      ],
+    });
+  }
+  function mathKey(k) {
+    const c = R.sheet && R.sheet.view === 'math' && R.sheet.ctx;
+    if (!c) return;
+    if (k === 'del') c.input = c.input.slice(0, -1);
+    else if (k === 'ok') {
+      if (!c.input) return;
+      if (Number(c.input) === c.a * c.b) {
+        c.n++; c.err = '';
+        if (c.n >= 3) { freeDone('math'); return; }
+        Object.assign(c, newQ(), { input: '' });
+        renderSheet();
+      } else {
+        c.err = `Not quite. ${c.a} × ${c.b} = ${c.a * c.b}. Back to problem 1.`;
+        c.n = 0;
+        Object.assign(c, newQ(), { input: '' });
+        renderSheet();
+        const f = $('#m-field');
+        if (f) f.classList.add('shake');
+      }
+      return;
+    } else if (c.input.length < 4) c.input += k;
+    $('#m-ans').textContent = c.input;
+    $('#m-ok').disabled = !c.input;
+  }
+  function startAd() {
+    R.adT = setInterval(() => {
+      const s = R.sheet;
+      if (!s || s.view !== 'ad') { clearInterval(R.adT); return; }
+      s.ctx.left--;
+      const b = $('#ad-btn');
+      if (!b) return;
+      if (s.ctx.left <= 0) {
+        clearInterval(R.adT);
+        b.disabled = false; b.innerHTML = I.xmark; b.setAttribute('aria-label', 'Close ad');
+      } else b.textContent = s.ctx.left;
+    }, 1000);
+  }
+
+  /* ---------- actions ---------- */
+  const findAlarm = id => S.alarms.find(a => a.id === id);
+  const alarmSetMsg = d => `Alarm set for ${inLong(d - new Date())} from now.`;
+  const A = {
+    tab(el) { R.tab = el.dataset.v; R.editMode = false; viewEl.scrollTop = 0; appEl.classList.remove('scrolled'); render(); },
+    'edit-mode'() { R.editMode = !R.editMode; render(); },
+    'del-row'(el) {
+      const a = findAlarm(el.dataset.id);
+      S.alarms = S.alarms.filter(x => x.id !== el.dataset.id);
+      save(); render();
+      if (a) toast(`${clockAP(a.h, a.m)} alarm deleted.`);
+    },
+    'add-alarm'() { R.editMode = false; render(); openSheet('edit', { h: 7, m: 0, label: '', days: [0, 0, 0, 0, 0, 0, 0], snooze: true, page: 'main' }); },
+    'edit-alarm'(el) {
+      const a = findAlarm(el.dataset.id);
+      if (a) openSheet('edit', { id: a.id, h: a.h, m: a.m, label: a.label, days: a.days.slice(), snooze: a.snooze !== false, page: 'main' });
+    },
+    'toggle-alarm'(el) {
+      const a = findAlarm(el.dataset.id);
+      if (!a) return;
+      a.on = !a.on; save();
+      el.setAttribute('aria-checked', String(a.on));
+      el.closest('.prow').classList.toggle('off', !a.on);
+      const nx = nextOccurrence(a, new Date());
+      if (a.on && nx) toast(alarmSetMsg(nx));
+      setTimeout(render, 260);
+    },
+    'edit-repeat'() { R.sheet.ctx.page = 'repeat'; renderSheet(); },
+    'repeat-back'() { R.sheet.ctx.page = 'main'; renderSheet(); },
+    day(el) {
+      const c = R.sheet.ctx, i = Number(el.dataset.i);
+      c.days[i] = c.days[i] ? 0 : 1;
+      el.setAttribute('aria-checked', String(!!c.days[i]));
+      el.querySelector('.check').classList.toggle('off', !c.days[i]);
+    },
+    'snooze-sw'(el) { const c = R.sheet.ctx; c.snooze = c.snooze === false; el.setAttribute('aria-checked', String(c.snooze)); },
+    'edit-soon'() {
+      const c = R.sheet.ctx, d = new Date(Date.now() + 60000);
+      c.h = d.getHours(); c.m = d.getMinutes();
+      if (!c.label) c.label = 'Test alarm';
+      renderSheet();
+    },
+    'edit-test'() {
+      const c = R.sheet.ctx;
+      ring({ kind: 'alarm', label: (c.label || '').trim() || 'Alarm', timeLabel: clockAP(c.h, c.m), snooze: c.snooze !== false });
+    },
+    'save-alarm'() {
+      const c = R.sheet.ctx;
+      const label = (c.label || '').trim() || 'Alarm';
+      const data = { h: c.h, m: c.m, label, days: c.days, on: true, snooze: c.snooze !== false };
+      if (c.id) { const a = findAlarm(c.id); if (a) Object.assign(a, data); delete R.lastFired[c.id]; }
+      else S.alarms.push(Object.assign({ id: 'a' + Date.now().toString(36) }, data));
+      save(); closeSheet(); R.tab = 'alarm'; render();
+      const nx = nextOccurrence(data, new Date());
+      if (nx) toast(alarmSetMsg(nx));
+    },
+    'del-alarm'() {
+      const c = R.sheet.ctx;
+      S.alarms = S.alarms.filter(a => a.id !== c.id);
+      save(); closeSheet(); render();
+      toast(`${clockAP(c.h, c.m)} alarm deleted.`);
+    },
+    't-toggle'() {
+      const t = R.timer, now = Date.now();
+      if (!t.active) {
+        const total = pickTotal();
+        if (!total) return;
+        Object.assign(t, { total, remaining: total, active: true, running: true, endAt: now + total * 1000 });
+      } else if (t.running) {
+        t.remaining = Math.max(0, Math.ceil((t.endAt - now) / 1000)); t.running = false;
+      } else {
+        t.endAt = now + t.remaining * 1000; t.running = true;
+      }
+      render();
+    },
+    't-cancel'() { Object.assign(R.timer, { active: false, running: false }); render(); },
+    't-preset'(el) {
+      const s = Number(el.dataset.v);
+      R.pick = { h: Math.floor(s / 3600), m: Math.floor(s % 3600 / 60), s: s % 60 };
+      Object.assign(R.timer, { total: s, remaining: s, active: true, running: true, endAt: Date.now() + s * 1000 });
+      viewEl.scrollTop = 0; appEl.classList.remove('scrolled');
+      render();
+    },
+    topup(el) { const c = Number(el.dataset.v); topup(c); render(); toast(`Added ${usdShort(c)} to your Coin Wallet. Still pretend money.`); },
+    plan(el) { R.proPlan = el.dataset.v; render(); },
+    'buy-pro'() { openSheet('pay', { action: 'pro', plan: R.proPlan, method: 'wallet', phase: 'confirm' }); },
+    'cancel-pro'() {
+      showDialog({ title: 'Cancel Subscription?', msg: `Starting tomorrow, every alarm costs ${usd(PRICE.stopAlarm + PRICE.fee)} to stop. Snoozing costs money again too.`, actions: [
+        { label: 'Keep Pro', style: 'bold', fn: () => toast('Good call. Our wallet thanks you.') },
+        { label: 'Cancel Subscription', style: 'destructive', fn: () => setTimeout(() => showDialog({
+          title: 'Wait!',
+          msg: `Get 50% off for 3 months: just ${usd(PRICE.discount)} a month. That’s less than stopping two alarms.`,
+          actions: [
+            { label: 'Take Discount', style: 'bold', fn: () => { S.pro.plan = 'discount'; save(); render(); toast(`Discount applied: ${usd(PRICE.discount)} a month for 3 months.`); } },
+            { label: 'Cancel Anyway', style: 'destructive', fn: () => { S.pro = null; save(); render(); toast('Subscription canceled. We’ll miss your money.'); } },
+          ],
+        }), 260) },
+      ] });
+    },
+    snooze() {
+      const r = R.ringing;
+      if (!r) return;
+      if (isPro()) {
+        S.proSaved = (S.proSaved || 0) + quote('snooze', r).total;
+        addHistory({ title: historyTitle('snooze', r), note: 'Free with Pro', amount: 0, kind: 'free' });
+        save(); doSnooze(); return;
+      }
+      openSheet('pay', { action: 'snooze', method: 'wallet', phase: 'confirm' });
+    },
+    'snooze-now'() { if (R.snooze) { const r = R.snooze.ring; R.snooze = null; ring(r); } },
+    free() { offerFree(); },
+    'go-pro'() { const prev = R.sheet.ctx; openSheet('pay', { action: 'pro', plan: 'monthly', method: prev.method, phase: 'confirm', back: prev }); },
+    'pay-back'() { const prev = R.sheet.ctx.back; openSheet('pay', Object.assign({}, prev, { phase: 'confirm' })); },
+    'pay-plan'(el) { R.sheet.ctx.plan = el.dataset.v; renderSheet(); },
+    'toggle-methods'() { R.sheet.ctx.showMethods = true; renderSheet(); },
+    method(el) { const c = R.sheet.ctx; c.method = el.dataset.v; c.showMethods = false; renderSheet(); },
+    pay() { pay(); },
+    'close-sheet'() { closeSheet(); },
+    key(el) { mathKey(el.dataset.v); },
+    'ad-done'() { freeDone('ad'); },
+    'ad-cta'() { toast('Hush Pillow isn’t real. Hang in there, the ad is almost over.'); },
+  };
+
+  screen.addEventListener('click', e => {
+    const el = e.target.closest('[data-action]');
+    if (!el || el.disabled || !screen.contains(el)) return;
+    const fn = A[el.dataset.action];
+    if (fn) fn(el, e);
+  });
+  sheetEl.addEventListener('input', e => { if (e.target.id === 'alarm-label' && R.sheet) R.sheet.ctx.label = e.target.value; });
+  sheetEl.addEventListener('keydown', e => { if (e.target.id === 'alarm-label' && e.key === 'Enter') { e.preventDefault(); A['save-alarm'](); } });
+  scrimEl.addEventListener('click', () => {
+    if (R.sheet && R.sheet.type === 'medium' && R.sheet.ctx.phase === 'confirm') closeSheet();
+  });
+
+  /* ---------- demo panel ---------- */
+  function demoAlarm() {
+    if (R.ringing) { toast('It’s already ringing. Stop it first (and pay).'); return; }
+    const now = new Date(), nx = nextAlarm(now);
+    const a = nx ? nx.a : S.alarms[0];
+    ring(a ? { kind: 'alarm', label: a.label || 'Alarm', timeLabel: clockAP(a.h, a.m), snooze: a.snooze !== false } : { kind: 'alarm', label: 'Alarm', timeLabel: clockAPOf(now) });
+  }
+  function demoTimer() {
+    if (R.ringing) { toast('It’s already ringing. Stop it first (and pay).'); return; }
+    const t = R.timer;
+    const total = t.active ? t.total : (pickTotal() || 300);
+    Object.assign(t, { active: false, running: false });
+    ring({ kind: 'timer', label: 'Timer Done', timeLabel: durWords(total) });
+  }
+  function renderControls() {
+    $('#ctl-pro').setAttribute('aria-checked', String(isPro()));
+    $('#ctl-sound').setAttribute('aria-checked', String(!S.muted));
+  }
+  $('#ctl-alarm').addEventListener('click', demoAlarm);
+  $('#ctl-timer').addEventListener('click', demoTimer);
+  $('#ctl-sound').addEventListener('click', () => {
+    S.muted = !S.muted; save(); renderControls();
+    if (R.ringing) { if (S.muted) stopBeep(); else startBeep(); }
+  });
+  $('#ctl-pro').addEventListener('click', () => {
+    S.pro = isPro() ? null : { plan: 'monthly', since: Date.now(), until: Date.now() + 30 * DAYMS };
+    save(); render();
+    if (R.ringing) renderRing();
+  });
+  let resetArmed = 0;
+  $('#ctl-reset').addEventListener('click', e => {
+    const b = e.currentTarget;
+    if (!resetArmed) {
+      b.textContent = 'Click Again to Reset';
+      resetArmed = setTimeout(() => { resetArmed = 0; b.textContent = 'Reset Demo Data'; }, 3000);
+      return;
+    }
+    clearTimeout(resetArmed); resetArmed = 0;
+    b.textContent = 'Reset Demo Data';
+    try { localStorage.removeItem(STORE); } catch (err) { /* ignore */ }
+    S = seed();
+    R.snooze = null; R.tab = 'alarm'; R.editMode = false;
+    R.pick = { h: 0, m: 5, s: 0 };
+    Object.assign(R.timer, { total: 300, remaining: 300, running: false, active: false, endAt: 0 });
+    if (R.dialog) closeDialog();
+    closeSheet();
+    if (R.ringing) stopRinging(); else render();
+    toast('Demo data reset.');
+  });
+
+  document.addEventListener('keydown', e => {
+    const tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (R.dialog) { if (e.key === 'Escape') closeDialog(); return; }
+    if (R.sheet && R.sheet.view === 'math') {
+      if (/^[0-9]$/.test(e.key)) { e.preventDefault(); mathKey(e.key); return; }
+      if (e.key === 'Backspace') { e.preventDefault(); mathKey('del'); return; }
+      if (e.key === 'Enter' && tag !== 'button') { e.preventDefault(); mathKey('ok'); return; }
+    }
+    if (e.key === 'Escape' && R.sheet && R.sheet.view !== 'ad' && (R.sheet.view !== 'pay' || R.sheet.ctx.phase === 'confirm')) {
+      if (R.sheet.view === 'edit' && R.sheet.ctx.page === 'repeat') A['repeat-back'](); else closeSheet();
+      return;
+    }
+    if (e.key === 'a' || e.key === 'A') demoAlarm();
+    else if (e.key === 't' || e.key === 'T') demoTimer();
+  });
+
+  /* ---------- main clock ---------- */
+  let lastMin = -1;
+  function checkAlarms(now) {
+    if (R.ringing) return;
+    if (R.snooze && now.getTime() >= R.snooze.until) { const r = R.snooze.ring; R.snooze = null; ring(r); return; }
+    const key = `${now.toDateString()} ${now.getHours()}:${now.getMinutes()}`;
+    const idx = (now.getDay() + 6) % 7;
+    for (const a of S.alarms) {
+      if (!a.on || a.h !== now.getHours() || a.m !== now.getMinutes()) continue;
+      const once = !a.days.some(Boolean);
+      if (!once && !a.days[idx]) continue;
+      if (R.lastFired[a.id] === key) continue;
+      R.lastFired[a.id] = key;
+      if (once) { a.on = false; save(); }
+      ring({ kind: 'alarm', label: a.label || 'Alarm', timeLabel: clockAP(a.h, a.m), snooze: a.snooze !== false });
+      return;
+    }
+  }
+  function tick() {
+    const now = new Date();
+    $('#sb-time').textContent = clockOf(now);
+    if (R.ringing) { const rc = $('#ring-clock'); if (rc) rc.textContent = clockOf(now); }
+
+    const t = R.timer;
+    if (t.active && t.running) {
+      const left = Math.max(0, Math.ceil((t.endAt - now.getTime()) / 1000));
+      if (left !== t.remaining) {
+        t.remaining = left;
+        if (R.tab === 'timer') {
+          const l = $('#cd-time'), p = $('#cd-prog');
+          if (l) l.textContent = dur(left);
+          if (p) p.setAttribute('stroke-dashoffset', (CIRC * (1 - left / t.total)).toFixed(2));
+        }
+      }
+      if (left === 0) {
+        Object.assign(t, { active: false, running: false });
+        if (!R.ringing) ring({ kind: 'timer', label: 'Timer Done', timeLabel: durWords(t.total) });
+        else render();
+      }
+    }
+    if (R.snooze && R.tab === 'alarm') {
+      const el = $('#snz-left');
+      if (el) el.textContent = dur(Math.max(0, Math.ceil((R.snooze.until - now.getTime()) / 1000)));
+    }
+    if (now.getMinutes() !== lastMin) {
+      const first = lastMin === -1;
+      lastMin = now.getMinutes();
+      if (!first && R.tab === 'alarm' && !R.editMode) render();
+    }
+    checkAlarms(now);
+  }
+
+  /* ---------- phone size ---------- */
+  function fit() {
+    const w = window.innerWidth, h = window.innerHeight - 48;
+    const stageW = $('.stage').clientWidth;
+    let s;
+    if (w >= 860) s = Math.min(1, h / 876, (stageW - 300 - 48) / 417);
+    else s = Math.min(1, stageW / 425);
+    SCALE = Math.max(0.3, s);
+    document.documentElement.style.setProperty('--s', SCALE.toFixed(4));
+  }
+  window.addEventListener('resize', fit);
+
+  fit();
+  render();
+  syncInert();
+  tick();
+  setInterval(tick, 500);
+})();
+</script>
+</body>
+</html>

@@ -8,3 +8,6 @@ pubspec.lock
 *.iml
 .idea/
 .vscode/
+
+# Vercel
+.vercel/

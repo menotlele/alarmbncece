@@ -1,0 +1,4 @@
+# Deploy only the web mockup; the Flutter app is not part of the site.
+/*
+!/web_mockup
+!/vercel.json
