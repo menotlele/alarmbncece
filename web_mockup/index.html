@@ -80,6 +80,22 @@
   --ad-2: #FBE7C6;
   --ad-ink: #1E2B22;
   --ad-pillow: #FFFFFF;
+  --bill-body: #FF9F0A;
+  --bill-dark: #E9860A;
+  --bill-face: #FFF6E6;
+  --bill-ink: #2B1B0E;
+  --bill-cheek: #FF7F6B;
+  --bill-money: #1E9E4A;
+  --bill-tear: #5AC8FA;
+  --bill-leg: #5A3A1E;
+  --crown: #FFD60A;
+  --crown-edge: #D9A400;
+  --bubble: #FFFFFF;
+  --bubble-ink: #1C1C1E;
+  --coin-hi: #FFE38A;
+  --coin: #F7B928;
+  --coin-lo: #C98A06;
+  --coin-ink: #5A3E00;
 
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --s: 1;
@@ -272,13 +288,13 @@ svg.s { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round
 .sec-plain { display: flex; align-items: center; gap: 6px; margin: 20px 16px 0; padding-bottom: 8px; font-weight: 600; border-bottom: 1px solid var(--sep); }
 .lt + .sec-plain { margin-top: 10px; }
 .sec-plain svg { width: 20px; height: 20px; color: var(--label2); }
-.sec-plain .badge-pro { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: var(--tint); }
-.sec-plain .badge-pro svg { width: 15px; height: 15px; color: var(--tint); }
+.badge-pro { flex: none; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: var(--tint); }
+.badge-pro svg { width: 15px; height: 15px; }
 .plist { list-style: none; margin: 0 0 0 16px; padding: 0; }
 .prow { display: flex; align-items: center; gap: 12px; min-height: 86px; padding: 6px 16px 8px 0; border-bottom: 1px solid var(--sep); }
 .prow-main { flex: 1; min-width: 0; display: grid; text-align: left; }
 .al-time { font-size: 56px; font-weight: 300; line-height: 1.04; letter-spacing: -.015em; font-variant-numeric: tabular-nums; }
-.al-time small { margin-left: 3px; font-size: 32px; letter-spacing: 0; }
+.al-time small { margin-left: 4px; font-size: 30px; letter-spacing: 0; }
 .al-sub { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .prow.off .al-time, .prow.off .al-sub { color: var(--label2); }
 .bal-plain { font-size: 34px; font-weight: 300; line-height: 1.15; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
@@ -409,7 +425,7 @@ button.row:active { background: var(--fill); }
 .ls-top { text-align: center; }
 .ls-date { margin: 0; font-size: 20px; font-weight: 600; opacity: .9; }
 .ls-time { margin: -4px 0 0; font-size: 100px; font-weight: 700; line-height: 1.05; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
-.ls-alarm { margin-top: auto; padding-bottom: 28px; text-align: center; }
+.ls-alarm { margin-top: 16px; padding-bottom: 22px; text-align: center; }
 .ls-kind { display: inline-flex; align-items: center; gap: 6px; margin: 0; font-size: 15px; font-weight: 600; opacity: .8; }
 .ls-kind svg { width: 16px; height: 16px; }
 .ls-label { margin: 6px 0 4px; font-size: 28px; font-weight: 700; letter-spacing: -.01em; line-height: 1.15; }
@@ -488,6 +504,7 @@ button.row:active { background: var(--fill); }
 .caret { width: 2px; height: 30px; margin-left: 2px; background: var(--tint); animation: blink 1s steps(1) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 .m-msg { margin: 12px 16px 0; min-height: 20px; text-align: center; font-size: 15px; color: var(--red); }
+.m-msg.ok { color: var(--green); }
 .numpad { margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 6px 6px 36px; background: var(--key-tray); }
 .key { height: 46px; border-radius: 5px; background: var(--key); color: var(--key-ink); box-shadow: 0 1px 0 var(--key-shadow); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; text-align: center; }
 .key:active { background: var(--key-down); }
@@ -555,8 +572,48 @@ button.row:active { background: var(--fill); }
 .bn-top span { font-size: 13px; color: var(--label2); }
 .bn-txt p { margin: 1px 0 0; font-size: 15px; line-height: 1.3; }
 
+/* Bill, the mascot */
+.bill { display: block; overflow: visible; }
+.b-body { fill: var(--bill-body); }
+.b-bell { fill: var(--bill-dark); }
+.b-face { fill: var(--bill-face); }
+.b-ink { fill: var(--bill-ink); }
+.b-line { fill: none; stroke: var(--bill-ink); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.b-money { font: 800 26px var(--font); fill: var(--bill-money); text-anchor: middle; }
+.b-cheek { fill: var(--bill-cheek); opacity: .55; }
+.b-leg { fill: var(--bill-leg); }
+.b-tear { fill: var(--bill-tear); }
+.b-tongue { fill: var(--bill-cheek); }
+.b-crown { fill: var(--crown); stroke: var(--crown-edge); stroke-width: 2; stroke-linejoin: round; }
+.b-z { font: 800 15px var(--font); fill: var(--label2); }
+.shake { animation: bill-shake .42s ease-in-out infinite; transform-origin: 50% 88%; }
+@keyframes bill-shake { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
+.bob { animation: bill-bob 3s ease-in-out infinite; }
+@keyframes bill-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+.intro .bill { width: 92px; height: 92px; margin: 0 0 14px -8px; }
+.ls-bill { margin-top: auto; display: grid; justify-items: center; gap: 12px; }
+.ls-bill .bill { width: 124px; height: 124px; }
+.bubble { position: relative; margin: 0; max-width: 270px; padding: 10px 16px; border-radius: 18px; background: var(--bubble); color: var(--bubble-ink); font-size: 17px; font-weight: 600; line-height: 1.25; text-align: center; box-shadow: 0 8px 24px rgba(0, 0, 0, .25); }
+.bubble::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 14px; height: 14px; margin-left: -7px; border-radius: 3px; background: var(--bubble); transform: rotate(45deg); }
+.pro-head .bill { width: 108px; height: 108px; }
+.empty { display: grid; justify-items: center; gap: 4px; padding: 40px 32px; text-align: center; color: var(--label2); font-size: 15px; }
+.empty .bill { width: 112px; height: 112px; margin-bottom: 8px; }
+.empty b { color: var(--label); font-size: 20px; font-weight: 600; }
+
+/* wallet card on the Alarms tab */
+.wcard { display: flex; align-items: center; gap: 12px; width: calc(100% - 32px); margin: 8px 16px 16px; padding: 12px 14px; border-radius: 14px; background: var(--cell2); text-align: left; }
+button.wcard:active { background: var(--fill); }
+.wcard.snz { margin-top: -6px; background: var(--tint-bg); }
+.coin { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 35% 30%, var(--coin-hi), var(--coin) 58%, var(--coin-lo)); color: var(--coin-ink); font-size: 18px; font-weight: 800; }
+.coin.zz { background: var(--tint); color: #FFFFFF; }
+.coin.zz svg { width: 20px; height: 20px; }
+.wc-txt { flex: 1; min-width: 0; display: grid; }
+.wc-txt b { font-size: 20px; font-weight: 600; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.wc-txt small { font-size: 13px; color: var(--label2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.plist.top { border-top: 1px solid var(--sep); }
+
 @media (prefers-reduced-motion: reduce) {
-  .device-slot.is-ringing, .slide-text, .caret { animation: none; }
+  .device-slot.is-ringing, .slide-text, .caret, .shake, .bob { animation: none; }
   .slide-text { color: var(--ls-ink); background: none; }
 }
 </style>
@@ -564,9 +621,10 @@ button.row:active { background: var(--fill); }
 <body>
 <main class="stage">
   <section class="intro">
+    <div id="intro-bill"></div>
     <h1>Coin Alarm</h1>
-    <p class="sub">The alarm clock that makes you pay to stop it.</p>
-    <p class="body">Slide to stop and you get a bill: $0.99 plus a $0.29 service fee. Snoozing costs money too, and the price goes up every time. Too cheap to pay? Go Pro, solve three math problems, or sit through an ad.</p>
+    <p class="sub">Meet Bill. He wakes you up, then he bills you.</p>
+    <p class="body">Slide to stop and Bill hands you an invoice: $0.99 plus a $0.29 service fee. Snoozing costs extra, and the price climbs every time you do it. Too cheap to pay? Go Pro, solve three math problems, or sit through an ad.</p>
   </section>
 
   <div class="device-col">
@@ -619,7 +677,7 @@ button.row:active { background: var(--fill); }
       <div class="pg-row"><span id="lbl-pro">Pro Subscription</span><button class="pg-sw" id="ctl-pro" type="button" role="switch" aria-checked="false" aria-labelledby="lbl-pro"></button></div>
       <button class="pg-row danger" id="ctl-reset" type="button">Reset Demo Data</button>
     </div>
-    <p class="ctl-f">A just-for-fun mockup. Every price and payment is pretend. Click the page once so your browser lets the alarm make sound.</p>
+    <p class="ctl-f">A just-for-fun mockup. Every price and payment is pretend, and Bill is not a real accountant. Click the page once so your browser lets the alarm make sound.</p>
   </aside>
 </main>
 
@@ -645,7 +703,6 @@ button.row:active { background: var(--fill); }
     return [h && `${h} hr`, m && `${m} min`, d && `${d} sec`].filter(Boolean).join(' ') || '0 sec';
   };
   const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
-  const times = n => (n === 1 ? 'once' : n === 2 ? 'twice' : `${n} times`);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const fmtMult = m => `${m}×`;
   const DAY_SHORT = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -656,18 +713,30 @@ button.row:active { background: var(--fill); }
 
   /* prices in cents */
   const PRICE = { stopAlarm: 99, stopTimer: 49, snooze: 49, fee: 29, monthly: 499, yearly: 2999, discount: 249 };
-  const STORE = 'coinalarm-mockup-v3';
+  const STORE = 'coinalarm-mockup-v4';
   const METHODS = [
     { id: 'wallet', name: 'Coin Wallet', tile: 'orange', glyph: '$' },
     { id: 'later', name: 'Sleep Later', sub: 'Wake up now, pay next month', tile: 'blue', glyph: 'SL' },
-    { id: 'leaf', name: 'Leaf Cash', sub: 'Picked fresh from the tree', tile: 'green leaf', glyph: '' },
+    { id: 'leaf', name: 'Leaf Cash', sub: 'Picked fresh this morning', tile: 'green leaf', glyph: '' },
+    { id: 'hugs', name: 'Hugs', sub: 'Warm, fuzzy, worthless', tile: 'purple', glyph: '♥' },
   ];
   const PRESETS = [
+    { s: 150, label: 'Microwave popcorn' },
     { s: 180, label: 'Instant noodles' },
-    { s: 420, label: 'Boiled egg' },
-    { s: 1500, label: 'Focus' },
+    { s: 420, label: 'Perfect boiled egg' },
+    { s: 1500, label: 'Pretend to work' },
     { s: 60, label: 'Quick test' },
   ];
+  const SOUNDS = {
+    chaching: { name: 'Cha-Ching', every: 1300 },
+    radar: { name: 'Radar', every: 1000 },
+    rooster: { name: 'Angry Rooster', every: 1700 },
+    mom: { name: 'Mom Yelling', every: 1500 },
+  };
+  const QUOTES = ['Pay up, sleepyhead!', 'Rise and pay!', 'Snooze? That’ll cost you.', 'I take cash, cards and tears.', 'Your bed is free. I am not.', 'Good morning! Wallet out, please.', 'Every snooze makes me richer.'];
+  const QUOTES_AGAIN = ['Back already? Prices went up.', 'Oh, you again. Surge pricing!', 'Snoozing is my favorite feature.'];
+  const QUOTES_PRO = ['Ugh, you’re Pro. Fine. It’s free.', 'Free for you. Bill is not okay.'];
+  const pick = a => a[Math.floor(Math.random() * a.length)];
 
   const pathIcon = d => `<svg class="f" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="${d}"/></svg>`;
   const lineIcon = (d, cls = '') => `<svg class="s ${cls}" viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
@@ -688,10 +757,39 @@ button.row:active { background: var(--fill); }
     xmark: lineIcon('<path d="M7 7l10 10M17 7 7 17"/>'),
     arrow: lineIcon('<path d="M5 12h13M12.5 6l6 6-6 6"/>'),
     checkCircle: lineIcon('<circle cx="12" cy="12" r="9.5"/><path d="M7.8 12.3l2.8 2.8 5.6-5.6"/>'),
+    face: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#FFFFFF" d="M6.4 2.4l1.1 1.3L3.8 6.8 2.7 5.5ZM17.6 2.4l3.7 3.1-1.1 1.3-3.7-3.1Z"/><circle cx="12" cy="13" r="8.2" fill="#FFFFFF"/><circle cx="9.3" cy="12" r="1.15" style="fill:var(--bill-ink)"/><circle cx="14.7" cy="12" r="1.15" style="fill:var(--bill-ink)"/><path d="M9.2 15.1q2.8 2.4 5.6 0" fill="none" style="stroke:var(--bill-ink)" stroke-width="1.4" stroke-linecap="round"/></svg>',
   };
   const chev = () => lineIcon(CHEV, 'chev');
   const check = on => lineIcon(CHECK, `check ${on ? '' : 'off'}`);
-  $('#bn-ico').innerHTML = I.alarm;
+  /* Bill: an alarm clock with opinions. mood: greedy | happy | sad | sleep */
+  function bill(mood = 'happy', cls = '', crown = false) {
+    const eyes = {
+      greedy: '<text x="46" y="71" class="b-money">$</text><text x="74" y="71" class="b-money">$</text>',
+      happy: '<path d="M41 62q5-7 10 0M69 62q5-7 10 0" class="b-line"/>',
+      sad: '<circle cx="46" cy="62" r="4" class="b-ink"/><circle cx="74" cy="62" r="4" class="b-ink"/><path d="M39 54l12 3M81 54l-12 3" class="b-line"/><path d="M76 69q-4 6 0 9q4-3 0-9z" class="b-tear"/>',
+      sleep: '<path d="M41 62q5 5 10 0M69 62q5 5 10 0" class="b-line"/>',
+    }[mood];
+    const mouth = {
+      greedy: '<path d="M47 75q13 16 26 0z" class="b-ink"/><path d="M53 81q7 5 14 0q-7-3-14 0z" class="b-tongue"/>',
+      happy: '<path d="M49 75q11 10 22 0" class="b-line"/>',
+      sad: '<path d="M51 82q9-8 18 0" class="b-line"/>',
+      sleep: '<ellipse cx="60" cy="79" rx="3.5" ry="2.8" class="b-ink"/>',
+    }[mood];
+    return `<svg class="bill ${cls}" viewBox="0 0 120 120" aria-hidden="true">
+      <rect x="35" y="94" width="10" height="18" rx="5" class="b-leg" transform="rotate(14 40 103)"/>
+      <rect x="75" y="94" width="10" height="18" rx="5" class="b-leg" transform="rotate(-14 80 103)"/>
+      <circle cx="29" cy="30" r="14" class="b-bell"/><circle cx="91" cy="30" r="14" class="b-bell"/>
+      ${crown ? '' : '<rect x="56" y="14" width="8" height="12" rx="3" class="b-bell"/>'}
+      <circle cx="60" cy="64" r="40" class="b-body"/>
+      <circle cx="60" cy="65" r="31" class="b-face"/>
+      ${crown ? '<path d="M42 31l5-21 13 11 13-11 5 21z" class="b-crown"/>' : ''}
+      ${mood === 'sleep' ? '' : '<ellipse cx="40" cy="74" rx="5" ry="3.5" class="b-cheek"/><ellipse cx="80" cy="74" rx="5" ry="3.5" class="b-cheek"/>'}
+      ${eyes}${mouth}
+      ${mood === 'sleep' ? '<text x="96" y="22" class="b-z">z</text><text x="106" y="10" class="b-z">z</text>' : ''}
+    </svg>`;
+  }
+  $('#bn-ico').innerHTML = I.face;
+  $('#intro-bill').innerHTML = bill('greedy', 'bob');
 
   /* ---------- state ---------- */
   function seed() {
@@ -699,9 +797,9 @@ button.row:active { background: var(--fill); }
     const at = (daysAgo, h, m) => { const d = new Date(now - daysAgo * DAYMS); d.setHours(h, m, 0, 0); return d.getTime(); };
     return {
       alarms: [
-        { id: 'a1', h: 5, m: 30, label: 'Rise and shine', days: [1, 1, 1, 1, 1, 1, 1], on: true, snooze: true },
-        { id: 'a2', h: 6, m: 15, label: 'Leave for work', days: [1, 1, 1, 1, 1, 0, 0], on: true, snooze: true },
-        { id: 'a3', h: 13, m: 0, label: 'Power nap', days: [0, 0, 0, 0, 0, 1, 1], on: false, snooze: true },
+        { id: 'a1', h: 5, m: 30, label: 'Rise and shine (allegedly)', days: [1, 1, 1, 1, 1, 1, 1], on: true, snooze: true, sound: 'chaching' },
+        { id: 'a2', h: 6, m: 15, label: 'Leave for work, sadly', days: [1, 1, 1, 1, 1, 0, 0], on: true, snooze: true, sound: 'rooster' },
+        { id: 'a3', h: 13, m: 0, label: 'Power nap (20 min, promise)', days: [0, 0, 0, 0, 0, 1, 1], on: false, snooze: true, sound: 'mom' },
       ],
       wallet: 2092,
       history: [
@@ -814,14 +912,15 @@ button.row:active { background: var(--fill); }
   function quote(action, ring, plan) {
     if (action === 'pro') {
       const base = plan === 'yearly' ? PRICE.yearly : PRICE.monthly;
-      return { lines: [[`Pro, ${planName(plan)}`, base], ['Service fee', PRICE.fee]], total: base + PRICE.fee, mult: 1 };
+      return { lines: [[`Pro, ${planName(plan)}`, base], ['Service fee', PRICE.fee], ['Bill’s tears', 'Included']], total: base + PRICE.fee, mult: 1 };
     }
     const base = action === 'snooze' ? PRICE.snooze : (ring.kind === 'timer' ? PRICE.stopTimer : PRICE.stopAlarm);
     const mult = 1 + 0.5 * (ring.snoozes || 0);
     const surge = Math.round(base * (mult - 1));
     const lines = [[action === 'snooze' ? 'Snooze for 5 minutes' : (ring.kind === 'timer' ? 'Stop timer' : 'Stop alarm'), base]];
-    if (surge) lines.push([`${fmtMult(mult)} surge`, surge]);
+    if (surge) lines.push([`${fmtMult(mult)} snooze surge`, surge]);
     lines.push(['Service fee', PRICE.fee]);
+    lines.push(['Emotional damage', 'Free']);
     return { lines, total: base + surge + PRICE.fee, mult };
   }
   function actionTitle(action, r) {
@@ -857,24 +956,39 @@ button.row:active { background: var(--fill); }
     if (actx.state === 'suspended') actx.resume().catch(() => {});
     return actx;
   }
-  function beepBurst() {
+  function tone(ac, t, f, d, type, vol, f2) {
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(f, t);
+    if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    o.connect(g).connect(ac.destination);
+    o.start(t);
+    o.stop(t + d + 0.02);
+  }
+  function playSound(id) {
     const ac = audio();
     if (!ac) return;
-    const t0 = ac.currentTime + 0.02;
-    for (let i = 0; i < 4; i++) {
-      const o = ac.createOscillator(), g = ac.createGain();
-      o.type = 'sine';
-      o.frequency.value = 1760;
-      const t = t0 + i * 0.13;
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.12, t + 0.008);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
-      o.connect(g).connect(ac.destination);
-      o.start(t);
-      o.stop(t + 0.1);
+    const t = ac.currentTime + 0.02;
+    if (id === 'chaching') {
+      tone(ac, t, 1318, 0.08, 'triangle', 0.14); tone(ac, t + 0.09, 1760, 0.08, 'triangle', 0.14); tone(ac, t + 0.2, 2637, 0.45, 'sine', 0.12);
+    } else if (id === 'rooster') {
+      tone(ac, t, 420, 0.18, 'sawtooth', 0.07, 700); tone(ac, t + 0.2, 700, 0.14, 'sawtooth', 0.07, 560); tone(ac, t + 0.36, 560, 0.5, 'sawtooth', 0.07, 880);
+    } else if (id === 'mom') {
+      tone(ac, t, 340, 0.22, 'square', 0.06, 300); tone(ac, t + 0.34, 360, 0.3, 'square', 0.06, 280);
+    } else {
+      for (let i = 0; i < 4; i++) tone(ac, t + i * 0.13, 1760, 0.09, 'sine', 0.12);
     }
   }
-  function startBeep() { stopBeep(); if (S.muted) return; beepBurst(); beepIv = setInterval(beepBurst, 1000); }
+  function startBeep() {
+    stopBeep();
+    if (S.muted || !R.ringing) return;
+    const id = SOUNDS[R.ringing.sound] ? R.ringing.sound : 'radar';
+    playSound(id);
+    beepIv = setInterval(() => playSound(id), SOUNDS[id].every);
+  }
   function stopBeep() { clearInterval(beepIv); beepIv = 0; }
   document.addEventListener('pointerdown', () => { audio(); }, { passive: true });
 
@@ -949,31 +1063,33 @@ button.row:active { background: var(--fill); }
     return `${left}<span class="nav-title">${title}</span>${right}`;
   }
 
+  function walletNote() {
+    const left = Math.floor(S.wallet / (PRICE.stopAlarm + PRICE.fee));
+    if (isPro()) return 'Pro: stopping is free. Bill is sulking.';
+    if (left === 0) return 'Not enough for a single wake-up. Uh-oh.';
+    return `Enough for ${plural(left, 'wake-up')}`;
+  }
+  const grade = n => (n === 0 ? 'A+' : n <= 2 ? 'B' : n <= 4 ? 'C−' : n <= 7 ? 'D' : 'F');
   function alarmView() {
     const list = S.alarms.slice().sort((x, y) => (x.h * 60 + x.m) - (y.h * 60 + y.m));
     const now = new Date(), nx = nextAlarm(now);
-    const stopPrice = isPro() ? 'free' : usd(PRICE.stopAlarm + PRICE.fee);
-    const snzPrice = isPro() ? 'free' : usd(PRICE.snooze + PRICE.fee);
-    const snz = R.snooze ? `<div class="sec-plain">${I.zz}Snoozed</div>
-      <ul class="plist"><li class="prow">
-        <div class="prow-main"><span class="bal-plain" id="snz-left">${dur(Math.max(0, Math.ceil((R.snooze.until - now) / 1000)))}</span><span class="bal-note">${esc(R.snooze.ring.label)} rings again at ${clockAPOf(new Date(R.snooze.until))}</span></div>
+    const snz = R.snooze ? `<div class="wcard snz">
+        <span class="coin zz">${I.zz}</span>
+        <span class="wc-txt"><b id="snz-left">${dur(Math.max(0, Math.ceil((R.snooze.until - now) / 1000)))}</b><small>Snoozed. Bill is waiting.</small></span>
         <button class="pill" type="button" data-action="snooze-now">Ring Now</button>
-      </li></ul>` : '';
-    const foot = [
-      nx ? `Next alarm: ${clockAP(nx.a.h, nx.a.m)}, in ${inShort(nx.d - now)}.` : 'No alarms are on.',
-      isPro() ? 'You’re Pro, so stopping and snoozing are free.' : 'The snooze price goes up 0.5× every time you snooze.',
-    ].join(' ');
+      </div>` : '';
+    const foot = nx ? `Next alarm in ${inShort(nx.d - now)}. Sleep tight, don’t let the snooze fees bite.` : 'Every alarm is off. Bill is getting nervous.';
     return `
       <h1 class="lt">Alarms</h1>
-      <div class="sec-plain">${I.card}Coin Wallet${isPro() ? `<span class="badge-pro">${I.crown}PRO</span>` : ''}</div>
-      <ul class="plist"><li class="prow">
-        <div class="prow-main"><span class="bal-plain">${usd(S.wallet)}</span><span class="bal-note">Stop ${stopPrice} · Snooze ${snzPrice}</span></div>
-        <button class="pill" type="button" data-action="tab" data-v="wallet">Top Up</button>
-      </li></ul>
+      <button class="wcard" type="button" data-action="tab" data-v="wallet" aria-label="Coin Wallet, ${usd(S.wallet)}. Open Wallet">
+        <span class="coin" aria-hidden="true">$</span>
+        <span class="wc-txt"><b>${usd(S.wallet)}</b><small>${walletNote()}</small></span>
+        ${isPro() ? `<span class="badge-pro">${I.crown}PRO</span>` : '<span class="pill">Top Up</span>'}
+      </button>
       ${snz}
-      <div class="sec-plain">${I.alarm}Other</div>
-      <ul class="plist">${list.map(alarmRow).join('') || '<li class="prow"><span class="al-sub" style="color:var(--label2)">No Alarms</span></li>'}</ul>
-      <p class="foot">${foot}</p>`;
+      ${list.length
+        ? `<ul class="plist top">${list.map(alarmRow).join('')}</ul><p class="foot">${foot}</p>`
+        : `<div class="empty">${bill('sleep')}<b>No Alarms</b><span>Bill has nobody to bill. Tap + to fix that.</span></div>`}`;
   }
   function alarmRow(a) {
     const t = clockAP(a.h, a.m);
@@ -1013,7 +1129,7 @@ button.row:active { background: var(--fill); }
         <button class="circ gray" type="button" data-action="t-cancel" ${t.active ? '' : 'disabled'}>Cancel</button>
         <button class="circ ${cls}" type="button" data-action="t-toggle" id="t-main" ${!t.active && pickTotal() === 0 ? 'disabled' : ''}>${main}</button>
       </div>
-      <div class="group"><div class="row"><span>When Timer Ends</span><span class="val">${isPro() ? 'Free with Pro' : 'Pay ' + usd(PRICE.stopTimer + PRICE.fee)}</span></div></div>
+      <div class="group"><div class="row"><span>When Timer Ends</span><span class="val">${isPro() ? 'Free with Pro' : 'Bill charges ' + usd(PRICE.stopTimer + PRICE.fee)}</span></div></div>
       <div class="sec-plain">Recents</div>
       <ul class="plist">${PRESETS.map(p => `<li class="prow">
         <div class="prow-main"><span class="rec-t">${durShort(p.s)}</span><span class="rec-l">${p.label}</span></div>
@@ -1022,8 +1138,11 @@ button.row:active { background: var(--fill); }
   }
 
   function walletView() {
-    const stops = S.history.filter(h => h.kind === 'stop' && h.amount < 0).length;
-    const snoozes = S.history.filter(h => h.kind === 'snooze' && h.amount < 0).length;
+    const now = new Date();
+    const month = S.history.filter(h => { const d = new Date(h.t); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); });
+    const stops = month.filter(h => h.kind === 'stop' && h.amount < 0).length;
+    const snoozes = month.filter(h => h.kind === 'snooze' && h.amount < 0).length;
+    const spent = monthSpent();
     const tile = k => ({
       stop: `<span class="tile red">${I.alarm}</span>`,
       snooze: `<span class="tile orange">${I.zz}</span>`,
@@ -1035,20 +1154,24 @@ button.row:active { background: var(--fill); }
     return `
       <h1 class="lt">Wallet</h1>
       <div class="group" style="margin-top:8px"><div class="bal">
-        <span class="bal-k">Coin Wallet Balance</span>
+        <span class="bal-k">Coin Wallet</span>
         <span class="bal-v">${usd(S.wallet)}</span>
+        <span class="bal-k">${walletNote()}</span>
         <div class="bal-btns">
           <button class="tinted" type="button" data-action="topup" data-v="500">Add $5</button>
           <button class="tinted" type="button" data-action="topup" data-v="2000">Add $20</button>
         </div>
       </div></div>
-      <p class="sec-f">Pretend money. It can’t be withdrawn or spent on snacks.</p>
+      <p class="sec-f">Pretend money. Bill wants it anyway.</p>
       <p class="sec-h">This Month</p>
       <div class="group">
-        <div class="row"><span>Spent on waking up</span><span class="val">${usd(monthSpent())}</span></div>
+        <div class="row"><span>Spent on waking up</span><span class="val">${usd(spent)}</span></div>
+        <div class="row"><span>That’s about</span><span class="val">${(spent / 550).toFixed(1)} lattes</span></div>
         <div class="row"><span>Paid stops</span><span class="val">${stops}</span></div>
         <div class="row"><span>Paid snoozes</span><span class="val">${snoozes}</span></div>
+        <div class="row"><span>Snooze score</span><span class="val">${grade(snoozes)}</span></div>
       </div>
+      <p class="sec-f">Fewer snoozes, better grade. Bill grades on a curve that benefits Bill.</p>
       <p class="sec-h">History</p>
       <div class="group tiles">${S.history.slice(0, 30).map(h => `<div class="row">
         ${tile(h.kind)}
@@ -1058,10 +1181,10 @@ button.row:active { background: var(--fill); }
   }
 
   const FEATURES = [
-    ['orange', I.alarm, 'Free stops', 'Alarms and timers, unlimited'],
-    ['green', I.zz, 'Free snoozes', 'The price never goes up'],
-    ['blue', I.tag, 'No service fee', 'Except when you subscribe'],
-    ['purple', I.crown, 'Pro badge', 'Shown on your alarms list'],
+    ['orange', I.alarm, 'Free stops', 'Sleep in like royalty'],
+    ['green', I.zz, 'Free snoozes', 'Snooze without shame or surge'],
+    ['blue', I.tag, 'No service fee', 'Except when subscribing, obviously'],
+    ['purple', I.crown, 'Pro badge', 'Flex on your roommates'],
   ];
   function proView() {
     const feats = `<div class="group tiles">${FEATURES.map(([c, ic, t, s]) => `<div class="row"><span class="tile ${c}">${ic}</span><span class="r-txt"><b>${t}</b><small>${s}</small></span></div>`).join('')}</div>`;
@@ -1069,7 +1192,7 @@ button.row:active { background: var(--fill); }
       const y = R.proPlan === 'yearly';
       return `
         <h1 class="lt">Pro</h1>
-        <div class="pro-head"><span class="app-ico lg">${I.alarm}</span><h2>Coin Alarm Pro</h2><p>Stop your alarms without thinking about the bill every morning.</p></div>
+        <div class="pro-head">${bill('happy', 'bob', true)}<h2>Coin Alarm Pro</h2><p>Stop alarms for free. Bill will be fine. Probably.</p></div>
         <p class="sec-h">What You Get</p>
         ${feats}
         <p class="sec-h">Choose a Plan</p>
@@ -1082,7 +1205,7 @@ button.row:active { background: var(--fill); }
     }
     return `
       <h1 class="lt">Pro</h1>
-      <div class="pro-head"><span class="app-ico lg">${I.alarm}</span><h2>You’re Pro</h2><p>Stopping and snoozing alarms is free now.</p></div>
+      <div class="pro-head">${bill('sad')}<h2>You’re Pro</h2><p>Stopping and snoozing are free. Bill is sad, but he respects it.</p></div>
       <p class="sec-h">Subscription</p>
       <div class="group">
         <div class="row"><span>Plan</span><span class="val">${planName(S.pro.plan)}</span></div>
@@ -1125,16 +1248,21 @@ button.row:active { background: var(--fill); }
     const pro = isPro();
     const qs = quote('stop', r), qz = quote('snooze', r);
     const dateTxt = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    const bubble = pro ? QUOTES_PRO[r.snoozes % 2] : r.quote;
     ringEl.innerHTML = `
       <div class="ls-top">
         <p class="ls-date">${esc(dateTxt)}</p>
         <p class="ls-time" id="ring-clock">${clockOf(new Date())}</p>
       </div>
+      <div class="ls-bill">
+        <p class="bubble">${esc(bubble)}</p>
+        <div class="shake">${bill(pro ? 'sad' : 'greedy')}</div>
+      </div>
       <div class="ls-alarm">
         <p class="ls-kind">${r.kind === 'timer' ? `${I.timer}Timer · ${esc(r.timeLabel)}` : `${I.alarm}Alarm · ${esc(r.timeLabel)}`}</p>
         <p class="ls-label">${esc(r.label)}</p>
         <p class="ls-price">${pro ? 'Free with Pro' : `${usd(qs.total)} to stop`}</p>
-        ${r.snoozes && !pro ? `<p class="ls-surge">${fmtMult(qs.mult)} price because you snoozed ${times(r.snoozes)}</p>` : ''}
+        ${r.snoozes && !pro ? `<p class="ls-surge">${fmtMult(qs.mult)} snooze surge · high demand for sleep</p>` : ''}
       </div>
       <div class="ls-bottom">
         ${r.kind === 'alarm' && r.snooze !== false ? `<button class="ls-snooze" type="button" data-action="snooze">Snooze <small>${pro ? 'free' : usd(qz.total)}</small></button>` : ''}
@@ -1194,7 +1322,7 @@ button.row:active { background: var(--fill); }
       addHistory({ title: historyTitle('stop', r), note: 'Free with Pro', amount: 0, kind: 'free' });
       save();
       stopRinging();
-      toast(`${r.kind === 'timer' ? 'Timer' : 'Alarm'} stopped. Free with Pro.`);
+      toast(`${r.kind === 'timer' ? 'Timer' : 'Alarm'} stopped for free. Bill is not happy about it.`);
       return;
     }
     openSheet('pay', { action: 'stop', method: 'wallet', phase: 'confirm' });
@@ -1203,7 +1331,8 @@ button.row:active { background: var(--fill); }
 
   function ring(opts) {
     if (R.ringing) return;
-    R.ringing = Object.assign({ snoozes: 0, snooze: true }, opts);
+    R.ringing = Object.assign({ snoozes: 0, snooze: true, sound: 'radar' }, opts);
+    R.ringing.quote = pick(R.ringing.snoozes ? QUOTES_AGAIN : QUOTES);
     if (R.dialog) closeDialog();
     if (R.sheet) closeSheet();
     renderRing();
@@ -1240,7 +1369,7 @@ button.row:active { background: var(--fill); }
     R.snooze = { until, ring: Object.assign({}, r, { snoozes: r.snoozes + 1 }) };
     closeSheet();
     render();
-    toast(`Snoozed for 5 minutes. It rings again at ${clockAPOf(new Date(until))}.`);
+    toast(`Snoozed until ${clockAPOf(new Date(until))}. Bill will be right here. Charging.`);
   }
 
   /* ---------- sheets ---------- */
@@ -1268,7 +1397,7 @@ button.row:active { background: var(--fill); }
     const { view, ctx } = R.sheet;
     sheetEl.setAttribute('aria-label', { pay: 'Payment', edit: 'Edit alarm', math: 'Math problem', ad: 'Ad' }[view]);
     sheetEl.innerHTML = SHEETS[view](ctx);
-    if (view === 'edit' && ctx.page !== 'repeat') {
+    if (view === 'edit' && ctx.page === 'main') {
       initWheels(sheetEl, { hh: ctx.h % 12, mm: ctx.m, ap: ctx.h >= 12 ? 1 : 0 }, (k, v) => {
         if (k === 'hh') ctx.h = v + (ctx.h >= 12 ? 12 : 0);
         else if (k === 'mm') ctx.m = v;
@@ -1290,7 +1419,7 @@ button.row:active { background: var(--fill); }
       const sub = x => (x.id === 'wallet' ? 'Balance ' + usd(S.wallet) : x.sub);
       let cta;
       if (ctx.phase === 'processing') cta = `<div class="busy" role="status">${spinner()}Processing…</div>`;
-      else if (ctx.phase === 'done') cta = `<div class="busy done" role="status">${I.checkCircle}Done</div>`;
+      else if (ctx.phase === 'done') cta = `<div class="busy done" role="status">${I.checkCircle}Paid. Bill says thanks!</div>`;
       else cta = `<button class="big-btn" type="button" data-action="pay">Pay ${usd(q.total)}</button>`;
       const methodBlock = ctx.showMethods
         ? METHODS.map(x => `<button class="row" type="button" role="radio" aria-checked="${x.id === ctx.method}" data-action="method" data-v="${x.id}">
@@ -1306,7 +1435,7 @@ button.row:active { background: var(--fill); }
       return `
         <div class="grabber" aria-hidden="true"></div>
         <div class="pay-top">
-          <span class="app-ico sm">${I.alarm}</span>
+          <span class="app-ico sm">${I.face}</span>
           <span class="r-txt"><b>Coin Alarm</b><small>In-App Purchase</small></span>
           <button class="x-btn" type="button" data-action="close-sheet" aria-label="Close" ${busy ? 'disabled' : ''}>${I.xmark}</button>
         </div>
@@ -1316,7 +1445,7 @@ button.row:active { background: var(--fill); }
           <button type="button" role="radio" aria-checked="${ctx.plan === 'yearly'}" data-action="pay-plan" data-v="yearly" ${busy ? 'disabled' : ''}>Yearly</button>
         </div>` : ''}
         <div class="group">
-          ${q.lines.map(([k, v]) => `<div class="row"><span>${esc(k)}</span><span class="val">${usd(v)}</span></div>`).join('')}
+          ${q.lines.map(([k, v]) => `<div class="row"><span>${esc(k)}</span><span class="val">${typeof v === 'number' ? usd(v) : v}</span></div>`).join('')}
           <div class="row total"><span>Total</span><span class="val">${usd(q.total)}</span></div>
         </div>
         <p class="sec-h" style="margin-top:20px">Pay With</p>
@@ -1330,6 +1459,15 @@ button.row:active { background: var(--fill); }
         </div>`}`;
     },
     edit(c) {
+      if (c.page === 'sound') {
+        return `
+          <div class="sh-nav"><button class="l" type="button" data-action="repeat-back">${I.back}Back</button><span class="t">Sound</span><span></span></div>
+          <div class="pg-body">
+            <p class="sec-h">Alarm Sounds</p>
+            <div class="group" role="radiogroup" aria-label="Alarm sound">${Object.entries(SOUNDS).map(([id, snd]) => `<button class="row" type="button" role="radio" aria-checked="${c.sound === id}" data-action="sound" data-v="${id}"><span>${snd.name}</span>${check(c.sound === id)}</button>`).join('')}</div>
+            <p class="sec-f">Tap a sound to hear it. They all cost the same to stop. Bill does not discriminate.</p>
+          </div>`;
+      }
       if (c.page === 'repeat') {
         return `
           <div class="sh-nav"><button class="l" type="button" data-action="repeat-back">${I.back}Back</button><span class="t">Repeat</span><span></span></div>
@@ -1348,10 +1486,10 @@ button.row:active { background: var(--fill); }
           <div class="group" style="margin-top:8px">
             <button class="row" type="button" data-action="edit-repeat"><span>Repeat</span><span class="val">${repeatText(c.days)}</span>${chev()}</button>
             <label class="row" for="alarm-label"><span>Label</span><input id="alarm-label" type="text" maxlength="40" autocomplete="off" value="${esc(c.label)}" placeholder="Alarm"></label>
-            <div class="row"><span>Sound</span><span class="val">Radar</span></div>
+            <button class="row" type="button" data-action="edit-sound"><span>Sound</span><span class="val">${(SOUNDS[c.sound] || SOUNDS.radar).name}</span>${chev()}</button>
             <div class="row"><span id="snz-lbl">Snooze</span><button class="sw" type="button" role="switch" aria-checked="${c.snooze !== false}" aria-labelledby="snz-lbl" data-action="snooze-sw"></button></div>
           </div>
-          <p class="sec-f">Stopping this alarm costs ${usd(PRICE.stopAlarm + PRICE.fee)}. Snoozing costs ${usd(PRICE.snooze + PRICE.fee)}, and the price goes up 0.5× every time you snooze.</p>
+          <p class="sec-f">Bill charges ${usd(PRICE.stopAlarm + PRICE.fee)} to stop this alarm and ${usd(PRICE.snooze + PRICE.fee)} to snooze it, plus 0.5× more every time you snooze. Bill loves snoozers.</p>
           <div class="group" style="margin-top:26px">
             <button class="row tint" type="button" data-action="edit-soon">Set to 1 Minute From Now</button>
             <button class="row tint" type="button" data-action="edit-test">Test Alarm Now</button>
@@ -1365,7 +1503,7 @@ button.row:active { background: var(--fill); }
         <div class="m-prog" aria-hidden="true">${[0, 1, 2].map(i => `<i class="${i < c.n ? 'on' : ''}"></i>`).join('')}</div>
         <p class="m-q">${c.a} × ${c.b}</p>
         <div class="m-field" id="m-field" aria-live="polite"><span id="m-ans">${c.input}</span><span class="caret" aria-hidden="true"></span></div>
-        <p class="m-msg" role="alert">${c.err ? esc(c.err) : '&nbsp;'}</p>
+        <p class="m-msg ${c.ok ? 'ok' : ''}" role="alert">${c.err ? esc(c.err) : c.ok ? esc(c.ok) : '&nbsp;'}</p>
         <div class="numpad">${[['1', ''], ['2', 'ABC'], ['3', 'DEF'], ['4', 'GHI'], ['5', 'JKL'], ['6', 'MNO'], ['7', 'PQRS'], ['8', 'TUV'], ['9', 'WXYZ']].map(([d, l]) =>
           `<button class="key" type="button" data-action="key" data-v="${d}"><b>${d}</b><small>${l || '&nbsp;'}</small></button>`).join('')}
           <span class="key flat" aria-hidden="true"></span>
@@ -1382,8 +1520,8 @@ button.row:active { background: var(--fill); }
           </div>
           <div class="ad-art" aria-hidden="true"><div class="pillow"></div></div>
           <p class="ad-brand">Hush Pillow</p>
-          <p class="ad-copy">The noise-blocking pillow. Your alarm rings, you keep sleeping.</p>
-          <p class="ad-fine">Fictional product. 0% off, today only.</p>
+          <p class="ad-copy">Can’t hear your alarm if you can’t hear anything. Bill hates this product.</p>
+          <p class="ad-fine">Fictional product. Side effects include being late to everything.</p>
           <button class="ad-cta" type="button" data-action="ad-cta">Learn More</button>
         </div>`;
     },
@@ -1450,11 +1588,15 @@ button.row:active { background: var(--fill); }
     }
     if (ctx.method === 'leaf') {
       back();
-      return showDialog({ title: 'Leaf Cash Not Accepted', msg: 'The cashier only takes fresh leaves. Try your Coin Wallet instead.', actions: [{ label: 'OK' }, useWallet] });
+      return showDialog({ title: 'Leaf Cash Not Accepted', msg: 'Bill only takes leaves picked today. These look like yesterday’s.', actions: [{ label: 'OK' }, useWallet] });
+    }
+    if (ctx.method === 'hugs') {
+      back();
+      return showDialog({ title: 'Hugs Not Accepted', msg: 'Bill appreciates the gesture, but he only takes money.', actions: [{ label: 'OK' }, useWallet] });
     }
     if (S.wallet < q.total) {
       back();
-      return showDialog({ title: 'Not Enough Money', msg: `This costs ${usd(q.total)}, and your wallet has ${usd(S.wallet)}.`, actions: [
+      return showDialog({ title: 'Not Enough Money', msg: `This costs ${usd(q.total)}, and your wallet has ${usd(S.wallet)}. Bill is not a charity.`, actions: [
         { label: 'Cancel' },
         { label: 'Add $20', style: 'bold', fn: () => { topup(2000); render(); pay(); } },
       ] });
@@ -1476,13 +1618,13 @@ button.row:active { background: var(--fill); }
       if (ctx.action === 'pro') {
         closeSheet(); render();
         if (R.ringing) renderRing();
-        toast(R.ringing ? 'You’re Pro now. Slide to stop, no charge.' : 'Coin Alarm Pro is on. Stopping alarms is free now.');
+        toast(R.ringing ? 'Welcome to Pro. Slide to stop for free. Bill is crying into his bells.' : 'Welcome to Pro. Bill is crying into his bells.');
       } else if (ctx.action === 'snooze') {
         doSnooze();
       } else {
         const what = r && r.kind === 'timer' ? 'Timer' : 'Alarm';
         stopRinging(); closeSheet();
-        toast(`${what} stopped. ${usd(q.total)} was charged to your Coin Wallet.`);
+        toast(`${what} stopped. ${usd(q.total)} charged. Good morning, sunshine!`);
       }
     }, 900);
   }
@@ -1498,7 +1640,7 @@ button.row:active { background: var(--fill); }
     save();
     stopRinging();
     closeSheet();
-    toast(how === 'ad' ? 'Ad finished. Alarm stopped for free.' : 'Three right answers. Alarm stopped for free.');
+    toast(how === 'ad' ? 'Ad finished. Alarm stopped for free. Bill is furious.' : 'Three right answers. Alarm stopped for free. Bill is impressed.');
   }
   const newQ = () => ({ a: 6 + Math.floor(Math.random() * 14), b: 3 + Math.floor(Math.random() * 7) });
   function offerFree() {
@@ -1506,9 +1648,9 @@ button.row:active { background: var(--fill); }
     showDialog({
       kind: 'sheet',
       title: 'Stop Without Paying?',
-      msg: 'Prove you’re really awake first.',
+      msg: 'Prove you’re actually awake. Bill is watching.',
       actions: [
-        { label: 'Solve 3 Math Problems', fn: () => openSheet('math', Object.assign({ n: 0, input: '', err: '' }, newQ())) },
+        { label: 'Solve 3 Math Problems', fn: () => openSheet('math', Object.assign({ n: 0, input: '', err: '', ok: '' }, newQ())) },
         { label: 'Watch a 10-Second Ad', fn: () => openSheet('ad', { left: 10 }) },
       ],
     });
@@ -1522,11 +1664,12 @@ button.row:active { background: var(--fill); }
       if (Number(c.input) === c.a * c.b) {
         c.n++; c.err = '';
         if (c.n >= 3) { freeDone('math'); return; }
+        c.ok = c.n === 1 ? 'Correct! Two more to go.' : 'Correct! One more and you’re free.';
         Object.assign(c, newQ(), { input: '' });
         renderSheet();
       } else {
-        c.err = `Not quite. ${c.a} × ${c.b} = ${c.a * c.b}. Back to problem 1.`;
-        c.n = 0;
+        c.err = `Nope. ${c.a} × ${c.b} = ${c.a * c.b}. Are you even awake? Back to problem 1.`;
+        c.ok = ''; c.n = 0;
         Object.assign(c, newQ(), { input: '' });
         renderSheet();
         const f = $('#m-field');
@@ -1553,7 +1696,7 @@ button.row:active { background: var(--fill); }
 
   /* ---------- actions ---------- */
   const findAlarm = id => S.alarms.find(a => a.id === id);
-  const alarmSetMsg = d => `Alarm set for ${inLong(d - new Date())} from now.`;
+  const alarmSetMsg = d => `Alarm set for ${inLong(d - new Date())} from now. Bill is ready.`;
   const A = {
     tab(el) { R.tab = el.dataset.v; R.editMode = false; viewEl.scrollTop = 0; appEl.classList.remove('scrolled'); render(); },
     'edit-mode'() { R.editMode = !R.editMode; render(); },
@@ -1561,12 +1704,12 @@ button.row:active { background: var(--fill); }
       const a = findAlarm(el.dataset.id);
       S.alarms = S.alarms.filter(x => x.id !== el.dataset.id);
       save(); render();
-      if (a) toast(`${clockAP(a.h, a.m)} alarm deleted.`);
+      if (a) toast(`${clockAP(a.h, a.m)} alarm deleted. Bill will miss it.`);
     },
-    'add-alarm'() { R.editMode = false; render(); openSheet('edit', { h: 7, m: 0, label: '', days: [0, 0, 0, 0, 0, 0, 0], snooze: true, page: 'main' }); },
+    'add-alarm'() { R.editMode = false; render(); openSheet('edit', { h: 7, m: 0, label: '', days: [0, 0, 0, 0, 0, 0, 0], snooze: true, sound: 'chaching', page: 'main' }); },
     'edit-alarm'(el) {
       const a = findAlarm(el.dataset.id);
-      if (a) openSheet('edit', { id: a.id, h: a.h, m: a.m, label: a.label, days: a.days.slice(), snooze: a.snooze !== false, page: 'main' });
+      if (a) openSheet('edit', { id: a.id, h: a.h, m: a.m, label: a.label, days: a.days.slice(), snooze: a.snooze !== false, sound: a.sound || 'radar', page: 'main' });
     },
     'toggle-alarm'(el) {
       const a = findAlarm(el.dataset.id);
@@ -1580,6 +1723,17 @@ button.row:active { background: var(--fill); }
     },
     'edit-repeat'() { R.sheet.ctx.page = 'repeat'; renderSheet(); },
     'repeat-back'() { R.sheet.ctx.page = 'main'; renderSheet(); },
+    'edit-sound'() { R.sheet.ctx.page = 'sound'; renderSheet(); },
+    sound(el) {
+      const c = R.sheet.ctx, id = el.dataset.v;
+      c.sound = id;
+      sheetEl.querySelectorAll('[data-action="sound"]').forEach(b => {
+        const on = b.dataset.v === id;
+        b.setAttribute('aria-checked', String(on));
+        b.querySelector('.check').classList.toggle('off', !on);
+      });
+      playSound(id);
+    },
     day(el) {
       const c = R.sheet.ctx, i = Number(el.dataset.i);
       c.days[i] = c.days[i] ? 0 : 1;
@@ -1595,12 +1749,12 @@ button.row:active { background: var(--fill); }
     },
     'edit-test'() {
       const c = R.sheet.ctx;
-      ring({ kind: 'alarm', label: (c.label || '').trim() || 'Alarm', timeLabel: clockAP(c.h, c.m), snooze: c.snooze !== false });
+      ring({ kind: 'alarm', label: (c.label || '').trim() || 'Alarm', timeLabel: clockAP(c.h, c.m), snooze: c.snooze !== false, sound: c.sound });
     },
     'save-alarm'() {
       const c = R.sheet.ctx;
       const label = (c.label || '').trim() || 'Alarm';
-      const data = { h: c.h, m: c.m, label, days: c.days, on: true, snooze: c.snooze !== false };
+      const data = { h: c.h, m: c.m, label, days: c.days, on: true, snooze: c.snooze !== false, sound: c.sound || 'chaching' };
       if (c.id) { const a = findAlarm(c.id); if (a) Object.assign(a, data); delete R.lastFired[c.id]; }
       else S.alarms.push(Object.assign({ id: 'a' + Date.now().toString(36) }, data));
       save(); closeSheet(); R.tab = 'alarm'; render();
@@ -1611,7 +1765,7 @@ button.row:active { background: var(--fill); }
       const c = R.sheet.ctx;
       S.alarms = S.alarms.filter(a => a.id !== c.id);
       save(); closeSheet(); render();
-      toast(`${clockAP(c.h, c.m)} alarm deleted.`);
+      toast(`${clockAP(c.h, c.m)} alarm deleted. Bill will miss it.`);
     },
     't-toggle'() {
       const t = R.timer, now = Date.now();
@@ -1634,18 +1788,18 @@ button.row:active { background: var(--fill); }
       viewEl.scrollTop = 0; appEl.classList.remove('scrolled');
       render();
     },
-    topup(el) { const c = Number(el.dataset.v); topup(c); render(); toast(`Added ${usdShort(c)} to your Coin Wallet. Still pretend money.`); },
+    topup(el) { const c = Number(el.dataset.v); topup(c); render(); toast(`Added ${usdShort(c)}. Bill is delighted.`); },
     plan(el) { R.proPlan = el.dataset.v; render(); },
     'buy-pro'() { openSheet('pay', { action: 'pro', plan: R.proPlan, method: 'wallet', phase: 'confirm' }); },
     'cancel-pro'() {
-      showDialog({ title: 'Cancel Subscription?', msg: `Starting tomorrow, every alarm costs ${usd(PRICE.stopAlarm + PRICE.fee)} to stop. Snoozing costs money again too.`, actions: [
-        { label: 'Keep Pro', style: 'bold', fn: () => toast('Good call. Our wallet thanks you.') },
+      showDialog({ title: 'Cancel Subscription?', msg: `Bill already misses your money. Starting tomorrow, every alarm costs ${usd(PRICE.stopAlarm + PRICE.fee)} to stop again.`, actions: [
+        { label: 'Keep Pro', style: 'bold', fn: () => toast('Good call. Bill thanks you from the bottom of his bells.') },
         { label: 'Cancel Subscription', style: 'destructive', fn: () => setTimeout(() => showDialog({
-          title: 'Wait!',
+          title: 'Wait! Bill Is Crying',
           msg: `Get 50% off for 3 months: just ${usd(PRICE.discount)} a month. That’s less than stopping two alarms.`,
           actions: [
-            { label: 'Take Discount', style: 'bold', fn: () => { S.pro.plan = 'discount'; save(); render(); toast(`Discount applied: ${usd(PRICE.discount)} a month for 3 months.`); } },
-            { label: 'Cancel Anyway', style: 'destructive', fn: () => { S.pro = null; save(); render(); toast('Subscription canceled. We’ll miss your money.'); } },
+            { label: 'Take Discount', style: 'bold', fn: () => { S.pro.plan = 'discount'; save(); render(); toast(`Discount applied: ${usd(PRICE.discount)} a month for 3 months. Bill stopped crying.`); } },
+            { label: 'Cancel Anyway', style: 'destructive', fn: () => { S.pro = null; save(); render(); toast('Subscription canceled. Bill is fine. Bill is totally fine.'); } },
           ],
         }), 260) },
       ] });
@@ -1671,7 +1825,7 @@ button.row:active { background: var(--fill); }
     'close-sheet'() { closeSheet(); },
     key(el) { mathKey(el.dataset.v); },
     'ad-done'() { freeDone('ad'); },
-    'ad-cta'() { toast('Hush Pillow isn’t real. Hang in there, the ad is almost over.'); },
+    'ad-cta'() { toast('Hush Pillow isn’t real. Bill made sure of that.'); },
   };
 
   screen.addEventListener('click', e => {
@@ -1688,13 +1842,13 @@ button.row:active { background: var(--fill); }
 
   /* ---------- demo panel ---------- */
   function demoAlarm() {
-    if (R.ringing) { toast('It’s already ringing. Stop it first (and pay).'); return; }
+    if (R.ringing) { toast('It’s already ringing. Bill is waiting for payment.'); return; }
     const now = new Date(), nx = nextAlarm(now);
     const a = nx ? nx.a : S.alarms[0];
-    ring(a ? { kind: 'alarm', label: a.label || 'Alarm', timeLabel: clockAP(a.h, a.m), snooze: a.snooze !== false } : { kind: 'alarm', label: 'Alarm', timeLabel: clockAPOf(now) });
+    ring(a ? { kind: 'alarm', label: a.label || 'Alarm', timeLabel: clockAP(a.h, a.m), snooze: a.snooze !== false, sound: a.sound } : { kind: 'alarm', label: 'Alarm', timeLabel: clockAPOf(now) });
   }
   function demoTimer() {
-    if (R.ringing) { toast('It’s already ringing. Stop it first (and pay).'); return; }
+    if (R.ringing) { toast('It’s already ringing. Bill is waiting for payment.'); return; }
     const t = R.timer;
     const total = t.active ? t.total : (pickTotal() || 300);
     Object.assign(t, { active: false, running: false });
@@ -1733,7 +1887,7 @@ button.row:active { background: var(--fill); }
     if (R.dialog) closeDialog();
     closeSheet();
     if (R.ringing) stopRinging(); else render();
-    toast('Demo data reset.');
+    toast('Demo data reset. Bill has forgotten everything.');
   });
 
   document.addEventListener('keydown', e => {
@@ -1746,7 +1900,7 @@ button.row:active { background: var(--fill); }
       if (e.key === 'Enter' && tag !== 'button') { e.preventDefault(); mathKey('ok'); return; }
     }
     if (e.key === 'Escape' && R.sheet && R.sheet.view !== 'ad' && (R.sheet.view !== 'pay' || R.sheet.ctx.phase === 'confirm')) {
-      if (R.sheet.view === 'edit' && R.sheet.ctx.page === 'repeat') A['repeat-back'](); else closeSheet();
+      if (R.sheet.view === 'edit' && R.sheet.ctx.page !== 'main') A['repeat-back'](); else closeSheet();
       return;
     }
     if (e.key === 'a' || e.key === 'A') demoAlarm();
@@ -1767,7 +1921,7 @@ button.row:active { background: var(--fill); }
       if (R.lastFired[a.id] === key) continue;
       R.lastFired[a.id] = key;
       if (once) { a.on = false; save(); }
-      ring({ kind: 'alarm', label: a.label || 'Alarm', timeLabel: clockAP(a.h, a.m), snooze: a.snooze !== false });
+      ring({ kind: 'alarm', label: a.label || 'Alarm', timeLabel: clockAP(a.h, a.m), snooze: a.snooze !== false, sound: a.sound });
       return;
     }
   }

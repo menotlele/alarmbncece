@@ -19,9 +19,9 @@ flutter run
 ## Mockup web (HP di layar laptop)
 Ada mockup interaktif versi "bayar atau langganan" di `web_mockup/index.html`. Satu file HTML, tanpa build. Tinggal buka di browser laptop: teks dan panel demo di kiri, HP di kanan.
 
-Bahasa aplikasinya Inggris, harganya dalam dolar (USD), dan format jamnya 12 jam (AM/PM). Tampilannya meniru aplikasi Jam bawaan iPhone (font sistem, daftar alarm polos, saklar hijau, roda pemilih waktu, sheet, alert, banner notifikasi) dan ikut mode terang/gelap.
+Bahasa aplikasinya Inggris, harganya dalam dolar (USD), dan format jamnya 12 jam (AM/PM). Maskotnya **Bill**, jam weker yang menagihmu: dia muncul di layar alarm dengan mata dolar dan balon kata-kata yang berganti-ganti. Tampilannya meniru aplikasi Jam bawaan iPhone (font sistem, daftar alarm polos, saklar hijau, roda pemilih waktu, sheet, alert, banner notifikasi) dan ikut mode terang/gelap.
 
-- ⏰ Tab **Alarms**: daftar alarm, Edit untuk hapus, + untuk tambah, roda jam/menit/AM-PM, Repeat per hari, Label, Snooze.
+- ⏰ Tab **Alarms**: kartu saldo, daftar alarm, Edit untuk hapus, + untuk tambah, roda jam/menit/AM-PM, Repeat per hari, Label, Snooze, dan Sound (Cha-Ching, Radar, Angry Rooster, Mom Yelling).
 - ⏱️ Tab **Timers**: roda hours/min/sec, tombol bulat Start/Pause/Cancel, daftar Recents (instant noodles, boiled egg, focus).
 - 🔒 Pas bunyi: layar kunci dengan "slide to stop" → muncul tagihan $0.99 + service fee $0.29. Snooze juga bayar, tarif naik 0,5× tiap kali snooze.
 - 👑 Tab **Pro**: langganan $4.99/bulan atau $29.99/tahun, stop gratis. Membatalkan dibujuk dua kali lewat alert.
@@ -29,6 +29,8 @@ Bahasa aplikasinya Inggris, harganya dalam dolar (USD), dan format jamnya 12 jam
 - 🎛️ Panel demo: bunyikan alarm/timer seketika (tombol `A` / `T`), nyala-matikan suara dan status Pro, reset data.
 
 Semua harga dan pembayaran di mockup ini pura-pura (saldo bohongan, disimpan di `localStorage` browser).
+
+Live di Vercel: https://alarmbncece.vercel.app
 
 ## Suara alarm
 Taruh file `alarm.mp3` di `assets/sounds/`. Tanpa file itu app tetap jalan (alarm "silent"). Lihat `assets/sounds/README.txt`.
